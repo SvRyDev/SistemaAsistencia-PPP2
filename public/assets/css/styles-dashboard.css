@@ -1,0 +1,292 @@
+*{
+  --color--main : #028fe7;
+  --color--main-subtle: #004b79; 
+  --color--secundary: white;
+
+}
+
+
+* {
+  scrollbar-width: thin;
+  /* Soporte para Firefox */
+  scrollbar-color: #028fe7 #d9f1fc;
+  /* Thumb y Track */
+}
+
+*::-webkit-scrollbar {
+  width: 15px;
+  /* Ancho de la barra de desplazamiento */
+  height: 15px;
+  /* Alto de la barra de desplazamiento horizontal */
+  border-radius: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #d9f1fc;
+  /* Color del track, un tono pastel del azul */
+  border-radius: 6px;
+  /* Bordes redondeados */
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #028fe7;
+  /* Color principal del thumb (barra desplazable) */
+  border-radius: 6px;
+  /* Bordes redondeados */
+  border: 2px solid #d9f1fc;
+  /* Espaciado para mejor contraste */
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #026db5;
+  /* Color más oscuro al pasar el mouse */
+}
+
+*::-webkit-scrollbar-corner {
+  background: #d9f1fc;
+  /* Color de la esquina en scroll combinados */
+}
+
+#sidebarMenu {
+  position: relative;
+  background: #028fe7;
+  min-width: 60px;
+  min-height: 100vh;
+  white-space: nowrap;
+  transition: .5s;
+}
+
+
+.logo-nav {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  z-index: 10;
+}
+
+.logo-nav::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  transition: .3s;
+}
+
+.logo-nav img {
+  width: 40px;
+  padding: 5px;
+  transition: .4s;
+  z-index: 10;
+}
+
+img {
+  z-index: 10000;
+}
+
+
+.title-nav {
+  color: white;
+  text-align: center;
+  margin: 10px 5px 30px;
+  overflow: hidden;
+  width: 0px;
+  height: 0;
+  opacity: 0;
+  transition: .2s;
+
+}
+
+#toggleText1 {
+  position: relative;
+}
+
+#toggleText1::after {
+  content: "";
+  position: absolute;
+  background-color: white;
+  width: 100%;
+  left: 0;
+  height: 1px;
+
+  top: 110%;
+}
+
+#toggleText2 {
+  display: inline-block;
+  transform: scale(.9);
+}
+
+#sidebarMenu{
+  z-index: 1000 ;
+}
+#sidebarMenu .nav-link {
+  display: flex;
+  /* Cambiamos a flex para alinear el contenido */
+  align-items: center;
+  /* Centra verticalmente */
+  justify-content: center;
+  /* Centra horizontalmente, ajusta si quieres alinearlo de otro modo */
+  color: white;
+  border-radius: 0;
+  transition: .2s;
+}
+
+#sidebarMenu .nav-link:hover {
+  background-color: #31b0ff;
+  
+}
+
+#sidebarMenu .nav-link i {
+  display: inline-block;
+  padding: 5px;
+  transform: scale(1.8);
+  transition: .2s;
+}
+
+#sidebarMenu .nav-link span {
+  width: 0px;
+  opacity: 0;
+  overflow: hidden;
+  transition: .2s;
+}
+
+#sidebarMenu .nav-link span {
+  display: inline-block;
+  transform: scale(.9);
+}
+
+#active-expand {
+  display: none;
+}
+
+#active-expand:checked~#sidebarMenu .logo-nav img {
+  margin: 0 15px;
+  width: 120px;
+}
+
+
+/* MENU - DASHBOARD */
+
+#active-expand:checked~#sidebarMenu .logo-nav::before {
+  height: 50%;
+}
+
+#active-expand:checked~#sidebarMenu .nav-link {
+  justify-content: flex-start;
+  /* Cambia la alineación a la izquierda */
+}
+
+#active-expand:checked~#sidebarMenu .nav-link i {
+  padding: 0 5px 0 0;
+  transform: scale(1.5);
+}
+
+#active-expand:checked~#sidebarMenu .nav-link span {
+  opacity: 1;
+  width: 150px !important;
+}
+
+#active-expand:checked~#sidebarMenu .title-nav {
+  width: 230px;
+  height: 50px;
+  opacity: 1;
+}
+
+/* MAIN CONTENT*/
+
+#main-content-space {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.main-content-right {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.image-background-main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  filter: grayscale(100%);
+  opacity: .4;
+  z-index: -1000;
+}
+
+.main-content-right::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 230%;
+  height: 100%;
+  background-color: #017dca;
+  z-index: -5;
+  transform: rotate(-65deg) translateY(-170px);
+}
+
+
+/* Seccion Buscador */
+.list--search li{
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+#results-students {
+  max-height: 200px; /* Ajusta la altura según sea necesario */
+  overflow-y: auto;  /* Habilita el desplazamiento vertical */
+}
+
+.list--search .students--item:hover{
+  background-color: rgb(192, 214, 255);
+}
+
+
+
+/*BOOTSTRAP CUSTOM*/
+
+/* Desactiva el ícono de validación para los campos válidos */
+.form-select:valid, 
+.form-control:valid {
+    background-image: default !important;
+}
+
+/* Desactiva el ícono para el estado inválido, si es necesario */
+.form-select:invalid, 
+.form-control:invalid {
+    background-image: default !important;
+}
+
+.required::after {
+  content: " *"; /* Agrega el asterisco */
+  color: rgb(189, 3, 3); /* Color del asterisco */
+}
+
+.max-width--custom{
+  max-width: 1300px !important;
+}
+.bg-custom-1 {
+  background-color: var(--color--main-subtle) !important;
+  color: white !important;
+
+}
+
+.border-custom-1 {
+  border-color: var(--color--main-subtle) !important;
+}
+
+.text-color-custom-1 {
+  color: var(--color--main-subtle) !important;
+}
+
+.max-width-lg {
+  max-width: 1150px;
+}
