@@ -13,6 +13,5 @@ require_once '../app/core/Router.php';
 $router = new Router();
 $router->addRoute('GET', '/', 'HomeController@index');
 $router->addRoute('GET', '/home', 'HomeController@index');
-
-$router->run();
+$router->run()
 ?>

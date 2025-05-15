@@ -20,6 +20,7 @@ define('APP_URL', 'http://localhost/SistemaAsistencia-PPP2');
 define('BASE_PATH', 'SistemaAsistencia-PPP2');
 
 
+define('DEFAULT_CONTROLLER', 'HomeController');
 
 // Nombre Empresa
 define('NOMBRE_EMPRESA','Montalván');

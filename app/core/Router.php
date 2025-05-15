@@ -36,29 +36,37 @@ class Router
         // Verificar si la ruta existe
         if (isset($this->routes[$method][$full_url])) {
             list($controller, $action) = explode('@', $this->routes[$method][$full_url]);
+
+            // Ubicación del archivo del controlador
             $controllerFile = __DIR__ . '/../controllers/' . $controller . '.php';
 
+            echo "Pasando por el controlador: $controllerFile<br>";
 
+            // Verificar si el archivo existe
             if (file_exists($controllerFile)) {
-            require_once $controllerFile;
-            if (class_exists($controllerName)) {
-                $controller = new $controllerName();
-                if (method_exists($controller, $actionName)) {
-                    call_user_func_array([$controller, $actionName], $params);
+                echo "Se encontró el archivo :D<br>";
+                require_once $controllerFile;
+
+                // Verificar si la clase existe
+                if (class_exists($controller)) {
+                    $controllerInstance = new $controller();
+
+                    // Verificar si la acción existe
+                    if (method_exists($controllerInstance, $action)) {
+                        // Llamar la acción con parámetros si es necesario
+                        $params = []; // Define this as needed or extract parameters from the URL
+                        call_user_func_array([$controllerInstance, $action], $params);
+                    } else {
+                        die("Action $action not found in $controller class");
+                    }
                 } else {
-                    die("Action $actionName does not exist in controller $controllerName.");
+                    die("Controller class $controller not found");
                 }
             } else {
-                die("Controller class $controllerName does not exist.");
+                die("Controller file $controllerFile not found");
             }
         } else {
-            die("Controller file for $controllerName does not exist.");
-        }
-
-            
-        } else {
-            // Ruta no encontrada
-            echo ", Error: La ruta no existe. La lista de rutas registradas es: " . implode(", ", array_keys($this->routes[$method])) . " y la base es: " . $full_url;
+            die("Route not found for $method $full_url");
         }
     }
 }
