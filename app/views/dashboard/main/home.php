@@ -1,7 +1,6 @@
-<html>
-<head><title>Home</title></head>
-<body>
+
     <h1>Welcome to the Home Page</h1>
     <!-- Más contenido dinámico puede ir aquí -->
-</body>
-</html>
+     <p>
+        este es el paso por el controlador de la vista home.php
+     </p>
