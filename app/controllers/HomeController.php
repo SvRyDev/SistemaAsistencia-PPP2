@@ -2,15 +2,15 @@
 
 class HomeController extends Controller {
 
-    public  $layout = 'dashboard'; // Establecer el layout por defecto
+    public  $layout = 'auth'; // Establecer el layout por defecto
 
     public function index() {
-        View::render('main/home', [],  $this->layout);
+        View::render('main.home', [],  $this->layout);
     }
 
 
     public function about() {
-        View::render('main/about', [],  $this->layout);
+        View::render('main.about', [],  $this->layout);
     }
 
     public function param($id) {

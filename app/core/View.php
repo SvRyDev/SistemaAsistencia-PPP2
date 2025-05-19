@@ -4,11 +4,13 @@ class View
     public static function render($view, $data = [], $layout = 'default')
 {
     extract($data);
-
-    $viewPath = __DIR__ . '/../views/' . $layout . '/' . $view .'.php';
+    
+    $newView = str_replace('.', '/', $view);
+    $viewPath = __DIR__ . '/../views/' . $layout . '/' . $newView .'.php';
     $headerPath = __DIR__ . '/../views/partials/' . $layout . '/header.php';
     $footerPath = __DIR__ . '/../views/partials/' . $layout . '/footer.php';
 
+    
     if (file_exists($viewPath)) {
         if (isAjax()) {
             require $viewPath;

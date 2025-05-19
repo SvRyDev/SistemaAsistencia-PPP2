@@ -56,10 +56,8 @@ class Router
 
         if ($found) {
             $controllerFile = __DIR__ . '/../controllers/' . $controller . '.php';
-            echo "Pasando por el controlador: $controllerFile<br>";
-
             if (file_exists($controllerFile)) {
-                echo "Se encontró el archivo :D<br>";
+       
                 require_once $controllerFile;
 
                 if (class_exists($controller)) {
