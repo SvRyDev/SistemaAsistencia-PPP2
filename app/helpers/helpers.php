@@ -4,13 +4,16 @@ function base_url(){
     return APP_URL;
 }
 
-
 function assets(){
     echo APP_URL . "/public/assets";
 }
 
 function dist(){
     echo APP_URL . "/public/dist";
+}
+
+function plugins(){
+    echo APP_URL . "/public/plugins";
 }
 
 // Función para verificar si la solicitud es AJAX
