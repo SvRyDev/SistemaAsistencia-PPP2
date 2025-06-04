@@ -46,31 +46,39 @@ class StudentController extends Controller
 
     public function read_from_Excel()
     {
-
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excelFile'])) {
             $fileTmpPath = $_FILES['excelFile']['tmp_name'];
             $fileName = $_FILES['excelFile']['name'];
             $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
-
+    
             $allowedExtensions = ['xls', 'xlsx'];
             if (!in_array(strtolower($fileExtension), $allowedExtensions)) {
                 echo "<p style='color:red;'>Archivo no permitido. Solo .xls y .xlsx</p>";
                 exit;
             }
-
+    
             try {
-                $spreadsheet = IOFactory::load($fileTmpPath);
+                $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($fileTmpPath);
                 $worksheet = $spreadsheet->getActiveSheet();
-
+                $rows = $worksheet->toArray(null, true, true, true); // devuelve array con letras como claves
+    
+                $expectedHeaders = ['codigo', 'nombre', 'apellido', 'edad'];
+    
+                // Obtener encabezados (primera fila del archivo)
+                $headers = array_map('strtolower', array_values($rows[1])); // Primera fila
+                $missing = array_diff($expectedHeaders, $headers);
+    
+                if (!empty($missing)) {
+                    echo "<p style='color:red;'>Faltan columnas requeridas: " . implode(', ', $missing) . "</p>";
+                    return;
+                }
+    
+                // Mostrar tabla si encabezados válidos
                 echo '<table border="1" cellpadding="5" style="border-collapse: collapse;">';
-                foreach ($worksheet->getRowIterator() as $row) {
+                foreach ($rows as $index => $row) {
                     echo '<tr>';
-                    $cellIterator = $row->getCellIterator();
-                    $cellIterator->setIterateOnlyExistingCells(false);
-
-                    foreach ($cellIterator as $cell) {
-                        echo '<td>' . htmlspecialchars($cell->getValue()) . '</td>';
+                    foreach ($row as $cell) {
+                        echo '<td>' . htmlspecialchars($cell) . '</td>';
                     }
                     echo '</tr>';
                 }
@@ -82,4 +90,5 @@ class StudentController extends Controller
             echo '<p>No se recibió ningún archivo.</p>';
         }
     }
+    
 }
