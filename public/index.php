@@ -1,6 +1,6 @@
 <?php
 
-// require_once '../vendor/autoload.php'; 
+require_once '../vendor/autoload.php'; 
 require_once '../app/core/Autoload.php';
 
 require_once '../config/config.php';
@@ -15,13 +15,14 @@ $router = new Router();
 $router->addRoute('GET', '/', 'HomeController@index');
 $router->addRoute('GET', '/home', 'HomeController@index');
 $router->addRoute('GET', '/student', 'StudentController@index');
+$router->addRoute('GET', '/student/import', 'StudentController@view_import_data');
 $router->addRoute('GET', '/details', 'HomeController@details');
 $router->addRoute('GET', '/param/{id}', 'HomeController@param');
 $router->addRoute('GET', '/user/{tipo}/buscar/{nivel}/{id}', 'HomeController@detalle');
 
-
 //Api Endpoints
 $router->addRoute('GET', '/student/getAll', 'StudentController@show');
+$router->addRoute('POST', '/student/readExcel', 'StudentController@read_from_Excel');
 
 $router->run()
 

@@ -1,11 +1,11 @@
 <?php
 class View
 {
-    public static function render($view, $data = [], $layout = 'default')
+    public static function render($v, $data = [], $layout = 'default')
 {
     extract($data);
     
-    $newView = str_replace('.', '/', $view);
+    $newView = str_replace('.', '/', $v);
     $viewPath = __DIR__ . '/../views/' . $layout . '/' . $newView .'.php';
     $headerPath = __DIR__ . '/../views/partials/' . $layout . '/header.php';
     $footerPath = __DIR__ . '/../views/partials/' . $layout . '/footer.php';
@@ -20,7 +20,7 @@ class View
             if (file_exists($footerPath)) require $footerPath;
         }
     } else {
-        die("Vista '$view' no encontrada.");
+        die("Vista '$v' no encontrada.");
     }
 }
 

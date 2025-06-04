@@ -1,0 +1,17 @@
+{
+    "name": "arturo/sistema-asistencia-ppp2",
+    "autoload": {
+        "psr-4": {
+            "Arturo\\SistemaAsistenciaPpp2\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "SvRyDev",
+            "email": "116703934+SvRyDev@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet": "^4.3"
+    }
+}
