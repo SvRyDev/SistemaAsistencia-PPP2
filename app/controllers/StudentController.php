@@ -44,51 +44,89 @@ class StudentController extends Controller
         View::render($view, $data, $this->layout);
     }
 
+
     public function read_from_Excel()
     {
+        header('Content-Type: application/json');
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excelFile'])) {
             $fileTmpPath = $_FILES['excelFile']['tmp_name'];
             $fileName = $_FILES['excelFile']['name'];
             $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
-    
+
             $allowedExtensions = ['xls', 'xlsx'];
             if (!in_array(strtolower($fileExtension), $allowedExtensions)) {
-                echo "<p style='color:red;'>Archivo no permitido. Solo .xls y .xlsx</p>";
-                exit;
+                http_response_code(400);
+                echo json_encode(['status' => 'error', 'message' => 'Archivo no permitido. Solo .xls y .xlsx']);
+                return;
             }
-    
+
             try {
                 $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($fileTmpPath);
                 $worksheet = $spreadsheet->getActiveSheet();
-                $rows = $worksheet->toArray(null, true, true, true); // devuelve array con letras como claves
-    
-                $expectedHeaders = ['codigo', 'nombre', 'apellido', 'edad'];
-    
-                // Obtener encabezados (primera fila del archivo)
-                $headers = array_map('strtolower', array_values($rows[1])); // Primera fila
+                $rows = $worksheet->toArray(null, true, true, true);
+
+                $expectedHeaders = ['dni', 'nombres', 'apellidos', 'grado', 'sección'];
+                $headers = array_map('strtolower', array_values($rows[1]));
                 $missing = array_diff($expectedHeaders, $headers);
-    
+
                 if (!empty($missing)) {
-                    echo "<p style='color:red;'>Faltan columnas requeridas: " . implode(', ', $missing) . "</p>";
+                    http_response_code(422);
+                    echo json_encode(['status' => 'error', 'message' => 'Faltan columnas requeridas: ' . implode(', ', $missing)]);
                     return;
                 }
-    
-                // Mostrar tabla si encabezados válidos
-                echo '<table border="1" cellpadding="5" style="border-collapse: collapse;">';
-                foreach ($rows as $index => $row) {
-                    echo '<tr>';
-                    foreach ($row as $cell) {
-                        echo '<td>' . htmlspecialchars($cell) . '</td>';
-                    }
-                    echo '</tr>';
-                }
-                echo '</table>';
+
+                // Optional: puedes filtrar datos, o simplemente devolverlos
+                $data = array_slice($rows, 1); // quitar encabezado
+
+                echo json_encode(['status' => 'success', 'message' => 'Archivo leído correctamente.', 'data' => $data]);
             } catch (Exception $e) {
-                echo '<p style="color:red;">Error leyendo el archivo: ' . $e->getMessage() . '</p>';
+                http_response_code(500);
+                echo json_encode(['status' => 'error', 'message' => 'Error leyendo el archivo: ' . $e->getMessage()]);
             }
         } else {
-            echo '<p>No se recibió ningún archivo.</p>';
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'No se recibió ningún archivo.']);
         }
     }
-    
+
+
+    public function import_data_file()
+    {
+        header('Content-Type: application/json');
+
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (isset($data['alumnos']) && is_array($data['alumnos']) && count($data['alumnos']) > 0) {
+
+            // Validar columnas requeridas para cada alumno
+            $requiredColumns = ['dni', 'nombres', 'apellidos', 'grado', 'seccion'];
+            foreach ($data['alumnos'] as $index => $alumno) {
+                foreach ($requiredColumns as $col) {
+                    if (!isset($alumno[$col]) || empty($alumno[$col])) {
+                        http_response_code(400);
+                        echo json_encode([
+                            "status" => "error",
+                            "message" => "Falta o está vacío el campo '$col' en el registro #" . ($index + 1)
+                        ]);
+                        return;
+                    }
+                }
+            }
+
+            $studentModel = $this->model('StudentModel');
+            $result = $studentModel->addMultipleStudents($data['alumnos']);
+
+            if (!$result) {
+                http_response_code(500);
+                echo json_encode(["status" => "error", "message" => "Error al insertar los estudiantes"]);
+                return;
+            }
+
+            echo json_encode(["status" => "success", "message" => "Datos importados correctamente"]);
+        } else {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "Datos inválidos"]);
+        }
+    }
 }

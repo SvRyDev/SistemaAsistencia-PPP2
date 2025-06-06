@@ -23,6 +23,7 @@ $router->addRoute('GET', '/user/{tipo}/buscar/{nivel}/{id}', 'HomeController@det
 //Api Endpoints
 $router->addRoute('GET', '/student/getAll', 'StudentController@show');
 $router->addRoute('POST', '/student/readExcel', 'StudentController@read_from_Excel');
+$router->addRoute('POST', '/student/importData', 'StudentController@import_data_file');
 
 $router->run()
 

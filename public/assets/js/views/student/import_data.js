@@ -1,9 +1,20 @@
+let archivoCargado = false;
 
 $(document).ready(function () {
+  $('#excelFile').on('change', function () {
+    $('#uploadForm').submit();
+  });
+
   $('#uploadForm').on('submit', function (e) {
     e.preventDefault();
 
     var formData = new FormData(this);
+
+    $('#previewTableData tbody').html(`
+      <tr>
+        <td colspan="6" style="text-align:center;">Procesando archivo, por favor espere...</td>
+      </tr>
+    `);
 
     $.ajax({
       url: base_url + '/student/readExcel',
@@ -11,19 +22,120 @@ $(document).ready(function () {
       data: formData,
       contentType: false,
       processData: false,
+      dataType: 'json',
       beforeSend: function () {
-        $('#previewTable').html('<p>Procesando archivo, por favor espere...</p>');
+          $('#previewTableData tbody').html(`
+      <tr>
+        <td colspan="6" style="text-align:center;">}
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </td>
+      </tr>
+    `);
       },
       success: function (response) {
-        $('#previewTable').html(response);
+        if (response.status === 'success' && Array.isArray(response.data)) {
+          const rows = response.data;
+          let html = '';
+
+          rows.forEach((row, index) => {
+            html += '<tr>';
+            html += `<td>${index + 1}</td>`;
+            html += `<td>${row.A || ''}</td>`;
+            html += `<td>${row.B || ''}</td>`;
+            html += `<td>${row.C || ''}</td>`;
+            html += `<td>${row.D || ''}</td>`;
+            html += `<td>${row.E || ''}</td>`;
+            html += '</tr>';
+          });
+
+          $('#countData').text(rows.length);
+
+
+          $('#div-button-import').removeClass('d-none');
+          $('#importButton').removeClass('disabled');
+
+          // Reiniciar DataTable si ya existe
+          if ($.fn.DataTable.isDataTable('#previewTableData')) {
+            $('#previewTableData').DataTable().clear().destroy();
+          }
+
+          $('#previewTableData tbody').html(html);
+
+          $('#previewTableData').DataTable({
+            searching: false,
+            pageLength: 10,
+            lengthChange: false,
+            paging: true,
+            info: true
+          });
+
+          // Marcar que ya hay un archivo cargado
+          archivoCargado = true;
+        } else {
+          $('#previewTableData tbody').html(`
+            <tr>
+              <td colspan="6" style="color:red; text-align:center;">
+                ${response.message || 'No se encontraron datos.'}
+              </td>
+            </tr>
+          `);
+        }
       },
-      error: function () {
-        $('#previewTable').html('<p style="color:red;">Error al procesar el archivo.</p>');
+      error: function (xhr) {
+        let msg = 'Error al procesar el archivo.';
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          msg = xhr.responseJSON.message;
+        }
+
+        $('#previewTableData tbody').html(`
+          <tr>
+            <td colspan="6" style="color:red; text-align:center;">${msg}</td>
+          </tr>
+        `);
+
+        $('#countData').text('0');
+        $('#countDataFounded').removeClass('text-success').addClass('text-muted');
+        $('#div-button-import').addClass('d-none');
+        $('#importButton').addClass('disabled');
+
+
+        archivoCargado = false; // Reiniciar estado si hay error
       }
     });
   });
-});
 
+  $('#btn-import-excel').on('click', function () {
+    if (archivoCargado) {
+      Swal.fire({
+        title: '¿Quieres reemplazar el archivo cargado?',
+        text: 'Ya hay un archivo procesado. Si continúas, se reemplazará.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, reemplazar',
+        cancelButtonText: 'Cancelar',
+        showClass: {
+          popup: 'animate__animated animate__flipInX'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__flipOutX'
+        },
+        didOpen: () => {
+          // Cambiar duración de animación al vuelo
+          document.querySelector('.swal2-popup').style.animationDuration = '500ms';
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $('#excelFile').click();
+        }
+      });
+    } else {
+      $('#excelFile').click();
+    }
+
+  });
+});
 
 
 
@@ -88,17 +200,70 @@ $fileInput.on('change', function () {
 
 
 
+// Función para activar el botón de importación
+$('#importButton').on('click', function () {
+  console.log('Botón de importación activado');
+  if (archivoCargado) {
+    Swal.fire({
+      title: '¿Estás seguro de importar los datos?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'success',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, importar',
+      cancelButtonText: 'Cancelar',
+      showClass: {
+        popup: 'animate__animated animate__flipInX'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__flipOutX'
+      },
+      didOpen: () => {
+        // Cambiar duración de animación al vuelo
+        document.querySelector('.swal2-popup').style.animationDuration = '500ms';
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        // Obtener todos los datos del DataTable
+        const table = $('#previewTableData').DataTable();
+        const data = table.rows().data().toArray(); // Array con todos los registros
 
 
-var table = new DataTable('#previewTableData', {
-  searching: false,      // Oculta la caja de búsqueda
-  pageLength: 20,         // Muestra 20 registros por página
-  lengthChange: false,    // Oculta el menú desplegable de cantidad de registros
-  paging: true,           // Asegura que la paginación esté activa
+
+        // Opcional: transformar cada fila si es necesario
+        const datosProcesados = data.map(row => ({
+          dni: row[1],
+          nombres: row[2],
+          apellidos: row[3],
+          grado: row[4],
+          seccion: row[5]
+        }));
+
+        $.ajax({
+          url: base_url + '/student/importData',
+          type: 'POST',
+          data: JSON.stringify({ alumnos: datosProcesados }),
+          contentType: 'application/json',
+          success: function (response) {
+            if (response.status === 'success') {
+              Swal.fire('Importación exitosa', response.message, 'success');
+              // Aquí puedes recargar la tabla o realizar otras acciones
+            } else {
+              Swal.fire('Error', response.message, 'error');
+            }
+          },
+          error: function (xhr) {
+            let msg = 'Error al importar los datos.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+              msg = xhr.responseJSON.message;
+            }
+            Swal.fire('Error', msg, 'error');
+          }
+        });
+
+      }
+    });
+  } else {
+    Swal.fire('No hay datos para importar', '', 'info');
+  }
 });
-
-
-
-// Ya no necesitas checkbox manual ni #select-all,
-// DataTables Select manejará la selección con click en celdas
-

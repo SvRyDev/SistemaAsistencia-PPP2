@@ -6,6 +6,7 @@
   <title>Sistema de Asistencia - Dashboard</title>
 
   <!-- SweetAlert2 -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" />
   <link rel="stylesheet" href="<?= plugins()?>/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <!-- Toastr -->
   <link rel="stylesheet" href="<?= plugins()?>/toastr/toastr.min.css">

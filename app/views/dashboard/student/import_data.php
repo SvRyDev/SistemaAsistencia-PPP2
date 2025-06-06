@@ -14,7 +14,8 @@
                 <form id="uploadForm" enctype="multipart/form-data" class="w-100">
                   <div class="form-group m-0">
                     <!-- Label como botón de ancho completo -->
-                    <label for="excelFile" class="btn btn-light shadow d-flex align-items-center w-100 m-0"
+
+                    <label id="btn-import-excel" class="btn btn-light shadow d-flex align-items-center w-100 m-0"
                       style="cursor: pointer; border-radius: 0;">
                       <!-- Ícono blanco con fondo verde -->
 
@@ -76,7 +77,7 @@
                 <b>Nota importante:</b>
                 <br>
                 <ul>
-                  <li>El archivo debe contener las columnas: <b>codigo, nombre, apellido, edad</b>.</li>
+                  <li>El archivo debe contener las columnas: <b>Dni, Nombres, Apellidos, Grado y Sección</b>.</li>
                   <li>El formato de fecha debe ser compatible con el sistema.</li>
                   <li>Los datos serán validados antes de ser importados.</li>
               </div>
@@ -114,7 +115,7 @@
                   </div>
 
                   <div class="col-md-3 text-right">
-                    <button class="btn btn-primary btn-block" id="importButton">
+                    <button class="btn btn-primary btn-block" id="loadFileButton">
                       Cargar <i class="fas fa-upload ml-2"></i>
                     </button>
                   </div>
@@ -131,45 +132,49 @@
         <!-- /.col -->
       </div>
 
+
       <div class="col-lg-12 col-md-12">
 
         <div class="row">
           <div class="col-12">
             <div class="card">
+
+              <div id="div-button-import" class="card-header d-none">
+                <button class="btn btn-success btn-block mb-2" id="importButton">
+                  Importar <i class="fas fa-upload ml-2"></i>
+                </button>
+
+                <span class="text-muted" id="countDataFounded">
+                  <i class="fas fa-exclamation-circle mr-2"></i>Se Encontraron <span class="text-bold" id="countData">0</span> Registros.
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="card">
               <!-- /.card-header -->
+
               <div class="card-header">
-                <i class="fas fa-eye mr-2"></i> Vista Previa
-
-
+                <i class="fas fa-eye mr-2"></i> Vista Previa <span class="text-muted">(Revisa los datos antes de importar)</span>
               </div>
 
               <div class="card-body">
                 <div id="previewContainer" class="table-responsive">
-                  <table class="table table-bordered table-striped" id="previewTableData">
+
+                  <table style="font-size: 15px;" class="table table-bordered table-striped" id="previewTableData">
                     <thead>
                       <tr>
-                        <th>Seleccionar</th>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Edad</th>
+
+                        <th>#</th>
+                        <th>Dni</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Grado</th>
+                        <th>Seccion</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td></td>
-                        <td>Tiger Nixon</td>
-                        <td>System Architect</td>
-                        <td>Edinburgh</td>
-                        <td>61</td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td>Garrett Winters</td>
-                        <td>Accountant</td>
-                        <td>Tokyo</td>
-                        <td>63</td>
-                      </tr>
+
                     </tbody>
                   </table>
 
@@ -178,11 +183,7 @@
               </div>
 
               <!-- /.card-body -->
-              <div class="card-footer">
-                <button class="btn btn-success btn-block disabled" id="importButton">
-                  Importar <i class="fas fa-upload ml-2"></i>
-                </button>
-              </div>
+
             </div>
           </div>
         </div>
