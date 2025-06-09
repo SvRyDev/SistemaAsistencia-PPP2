@@ -10,9 +10,9 @@ class StudentController extends Controller
 
     public function index()
     {
-        $view = "student/list";
+        $view = "student.list";
         $data = [
-            'view' => $view,
+            'view_js' => $view,
             'title' => 'Estudiantes',
             'message' => 'Esta es la página de vista de estudiantes.'
         ];
@@ -33,11 +33,24 @@ class StudentController extends Controller
         }
     }
 
+
+    public function get_total_students()
+    {
+        $studentModel = $this->model('StudentModel');
+        $totalStudents = $studentModel->getTotalStudents();
+
+        if (isAjax()) {
+            header('Content-Type: application/json');
+            echo json_encode($totalStudents);
+            return;
+        }
+    }
+
     public function view_import_data()
     {
-        $view = "student/import_data";
+        $view = "student.import_data";
         $data = [
-            'view' => $view,
+            'view_js' => $view,
             'title' => 'Importar Estudiantes',
             'message' => 'Esta es la página de vista de estudiantes.'
         ];

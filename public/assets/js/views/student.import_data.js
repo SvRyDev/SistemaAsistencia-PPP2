@@ -10,12 +10,6 @@ $(document).ready(function () {
 
     var formData = new FormData(this);
 
-    $('#previewTableData tbody').html(`
-      <tr>
-        <td colspan="6" style="text-align:center;">Procesando archivo, por favor espere...</td>
-      </tr>
-    `);
-
     $.ajax({
       url: base_url + '/student/readExcel',
       type: 'POST',
@@ -26,7 +20,7 @@ $(document).ready(function () {
       beforeSend: function () {
           $('#previewTableData tbody').html(`
       <tr>
-        <td colspan="6" style="text-align:center;">}
+        <td colspan="6" style="text-align:center;">
           <div class="spinner-border" role="status">
             <span class="sr-only">Loading...</span>
           </div>

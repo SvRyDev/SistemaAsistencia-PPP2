@@ -9,6 +9,13 @@ class StudentModel extends Model
     }
 
 
+    public function getTotalStudents()
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM estudiante");
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function addMultipleStudents($alumnos)
     {
         try {
@@ -32,5 +39,14 @@ class StudentModel extends Model
             $this->db->rollBack();
             return false;
         }
+    }
+
+
+    public function getStudentByCode($codigo)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM estudiante WHERE codigo = :codigo");
+        $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 };

@@ -115,7 +115,7 @@
     const base_url = "<?= base_url() ?>";
   </script>
 
-  <script src="<?= assets() ?>/js/views/<?= $data['view']?>.js"></script>
+  <script src="<?= assets() ?>/js/views/<?= $data['view_js']?>.js"></script>
   </body>
 
   </html>

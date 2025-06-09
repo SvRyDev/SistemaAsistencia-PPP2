@@ -16,15 +16,26 @@ $router->addRoute('GET', '/', 'HomeController@index');
 $router->addRoute('GET', '/home', 'HomeController@index');
 $router->addRoute('GET', '/student', 'StudentController@index');
 $router->addRoute('GET', '/student/import', 'StudentController@view_import_data');
+$router->addRoute('GET', '/carnet', 'CarnetController@index');
+$router->addRoute('GET', '/attendance', 'AttendanceController@index');
+$router->addRoute('GET', '/attendance/openAttendance', 'AttendanceController@open_attendance');
+$router->addRoute('GET', '/attendance/searchStudentByCode', 'AttendanceController@open_attendance');
+
+
+
 $router->addRoute('GET', '/details', 'HomeController@details');
 $router->addRoute('GET', '/param/{id}', 'HomeController@param');
 $router->addRoute('GET', '/user/{tipo}/buscar/{nivel}/{id}', 'HomeController@detalle');
+
 
 //Api Endpoints
 $router->addRoute('GET', '/student/getAll', 'StudentController@show');
 $router->addRoute('POST', '/student/readExcel', 'StudentController@read_from_Excel');
 $router->addRoute('POST', '/student/importData', 'StudentController@import_data_file');
-
+$router->addRoute('GET', '/carnet/generateCarnet', 'CarnetController@generate_carnet_pdf');
+$router->addRoute('GET', '/carnet/previewCarnet', 'CarnetController@preview_single_carnet_pdf');
+$router->addRoute('POST', '/attendance/registerAttendance', 'AttendanceController@register_attendance');
+$router->addRoute('GET', '/student/getTotalStudents', 'StudentController@get_total_students');
 $router->run()
 
 ?>

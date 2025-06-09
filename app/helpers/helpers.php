@@ -5,7 +5,7 @@ function base_url(){
 }
 
 function assets(){
-    echo APP_URL . "/public/assets";
+    return APP_URL . "/public/assets";
 }
 
 function dist(){
