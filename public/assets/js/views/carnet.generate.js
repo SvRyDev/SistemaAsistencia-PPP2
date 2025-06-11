@@ -1,7 +1,7 @@
 $('#btnDownload').click(function(e) {
     e.preventDefault();
     $.ajax({
-        url: base_url + '/student/generateCarnet',
+        url: base_url + '/carnet/generateCarnet',
         method: 'GET',
         xhrFields: {
             responseType: 'blob' // Importante para manejar archivos binarios

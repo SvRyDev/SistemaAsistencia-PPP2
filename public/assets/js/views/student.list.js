@@ -16,7 +16,7 @@ $(function () {
     columns: [
       { title: "#", data: "estudiante_id" },
       { title: "Codigo", data: "codigo" },
-      { title: "Nombre(s)", data: "nombre" },
+      { title: "Nombre(s)", data: "nombres" },
       { title: "Apellidos", data: "apellidos" },
       { title: "DNI", data: "dni" },
       { title: "Grado", data: "grado" },

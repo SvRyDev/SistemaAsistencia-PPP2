@@ -61,7 +61,7 @@ window.addEventListener("message", function (event) {
         Código: <span class="text-dark">${event.data.codigo}</span>
       </div>
       <div class="col-md-4">
-        <span class="text-muted"> Nombres: </span> <span> ${event.data.nombre} ${event.data.apellidos}</span>
+        <span class="text-muted"> Nombres: </span> <span> ${event.data.nombres} ${event.data.apellidos}</span>
       </div>
 
       <div class="col-md-1 text-muted">

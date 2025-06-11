@@ -21,7 +21,7 @@ class StudentModel extends Model
         try {
             $this->db->beginTransaction();
 
-            $stmt = $this->db->prepare("INSERT INTO estudiante (dni, nombre, apellidos, grado, seccion) VALUES (?, ?, ?, ?, ?)");
+            $stmt = $this->db->prepare("INSERT INTO estudiante (dni, nombres, apellidos, grado, seccion) VALUES (?, ?, ?, ?, ?)");
 
             foreach ($alumnos as $alumno) {
                 $stmt->execute([

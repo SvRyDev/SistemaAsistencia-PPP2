@@ -33,7 +33,7 @@ $(document).ready(function () {
           $("#mensajeRespuesta").html("<b>ESTUDIANTE REGISTRADO CORRECTAMENTE</b>");
           //$("#resultadoBusqueda span").addClass("text-success");
           // Mostrar datos del estudiante
-          $("#nombre").html('Nombre: ' + response.student.nombre);
+          $("#nombre").html('Nombre: ' + response.student.nombres);
           $("#apellido").html('Estudiante: ' + response.student.apellidos);
           $("#codigo").html('Código: ' + response.student.codigo);
 

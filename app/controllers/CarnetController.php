@@ -2,6 +2,7 @@
 
 use Dompdf\Dompdf;
 use Picqer\Barcode\BarcodeGeneratorPNG;
+
 class CarnetController extends Controller
 {
 
