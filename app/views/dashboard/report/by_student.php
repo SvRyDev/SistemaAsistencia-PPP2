@@ -10,13 +10,16 @@
 
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <input type="text" class="form-control" id="studentCode"
+                                <input type="text" class="form-control" id="studentCodeInput"
                                     placeholder="Ingrese el código del estudiante">
 
                                 <button class="btn btn-primary btn-block mt-2" id="searchStudentButton">
                                     Buscar Estudiante
                                 </button>
 
+                                <div id="studentInfo">
+                                    
+                                </div>
                             </div>
 
                             <!-- /.card-body -->

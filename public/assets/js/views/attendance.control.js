@@ -3,6 +3,22 @@ let verificador = null;
 
 $("#btnOpenAttendance").click(function (e) {
   e.preventDefault();
+
+
+  $.ajax({
+    url: base_url + '/attendance/openNewDay', // Cambia esto a la URL de tu endpoint
+    type: 'POST',
+    data: {},
+    success: function (response) {
+      console.log(response);
+    },
+    error: function (xhr, status, error) {
+      // Manejo de errores
+      console.error('Error al generar generar dia:', error);
+      // $('#studentInfo').html('<p>Error al Generar Dia.</p>');
+    }
+  });
+
   if (ventana && !ventana.closed) {
     ventana.focus(); // Si la ventana ya está abierta, solo la enfocamos
   } else {
@@ -114,13 +130,13 @@ $(document).ready(function () {
   $.ajax({
     url: base_url + "/student/getTotalStudents", // cambia por tu ruta real
     method: "GET",
-    beforeSend: function () {},
+    beforeSend: function () { },
     success: function (response) {
       console.log("El total es : " + response.total);
       $("#totalEstudiantes").html(response.total);
       $("#totalRestantes").html(response.total);
     },
-    error: function (xhr, status, error) {},
-    complete: function () {},
+    error: function (xhr, status, error) { },
+    complete: function () { },
   });
 });

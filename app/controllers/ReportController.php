@@ -17,7 +17,57 @@ class ReportController extends Controller
         View::render($view, $data, $this->layout);
     }
 
-    public function report_by_student()
+    public function record_by_student()
+    {
+        if (!isAjax()) {
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['code'])) {
+            $codigoEstudiante = $_POST['code'];
+
+            $StudentModel = $this->model('StudentModel');
+            $student = $StudentModel->getStudentByCode($codigoEstudiante);
+
+            $studentId = $student['estudiante_id'] ?? null;
+
+            if (!$studentId) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Estudiante no encontrado con el código proporcionado.'
+                ]);
+                return;
+            }
+
+            $AttendanceModel = $this->model('AttendanceModel');
+            $attendanceRecords = $AttendanceModel->getRecordByStudent($studentId);
+
+            if (!$student) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Estudiante no encontrado con el código proporcionado.'
+                ]);
+                return;
+            }
+
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Reporte generado exitosamente.',
+                'student' => $student,
+                'attendance_records' => $attendanceRecords
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Código de estudiante no proporcionado.'
+            ]);
+        }
+    }
+
+
+    public function get_by_student_code()
     {
         if (!isAjax()) {
             return;
@@ -31,6 +81,7 @@ class ReportController extends Controller
             $StudentModel = $this->model('StudentModel');
             $student = $StudentModel->getStudentByCode($codigoEstudiante);
 
+            $AttendanceModel = $this->model('AttendanceModel');
             if (!$student) {
                 echo json_encode([
                     'status' => 'error',
@@ -54,7 +105,4 @@ class ReportController extends Controller
             ]);
         }
     }
-
-
-
 }

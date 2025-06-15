@@ -31,6 +31,38 @@ class AttendanceController extends Controller
     }
 
 
+    public function register_new_day()
+    {
+        if (!isAjax()) {
+            return;
+        }
+    
+        header('Content-Type: application/json');
+    
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $AttendanceModel = $this->model('AttendanceModel');
+            $result = $AttendanceModel->registerNewDay();
+    
+            if ($result) {
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Nuevo día de asistencia registrado exitosamente.'
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Error al registrar el nuevo día de asistencia.'
+                ]);
+            }
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Método no permitido.'
+            ]);
+        }
+    }
+
+    
     public function register_attendance()
     {
         if (!isAjax()) {
