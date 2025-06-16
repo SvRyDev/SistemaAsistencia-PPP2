@@ -52,11 +52,16 @@ class ReportController extends Controller
                 return;
             }
 
+
+            $DayModel = $this->model('DayModel');
+            $daysActive = $DayModel->getAllDays();
+
             echo json_encode([
                 'status' => 'success',
                 'message' => 'Reporte generado exitosamente.',
                 'student' => $student,
-                'attendance_records' => $attendanceRecords
+                'attendance_records' => $attendanceRecords,
+                'days_active' => $daysActive,
             ]);
         } else {
             echo json_encode([

@@ -44,8 +44,8 @@
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <p>Reporte de Asistencia</p>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
+                                <div class="" style="overflow-x: auto;">
+                                    <table id="table-resultado" class="table-bordered table-sm" style="">
                                         <thead class="text-center">
                                             <tr class="bg-success">
                                                 <th rowspan="4">Nombre y Apellido</th>
@@ -118,7 +118,7 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>ARTURO SARAVIA REYES</td>
+                                                <td id="td_nombres">-- student --</td>
                                                 <td>/</td>
                                                 <td>x</td>
                                                 <td>!</td>
