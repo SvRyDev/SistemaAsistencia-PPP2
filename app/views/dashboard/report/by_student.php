@@ -18,7 +18,7 @@
                                 </button>
 
                                 <div id="studentInfo">
-                                    
+
                                 </div>
                             </div>
 
@@ -45,84 +45,22 @@
                             <div class="card-body">
                                 <p>Reporte de Asistencia</p>
                                 <div class="" style="overflow-x: auto;">
-                                    <table id="table-resultado" class="table-bordered table-sm" style="">
+                                    <table id="table-resultado" class="table table-bordered table-sm" style="">
                                         <thead class="text-center">
                                             <tr class="bg-success">
-                                                <th rowspan="4">Nombre y Apellido</th>
-                                                <th colspan="30">ENERO</th>
+                                                <th>#</th>
+                                                <th>Dia</th>
+                                                <th>Estado</th>
+                                                <th>Observación</th>
                                             </tr>
-                                            <tr class="bg-success">
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                            </tr>
-                                            <tr class="table-success">
-                                                <td>1</td>
-                                                <td>2</td>
-                                                <td>3</td>
-                                                <td>4</td>
-                                                <td>5</td>
-                                                <td>8</td>
-                                                <td>9</td>
-                                                <td>10</td>
-                                                <td>11</td>
-                                                <td>12</td>
-                                                <td>1</td>
-                                                <td>2</td>
-                                                <td>3</td>
-                                                <td>4</td>
-                                                <td>5</td>
-                                                <td>8</td>
-                                                <td>9</td>
-                                                <td>10</td>
-                                                <td>11</td>
-                                                <td>12</td>
-                                                <td>1</td>
-                                                <td>2</td>
-                                                <td>3</td>
-                                                <td>4</td>
-                                                <td>5</td>
-                                                <td>8</td>
-                                                <td>9</td>
-                                                <td>10</td>
-                                                <td>11</td>
-                                                <td>12</td>
-                                            </tr>
+
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td id="td_nombres">-- student --</td>
-                                                <td>/</td>
-                                                <td>x</td>
-                                                <td>!</td>
-                                                <!-- Agrega más celdas si corresponde -->
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
                                             </tr>
                                         </tbody>
                                     </table>
