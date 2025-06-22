@@ -67,38 +67,7 @@ $(function () {
     language: {
       url: base_url + "/public/assets/libs/data-table-js/languaje/Spanish.json"
     },
-    buttons: [
-      {
-        extend: 'copy',
-        text: '<i class="fas fa-copy"></i> Copiar',
-        className: 'btn btn-light mr-1'
-      },
-      {
-        extend: 'csv',
-        text: '<i class="fas fa-file-csv"></i> CSV',
-        className: 'btn btn-info mr-1'
-      },
-      {
-        extend: 'excel',
-        text: '<i class="fas fa-file-excel"></i> Excel',
-        className: 'btn btn-success mr-1'
-      },
-      {
-        extend: 'pdf',
-        text: '<i class="fas fa-file-pdf"></i> PDF',
-        className: 'btn btn-danger mr-1'
-      },
-      {
-        extend: 'print',
-        text: '<i class="fas fa-print"></i> Imprimir',
-        className: 'btn btn-secondary mr-1'
-      },
-      {
-        extend: 'colvis',
-        text: '<i class="fas fa-columns"></i> Columnas',
-        className: 'btn btn-info mr-1'
-      }
-    ]
+   
   });
   /////////////////////////////////////////////////////////////////////////////////////////////
 });

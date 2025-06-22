@@ -20,7 +20,8 @@ $router->addRoute('GET', '/carnet', 'CarnetController@index');
 $router->addRoute('GET', '/attendance', 'AttendanceController@index');
 $router->addRoute('GET', '/attendance/openAttendance', 'AttendanceController@open_attendance');
 $router->addRoute('GET', '/attendance/searchStudentByCode', 'AttendanceController@open_attendance');
-$router->addRoute('GET', '/report', 'ReportController@index');
+$router->addRoute('GET', '/report/student', 'ReportController@view_student_report');
+$router->addRoute('GET', '/report/group', 'ReportController@view_group_report');
 
 
 
