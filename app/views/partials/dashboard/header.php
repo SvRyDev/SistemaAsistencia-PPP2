@@ -65,7 +65,7 @@
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a class="nav-link">San Luis - Lunes, 17 de Junio de 2025 - 14:32:15</a>
+          <a class="nav-link" id="reloj-dinamico">San Luis - Lunes, 17 de Junio de 2025 - 14:32:15</a>
         </li>
 
       </ul>

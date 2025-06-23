@@ -50,7 +50,7 @@ class ReportController extends Controller
     
         header('Content-Type: application/json');
     
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['code'])) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['dni_est'])) {
             echo json_encode([
                 'status' => 'error',
                 'message' => 'Código de estudiante no proporcionado.'
@@ -58,10 +58,19 @@ class ReportController extends Controller
             return;
         }
     
-        $codigoEstudiante = $_POST['code'];
+        $DNIEstudiante = $_POST['dni_est'];
+        $mes = isset($_POST['mes']) ? (int)$_POST['mes'] : null;
+    
+        if (!$mes || $mes < 1 || $mes > 12) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Mes inválido.'
+            ]);
+            return;
+        }
     
         $StudentModel = $this->model('StudentModel');
-        $student = $StudentModel->getStudentByCode($codigoEstudiante);
+        $student = $StudentModel->getStudentByDNI($DNIEstudiante);
     
         if (!$student || empty($student['estudiante_id'])) {
             echo json_encode([
@@ -73,8 +82,8 @@ class ReportController extends Controller
     
         $studentId = $student['estudiante_id'];
     
-        $AttendanceModel = $this->model('AttendanceModel');
-        $attendanceRecords = $AttendanceModel->getRecordByStudent($studentId);
+        $ReportModel = $this->model('ReportModel');
+        $attendanceRecords = $ReportModel->getRecordByStudent($studentId, $mes);
     
         $DayModel = $this->model('DayModel');
         $daysActive = $DayModel->getAllDays();
@@ -90,7 +99,7 @@ class ReportController extends Controller
     
 
 
-    public function get_by_student_code()
+    public function get_by_student_dni()
     {
         if (!isAjax()) {
             return;
@@ -98,11 +107,11 @@ class ReportController extends Controller
 
         header('Content-Type: application/json');
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
-            $codigoEstudiante = $_POST['codigo'];
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dni_est'])) {
+            $DNIEstudiante = $_POST['dni_est'];
 
             $StudentModel = $this->model('StudentModel');
-            $student = $StudentModel->getStudentByCode($codigoEstudiante);
+            $student = $StudentModel->getStudentByDNI($DNIEstudiante);
 
             $AttendanceModel = $this->model('AttendanceModel');
             if (!$student) {

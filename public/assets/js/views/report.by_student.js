@@ -26,7 +26,23 @@ $(document).ready(function () {
   );
 
   table = $("#table-resultado").DataTable({
-    dom: '<"d-flex justify-content-end mb-3"B>frtip',
+    dom: `
+    <'row mb-3'
+      <'col-12 col-md-5 d-flex align-items-center order-2 order-md-1'<'left-text font-weight-bold'>>
+      <'col-12 col-md-7 d-flex justify-content-md-end justify-content-start order-1 order-md-2'B>
+    >
+    <'row'
+      <'col-sm-12'f>
+    >
+    <'row'
+      <'col-sm-12'tr>
+    >
+    <'row'
+      <'col-sm-5'i>
+      <'col-sm-7'p>
+    >
+  `,
+
     buttons: [
       {
         extend: "copy",
@@ -147,10 +163,11 @@ $(document).ready(function () {
 
           doc.content[doc.content.length - 1].table.widths = [
             "5%",
-            "25%",
-            "25%",
+            "15%",
+            "20%",
+            "15%",
             "45%",
-          ]; // Para 4 columnas
+          ]; // Para 5 columnas
 
           // Estilos
           doc.styles.header = {
@@ -244,6 +261,7 @@ $(document).ready(function () {
       },
     ],
     initComplete: function () {
+      $(".left-text").html("");
       this.api().buttons().disable(); // ✅ esto funciona
     },
     ordering: false,
@@ -255,39 +273,65 @@ $(document).ready(function () {
       url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json",
     },
   });
+  $(".left-text").html('<h5 class="mb-0">Mes de Agosto</h5>');
+
+  // Cargar meses en el select
+
+  const selectMes = $("#select-mes");
+  obtenerMeses().forEach((mes) => {
+    selectMes.append(`<option value="${mes.id}">${mes.nombre}</option>`);
+  });
 });
 
 $("#searchStudentButton").on("click", function () {
-  const studentCode = $("#studentCodeInput").val().trim();
+  const studentDNI = $("#studentDNIInput").val().trim();
+  const nombreMes = $("#select-mes").val().trim();
 
-  if (studentCode === "") {
+  if (studentDNI === "") {
     alert("Por favor, ingrese el código del estudiante.");
+    return;
+  }
+
+  if (nombreMes === "") {
+    alert("Por favor, ingrese el mes a consultar.");
     return;
   }
 
   $.ajax({
     url: base_url + "/report/RecordByStudent",
     type: "POST",
-    data: { code: studentCode },
+    data: { dni_est: studentDNI, mes: nombreMes.toUpperCase() },
     beforeSend: function () {
       table.clear().draw(); // Limpia resultados anteriores
       table.buttons().disable();
       $("#searchStudentButton").prop("disabled", true);
       $("#table-resultado tbody").html(`
-        <tr><td colspan="4" style="text-align:center;">
+        <tr><td colspan="5" style="text-align:center;">
         <div class="spinner-border m-2" role="status">
           <span class="sr-only">Loading...</span>
         </div>
       </td></tr>`);
 
-      $("#info-student-contain").addClass(
-        "animate__animated animate__fadeOut animate__faster"
-      );
+      $('#student-info-loader').show();
+      $('#info-student-contain').hide();
+  
+      $(".left-text").html("");
+      $("#result-nombre-est").html('-');
+      $("#result-codigo-est").html('-');
+      $("#result-grado-est").html('-');
+
+
+
+
+      $(".total-asistencias").html('0');
+      $(".total-inasistencias").html('0');
+      $(".total-justificados").html('0');
+      $(".total-tardanzas").html('0');
     },
     success: function (response) {
       if (response.status !== "success") {
         $("#table-resultado tbody").html(`
-          <tr><td colspan="4" class="text-center text-muted">${
+          <tr><td colspan="5" class="text-center text-muted">${
             response.message || "Error al obtener datos."
           }</td></tr>
         `);
@@ -303,40 +347,73 @@ $("#searchStudentButton").on("click", function () {
       );
       $("#result-codigo-est").html(response.student.codigo.toUpperCase());
 
-      $("#result-grado-est").html(response.student.grado);
-      $("#result-seccion-est").html(response.student.seccion);
+      $("#result-grado-est").html(
+        response.student.grado_nombre + " - " + response.student.seccion
+      );
 
-      
+      $(".left-text").html(
+        (
+          response.student.nombres +
+          " " +
+          response.student.apellidos +
+          " - " +
+          response.student.codigo
+        ).toUpperCase()
+      );
+
       const attendance = response.attendance_records;
 
       if (!attendance.length) {
         $("#table-resultado tbody").html(`
-          <tr><td colspan="4" class="text-center text-muted">No se encontraron registros de asistencia.</td></tr>
+          <tr><td colspan="5" class="text-center text-muted">No se encontraron registros de asistencia.</td></tr>
         `);
         return;
       }
 
-    
-
       attendance.forEach((record, index) => {
         table.row.add([
           index + 1,
-          `${record.nombre_dia} - ${record.fecha_asistencia}`,
-          record.condicion,
+          `${getNombreMes(record.fecha_asistencia).toUpperCase()}`,
+          `${getDia(
+            record.fecha_asistencia
+          )} - ${record.nombre_dia.toUpperCase()}`,
+          record.estado_asistencia,
           record.observacion || "",
         ]);
       });
 
       table.draw(false);
       table.buttons().enable();
+
+      let totalAsistencias = 0;
+      let totalFaltas = 0;
+      let totalJustificados = 0;
+      let totalTardanzas = 0;
+
+      attendance.forEach((registro) => {
+        const abrev = registro.abreviatura;
+
+        if (abrev === "P") totalAsistencias++;
+        else if (abrev === "F") totalFaltas++;
+        else if (abrev === "J") totalJustificados++;
+        else if (abrev === "T") totalTardanzas++;
+      });
+
+      // Actualiza en el DOM
+      $(".total-asistencias").html(totalAsistencias);
+      $(".total-inasistencias").html(totalFaltas);
+      $(".total-justificados").html(totalJustificados);
+      $(".total-tardanzas").html(totalTardanzas);
     },
     error: function () {
       alert("Error del servidor");
     },
     complete: function () {
       $("#searchStudentButton").prop("disabled", false);
-      $("#info-student-contain").removeClass("animate__fadeOut");
-      $("#info-student-contain").addClass("animate__fadeIn");
+      $('#student-info-loader').hide();
+      $('#info-student-contain').show();
+
+
     },
   });
 });

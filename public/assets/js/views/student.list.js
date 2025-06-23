@@ -19,7 +19,7 @@ $(function () {
       { title: "Nombre(s)", data: "nombres" },
       { title: "Apellidos", data: "apellidos" },
       { title: "DNI", data: "dni" },
-      { title: "Grado", data: "grado" },
+      { title: "Grado", data: "grado_nombre" },
       { title: "Sección", data: "seccion" },
       { title: "Fecha de Registro", data: "date_created" },
       {

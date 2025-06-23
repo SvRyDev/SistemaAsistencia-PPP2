@@ -3,7 +3,7 @@ class StudentModel extends Model
 {
     public function getAllStudents()
     {
-        $stmt = $this->db->prepare("SELECT * FROM estudiante");
+        $stmt = $this->db->prepare("SELECT * FROM vista_estudiantes");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -42,10 +42,10 @@ class StudentModel extends Model
     }
 
 
-    public function getStudentByCode($codigo)
+    public function getStudentByDNI($dni)
     {
-        $stmt = $this->db->prepare("SELECT * FROM estudiante WHERE codigo = :codigo");
-        $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
+        $stmt = $this->db->prepare("SELECT * FROM vista_estudiantes WHERE dni = :dni");
+        $stmt->bindParam(':dni', $dni, PDO::PARAM_STR);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
