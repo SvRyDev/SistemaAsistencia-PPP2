@@ -4,26 +4,12 @@ $(document).ready(function () {
   let logoBase64 = "";
 
   table = $("#table-resultado").DataTable({
-    dom: `
-    <'row mb-3'
-      <'col-12 col-md-5 d-flex align-items-center order-2 order-md-1'<'left-text font-weight-bold'>>
-      <'col-12 col-md-7 d-flex justify-content-md-end justify-content-start order-1 order-md-2'B>
-    >
-    <'row'
-      <'col-sm-12'f>
-    >
-    <'row'
-      <'col-sm-12'tr>
-    >
-    <'row'
-      <'col-sm-5'i>
-      <'col-sm-7'p>
-    >
-  `,
+    dom: `t`,
 
     buttons: dtButtons,
     initComplete: function () {
       $(".left-text").html("");
+      this.api().buttons().container().appendTo("#table-buttons-wrapper");
       this.api().buttons().disable(); // ✅ esto funciona
     },
     ordering: false,
@@ -66,7 +52,7 @@ $(document).ready(function () {
       } else {
         alert(
           response.message ||
-            "No se pudo cargar la información de grados y secciones."
+          "No se pudo cargar la información de grados y secciones."
         );
       }
     },
@@ -98,15 +84,22 @@ $("#searchGroupButton").on("click", function () {
     data: { grado_id: grado, seccion_id: seccion, mes: mesId },
     dataType: "json",
     beforeSend: () => {
+      $('#searchGroupButton').prop('disabled', true);
       table.clear().draw();
       table.buttons().disable();
       table.destroy();
+
+
+      $("#table-resultado tbody").html(
+        `<tr><td colspan="30" class="text-center text-muted"><div class="spinner-grow" role="status">
+  <span class="sr-only">Loading...</span>
+</div></td></tr>`
+      );
     },
     success: function (response) {
       if (response.status !== "success") {
         $("#table-resultado tbody").html(
-          `<tr><td colspan="30" class="text-center text-muted">${
-            response.message || "Sin datos"
+          `<tr><td colspan="30" class="text-center text-muted">${response.message || "Sin datos"
           }</td></tr>`
         );
         return;
@@ -125,8 +118,8 @@ $("#searchGroupButton").on("click", function () {
     <th class="small" rowspan="2">Grado</th>
     <th class="small" rowspan="2">Sección</th>
     ${diasMes
-      .map((d) => `<th class="small text-center">${d.diaNombre}</th>`)
-      .join("")}
+          .map((d) => `<th class="small text-center">${d.diaNombre}</th>`)
+          .join("")}
   </tr>
 `;
 
@@ -158,18 +151,17 @@ $("#searchGroupButton").on("click", function () {
           <tr>
             <td class="small text-center">${index + 1}</td>
             <td class="small text-center">${s.codigo}</td>
-            <td class="small" style="white-space: nowrap;">${s.nombres} ${
-          s.apellidos
-        }</td>
+            <td class="small" style="white-space: nowrap;">${s.nombres} ${s.apellidos
+          }</td>
             <td class="small text-center">${s.grado_nombre}</td>
             <td class="small text-center">${s.seccion}</td>
-            ${diasMes
-              .map((d) => {
-                const key = `${s.estudiante_id}_${d.fecha}`;
-                const abrev = asistenciaMap[key] || "-";
-                return `<td class="small text-center">${abrev}</td>`;
-              })
-              .join("")}
+            ${diasMes.map((d) => {
+            const key = `${s.estudiante_id}_${d.fecha}`;
+            const abrev = asistenciaMap[key] || "-";
+            const isWeekend = d.diaNombre === "S" || d.diaNombre === "D";
+            const clase = isWeekend ? "table-warning text-dark" : "";
+            return `<td class="small text-center ${clase}">${abrev}</td>`;
+          }).join("")}
           </tr>
         `;
         htmlFilas += fila;
@@ -178,26 +170,13 @@ $("#searchGroupButton").on("click", function () {
       $("#table-resultado tbody").html(htmlFilas);
 
       table = $("#table-resultado").DataTable({
-        dom: `
-        <'row mb-3'
-          <'col-12 col-md-5 d-flex align-items-center order-2 order-md-1'<'left-text font-weight-bold'>>
-          <'col-12 col-md-7 d-flex justify-content-md-end justify-content-start order-1 order-md-2'B>
-        >
-        <'row'
-          <'col-sm-12'f>
-        >
-        <'row'
-          <'col-sm-12'tr>
-        >
-        <'row'
-          <'col-sm-5'i>
-          <'col-sm-7'p>
-        >
-      `,
+        dom: `t`,
 
         buttons: dtButtons,
         initComplete: function () {
           $(".left-text").html("");
+            this.api().buttons().container().appendTo("#table-buttons-wrapper");
+      
           this.api().buttons().enable(); // ✅ esto funciona
         },
         ordering: false,
@@ -210,7 +189,10 @@ $("#searchGroupButton").on("click", function () {
         },
       });
     },
-    error: () => {},
+    error: () => { },
+    complete: () => {
+      $('#searchGroupButton').prop('disabled', false);
+    },
   });
 });
 

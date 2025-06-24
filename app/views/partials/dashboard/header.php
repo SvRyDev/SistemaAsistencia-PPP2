@@ -194,7 +194,7 @@
               <a href="<?= base_url() ?>/report/student" class="nav-link">
                 <i class="nav-icon fas fa-id-badge"></i>
                 <p>
-                  R. Estudiante
+                  Individual
                 </p>
               </a>
             </li>
@@ -202,15 +202,24 @@
               <a href="<?= base_url() ?>/report/group" class="nav-link">
                 <i class="nav-icon fas fa-users"></i>
                 <p>
-                  R. por Grado y Sección
+                  Por Aula
                 </p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="<?= base_url() ?>/report" class="nav-link">
+              <a href="<?= base_url() ?>/report/resume/month" class="nav-link">
                 <i class="nav-icon fas fa-chart-bar"></i>
                 <p>
-                  R. General
+                  Resumen Mensual
+                </p>
+              </a>
+            </li>
+            
+            <li class="nav-item">
+              <a href="<?= base_url() ?>/report/resume/daily" class="nav-link">
+                <i class="nav-icon fas fa-chart-bar"></i>
+                <p>
+                  Resumen Diario
                 </p>
               </a>
             </li>

@@ -47,17 +47,17 @@ $(document).ready(function () {
       {
         extend: "copy",
         text: '<i class="fas fa-copy"></i> Copiar',
-        className: "btn btn-light mr-2 mb-1",
+        className: "btn btn-light mr-2 mb-1 rounded",
       },
       {
         extend: "csv",
         text: '<i class="fas fa-file-csv"></i> Exportar a CSV',
-        className: "btn btn-info mr-2 mb-1",
+        className: "btn btn-info mr-2 mb-1 rounded",
       },
       {
         extend: "excel",
         text: '<i class="fas fa-file-excel"></i> Exportar a Excel',
-        className: "btn btn-success mr-2 mb-1",
+        className: "btn btn-success mr-2 mb-1 rounded",
         title: "Reporte de Asistencia",
         messageTop: function () {
           return `Generado el ${new Date().toLocaleDateString()} - Estudiante: ${$(
@@ -68,7 +68,7 @@ $(document).ready(function () {
       {
         extend: "pdf",
         text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
-        className: "btn btn-danger mr-2 mb-1",
+        className: "btn btn-danger mr-2 mb-1 rounded",
         title: "", // evita duplicación de título
         customize: function (doc) {
           const estudiante = $("#studentCodeInput").val();
@@ -184,7 +184,7 @@ $(document).ready(function () {
       {
         extend: "print",
         text: '<i class="fas fa-print"></i> Imprimir',
-        className: "btn btn-secondary mr-2 mb-1",
+        className: "btn btn-secondary mr-2 mb-1 rounded",
         customize: function (win) {
           const estudiante = $("#studentCodeInput").val();
           const fecha = new Date().toLocaleDateString();

@@ -10,7 +10,7 @@ class ReportController extends Controller
         $view = "report.by_student";
         $data = [
             'view_js' => $view,
-            'title' => 'Reporte por Estudiante',
+            'title' => 'Reporte Individual',
             'message' => 'Esta es la página de reporte.'
         ];
 
@@ -23,7 +23,7 @@ class ReportController extends Controller
         $view = "report.by_student";
         $data = [
             'view_js' => $view,
-            'title' => 'Reporte por Estudiante',
+            'title' => 'Reporte Individual',
             'message' => 'Esta es la página de reporte.'
         ];
 
@@ -36,13 +36,37 @@ class ReportController extends Controller
         $view = "report.by_group";
         $data = [
             'view_js' => $view,
-            'title' => 'Reporte por Sección',
+            'title' => 'Reporte por Aula',
             'message' => 'Esta es la página de reporte.'
         ];
 
         View::render($view, $data, $this->layout);
     }
 
+
+    public function view_resume_month_report()
+    {
+        $view = "report.by_resume_month";
+        $data = [
+            'view_js' => $view,
+            'title' => 'Reporte Mensual',
+            'message' => 'Esta es la página de reporte.'
+        ];
+
+        View::render($view, $data, $this->layout);
+    }
+
+    public function view_resume_daily_report()
+    {
+        $view = "report.by_resume_daily";
+        $data = [
+            'view_js' => $view,
+            'title' => 'Reporte Diario',
+            'message' => 'Esta es la página de reporte.'
+        ];
+
+        View::render($view, $data, $this->layout);
+    }
 
     public function record_by_student()
     {
@@ -217,6 +241,4 @@ class ReportController extends Controller
             ]);
         }
     }
-
-
 }

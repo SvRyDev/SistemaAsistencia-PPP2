@@ -22,6 +22,9 @@ $router->addRoute('GET', '/attendance/openAttendance', 'AttendanceController@ope
 $router->addRoute('GET', '/attendance/searchStudentByCode', 'AttendanceController@open_attendance');
 $router->addRoute('GET', '/report/student', 'ReportController@view_student_report');
 $router->addRoute('GET', '/report/group', 'ReportController@view_group_report');
+$router->addRoute('GET', '/report/resume/month', 'ReportController@view_resume_month_report');
+$router->addRoute('GET', '/report/resume/daily', 'ReportController@view_resume_daily_report');
+
 
 
 
