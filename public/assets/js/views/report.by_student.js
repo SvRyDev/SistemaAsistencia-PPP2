@@ -273,6 +273,7 @@ $(document).ready(function () {
       url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json",
     },
   });
+  
   $(".left-text").html('<h5 class="mb-0">Mes de Agosto</h5>');
 
   // Cargar meses en el select

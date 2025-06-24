@@ -39,4 +39,22 @@ function getNombreMes(fechaStr) {
     ];
   }
   
+  function obtenerDiasDelMes(mes, anio = new Date().getFullYear()) {
+    const diasSemana = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+    const dias = [];
+  
+    const fechaInicio = new Date(anio, mes - 1, 1);
+    const diasEnMes = new Date(anio, mes, 0).getDate(); // número de días del mes
+  
+    for (let d = 1; d <= diasEnMes; d++) {
+      const fecha = new Date(anio, mes - 1, d);
+      dias.push({
+        fecha: fecha.toISOString().split("T")[0], // "YYYY-MM-DD"
+        diaNombre: diasSemana[fecha.getDay()],
+        diaNumero: d < 10 ? `0${d}` : `${d}`
+      });
+    }
+  
+    return dias;
+  }
   

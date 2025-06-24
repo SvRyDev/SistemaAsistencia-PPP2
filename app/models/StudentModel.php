@@ -49,4 +49,13 @@ class StudentModel extends Model
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+
+    public function getStudentsByGradeAndSection($gradoId, $seccionId){
+        $stmt = $this->db->prepare("SELECT * FROM vista_estudiantes WHERE id_grado = :grado_id AND id_seccion = :seccion_id");
+        $stmt->bindParam(':grado_id', $gradoId, PDO::PARAM_INT);
+        $stmt->bindParam(':seccion_id', $seccionId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 };

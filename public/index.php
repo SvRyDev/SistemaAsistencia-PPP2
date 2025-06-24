@@ -40,6 +40,8 @@ $router->addRoute('POST', '/attendance/registerAttendance', 'AttendanceControlle
 $router->addRoute('POST', '/attendance/openNewDay', 'AttendanceController@register_new_day');
 $router->addRoute('GET', '/student/getTotalStudents', 'StudentController@get_total_students');
 $router->addRoute('POST', '/report/RecordByStudent', 'ReportController@record_by_student');
+$router->addRoute('POST', '/report/RecordByGroup', 'ReportController@record_by_group');
+$router->addRoute('GET', '/report/getGroupFilterOptions', 'ReportController@load_data_for_group_filter');
 $router->run()
 
 ?>

@@ -4,28 +4,60 @@
             <div class="col-md-12">
 
                 <div class="row">
-
                     <div class="col-12">
-                        <div class="card">
-
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <input type="text" class="form-control" id="studentCodeInput"
-                                    placeholder="Ingrese el código del estudiante">
-
-                                <button class="btn btn-primary btn-block mt-2" id="searchStudentButton">
-                                    Buscar Estudiante
-                                </button>
-
-                                <div id="studentInfo">
-                                    
-                                </div>
+                        <div class="card border-primary shadow-sm">
+                            <div class="card-header bg-primary text-white font-weight-bold d-flex align-items-center">
+                                <i class="fas fa-users fa-lg mr-2"></i>
+                                Consulta de Grupo de Estudiantes
                             </div>
 
-                            <!-- /.card-body -->
+                            <div class="card-body">
+                                <div class="alert alert-info small" role="alert">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    Selecciona el <strong>grado</strong>, <strong>sección</strong> y
+                                    <strong>mes</strong> para consultar el grupo.
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="select-grado" class="font-weight-bold text-primary">
+                                            <i class="fas fa-layer-group mr-1"></i> Grado:
+                                        </label>
+                                        <select id="select-grado" class="form-control">
+                                            <option value="">-- Seleccionar Grado --</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-md-4">
+                                        <label for="select-seccion" class="font-weight-bold text-primary">
+                                            <i class="fas fa-door-open mr-1"></i> Sección:
+                                        </label>
+                                        <select id="select-seccion" class="form-control">
+                                            <option value="">-- Seleccionar Sección --</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-md-4">
+                                        <label for="select-mes" class="font-weight-bold text-primary">
+                                            <i class="fas fa-calendar-alt mr-1"></i> Mes:
+                                        </label>
+                                        <select id="select-mes" class="form-control">
+                                            <option value="">-- Seleccionar Mes --</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="text-right mt-4">
+                                    <button class="btn btn-success btn-lg px-4" id="searchGroupButton">
+                                        <i class="fas fa-search mr-1"></i> Buscar Grupo
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+
                 <!-- /.col -->
 
             </div>
@@ -48,82 +80,14 @@
                                     <table id="table-resultado" class="table-bordered table-sm" style="">
                                         <thead class="text-center">
                                             <tr class="bg-success">
-                                                <th rowspan="4">Nombre y Apellido</th>
-                                                <th colspan="30">ENERO</th>
-                                            </tr>
-                                            <tr class="bg-success">
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                                <td>L</td>
-                                                <td>M</td>
-                                                <td>M</td>
-                                                <td>J</td>
-                                                <td>V</td>
-                                            </tr>
-                                            <tr class="table-success">
-                                                <td>1</td>
-                                                <td>2</td>
-                                                <td>3</td>
-                                                <td>4</td>
-                                                <td>5</td>
-                                                <td>8</td>
-                                                <td>9</td>
-                                                <td>10</td>
-                                                <td>11</td>
-                                                <td>12</td>
-                                                <td>1</td>
-                                                <td>2</td>
-                                                <td>3</td>
-                                                <td>4</td>
-                                                <td>5</td>
-                                                <td>8</td>
-                                                <td>9</td>
-                                                <td>10</td>
-                                                <td>11</td>
-                                                <td>12</td>
-                                                <td>1</td>
-                                                <td>2</td>
-                                                <td>3</td>
-                                                <td>4</td>
-                                                <td>5</td>
-                                                <td>8</td>
-                                                <td>9</td>
-                                                <td>10</td>
-                                                <td>11</td>
-                                                <td>12</td>
+                                            <th>#</th>
+                                            <th>Código</th>
+        <th>Nombre</th>
+        <th>Grado</th>
+        <th>Sección</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td id="td_nombres">-- student --</td>
-                                                <td>/</td>
-                                                <td>x</td>
-                                                <td>!</td>
-                                                <!-- Agrega más celdas si corresponde -->
-                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
