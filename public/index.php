@@ -23,7 +23,7 @@ $router->addRoute('GET', '/attendance/searchStudentByCode', 'AttendanceControlle
 $router->addRoute('GET', '/report/student', 'ReportController@view_student_report');
 $router->addRoute('GET', '/report/group', 'ReportController@view_group_report');
 $router->addRoute('GET', '/report/resume/month', 'ReportController@view_resume_month_report');
-$router->addRoute('GET', '/report/resume/daily', 'ReportController@view_resume_daily_report');
+$router->addRoute('GET', '/report/resume/daily', 'ReportController@view_resume_day_report');
 
 
 
@@ -45,6 +45,7 @@ $router->addRoute('GET', '/student/getTotalStudents', 'StudentController@get_tot
 $router->addRoute('POST', '/report/RecordByStudent', 'ReportController@record_by_student');
 $router->addRoute('POST', '/report/RecordByGroup', 'ReportController@record_by_group');
 $router->addRoute('GET', '/report/getGroupFilterOptions', 'ReportController@load_data_for_group_filter');
+$router->addRoute('GET', '/report/RecordByResumeDay', 'ReportController@record_by_day_report');
 $router->run()
 
 ?>

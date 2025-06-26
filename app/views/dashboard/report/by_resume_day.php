@@ -16,23 +16,37 @@
 
 
                         <div class="form-row align-items-end">
+
+
                             <div class="form-group col-md-3">
                                 <label for="anio" class="font-weight-bold">
-                                    <i class="fas fa-calendar-alt mr-2"></i> Año Academico:
+                                    <i class="fas fa-graduation-cap mr-2"></i> Año Académico:
                                 </label>
                                 <input type="text" class="form-control" value="2025" disabled>
-                                
                             </div>
 
                             <div class="form-group col-md-3">
                                 <label for="select-mes" class="font-weight-bold">
-                                    <i class="fas fa-calendar-alt mr-2"></i> Mes:
+                                    <i class="fas fa-calendar mr-2"></i> Mes:
                                 </label>
                                 <select class="form-control" id="select-mes">
                                     <option value="">-- Seleccionar --</option>
                                     <!-- Otros meses -->
                                 </select>
                             </div>
+
+                            <div class="form-group col-md-3">
+                                <label for="select-dia" class="font-weight-bold">
+                                    <i class="fas fa-calendar-day mr-2"></i> Día:
+                                </label>
+                                <select class="form-control" id="select-dia">
+                                    <option value="">-- Seleccionar --</option>
+                                    <!-- Otros días -->
+                                </select>
+                            </div>
+
+
+
 
                             <div class="form-group col-md-2">
                                 <button class="btn btn-primary btn-block">

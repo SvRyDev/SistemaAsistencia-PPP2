@@ -44,12 +44,12 @@ class ReportController extends Controller
     }
 
 
-    public function view_resume_month_report()
+    public function view_resume_day_report()
     {
-        $view = "report.by_resume_month";
+        $view = "report.by_resume_day";
         $data = [
             'view_js' => $view,
-            'title' => 'Reporte Mensual',
+            'title' => 'Reporte Resumen Diario',
             'message' => 'Esta es la página de reporte.'
         ];
 
@@ -193,6 +193,55 @@ class ReportController extends Controller
         }
     }
 
+        public function record_by_day_report()
+    {
+        if (!isAjax()) {
+            http_response_code(403);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Acceso no autorizado.'
+            ]);
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        // Validar el método y los parámetros
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET' || !isset($_GET['mes'])) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Mes no proporcionado.'
+            ]);
+            return;
+        }
+
+        $mes = (int) $_GET['mes'];
+
+        if ($mes < 1 || $mes > 12) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Mes inválido.'
+            ]);
+            return;
+        }
+
+        try {
+            $ReportModel = $this->model('ReportModel');
+            $attendanceData = $ReportModel->getRecordByResumeDay($mes);
+
+            echo json_encode([
+                'status' => 'success',
+                'data' => $attendanceData
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error al generar el reporte.',
+                'error' => $e->getMessage() // Quitar en producción
+            ]);
+        }
+    }
 
     public function load_data_for_group_filter()
     {
@@ -241,4 +290,6 @@ class ReportController extends Controller
             ]);
         }
     }
+
+
 }

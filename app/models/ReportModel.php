@@ -71,16 +71,49 @@ class ReportModel extends Model
             AND MONTH(f.fecha) = :mes
             ORDER BY e.apellidos ASC, f.fecha ASC
         ");
-    
+
         $stmt->bindParam(':grado_id', $gradoId, PDO::PARAM_INT);
         $stmt->bindParam(':seccion_id', $seccionId, PDO::PARAM_INT);
         $stmt->bindParam(':mes', $mes, PDO::PARAM_INT);
-    
+
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
-    
-    
 
+
+    public function getRecordByResumeDay($fecha_dia)
+    {
+        $stmt = $this->db->prepare("
+            SELECT
+            ROW_NUMBER() OVER (ORDER BY g.id_grado, s.id_seccion) AS `#`,
+            g.nombre_completo AS `Grado`,
+            s.nombre_seccion AS `Sección`,
+            COUNT(ae.asistencia_estudiante_id) AS `Total`,
+            SUM(CASE WHEN ea.id_estado = 1 THEN 1 ELSE 0 END) AS `Presentes`,
+            SUM(CASE WHEN ea.id_estado = 2 THEN 1 ELSE 0 END) AS `Tardanzas`,
+            SUM(CASE WHEN ea.id_estado = 3 THEN 1 ELSE 0 END) AS `Ausentes`,
+            SUM(CASE WHEN ea.id_estado = 4 THEN 1 ELSE 0 END) AS `Justificados`,
+            CONCAT(
+                ROUND(
+                (SUM(CASE WHEN ea.id_estado = 1 or ea.id_estado = 2 THEN 1 ELSE 0 END) * 100.0) /
+                NULLIF(COUNT(ae.asistencia_estudiante_id), 0),
+                2
+                ),
+                '%'
+            ) AS `% Asistencia`
+            FROM asistencia_estudiante ae
+            JOIN estudiante e ON ae.estudiante_id = e.estudiante_id
+            JOIN grados g ON e.grado_id = g.id_grado
+            JOIN secciones s ON e.seccion_id = s.id_seccion
+            JOIN dia_asistencia da ON ae.dia_fecha_id = da.dia_fecha_id
+            LEFT JOIN estados_asistencia ea ON ae.estado_asistencia_id = ea.id_estado
+            WHERE MONTH(da.fecha) = :fecha_dia
+            GROUP BY g.id_grado, s.id_seccion
+            ORDER BY g.id_grado, s.id_seccion;
+            ");
+
+        $stmt->bindParam(':fecha_dia', $fecha_dia, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
