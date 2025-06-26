@@ -142,4 +142,7 @@ class StudentController extends Controller
             echo json_encode(["status" => "error", "message" => "Datos inválidos"]);
         }
     }
+
+
+
 }

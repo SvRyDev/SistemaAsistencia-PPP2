@@ -48,25 +48,25 @@
                     <div class="col-sm-6 col-md-3 mb-3">
                         <div class="bg-light border-left border-dark p-3 rounded shadow-sm">
                             <h6 class="text-muted mb-1">Total Estudiantes</h6>
-                            <div class="h2 font-weight-bold text-dark">480</div>
+                            <div id="total-estudiantes" class="h2 font-weight-bold text-dark">0</div>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3 mb-3">
                         <div class="bg-light border-left border-success p-3 rounded shadow-sm">
                             <h6 class="text-success mb-1">Presentes</h6>
-                            <div class="h2 font-weight-bold text-success">420</div>
+                            <div id="total-presentes" class="h2 font-weight-bold text-success">0</div>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3 mb-3">
                         <div class="bg-light border-left border-danger p-3 rounded shadow-sm">
                             <h6 class="text-danger mb-1">Ausentes</h6>
-                            <div class="h2 font-weight-bold text-danger">50</div>
+                            <div id="total-ausentes" class="h2 font-weight-bold text-danger">0</div>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3 mb-3">
                         <div class="bg-light border-left border-warning p-3 rounded shadow-sm">
                             <h6 class="text-warning mb-1">Justificados</h6>
-                            <div class="h2 font-weight-bold text-warning">7</div>
+                            <div id="total-justificados" class="h2 font-weight-bold text-warning">0</div>
                         </div>
                     </div>
                 </div>
