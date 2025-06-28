@@ -48,108 +48,141 @@ $(document).ready(function () {
   });
 });
 
+$('#select-mes').on('change', function () {
+  const mesSeleccionado = parseInt($(this).val());
+  if (!mesSeleccionado) return;
 
-$('#').on('click', function () {
+  const diasDelMes = obtenerDiasDelMes(mesSeleccionado);
+  const $selectDia = $('#select-dia');
+
+  $selectDia.empty();
+  $selectDia.append('<option value="">-- Seleccionar --</option>');
+
+  diasDelMes.forEach(dia => {
+    const diaSemana = new Date(dia.fecha).getDay(); // Correcto: 0 = Domingo, 6 = Sábado
+
+    if (diaSemana !== 5 && diaSemana !== 6) { // Excluye sábado y domingo
+      const option = `<option value="${dia.diaNumero}">${dia.diaNombre.toUpperCase()} - ${dia.diaNumero}</option>`;
+      $selectDia.append(option);
+    }
+  });
+});
+
+
+$('#btnSearchRecord').on('click', function () {
   const nombreMes = $("#select-mes").val().trim();
-
+  const nombreDia = $('#select-dia').val().trim();
 
   if (nombreMes === "") {
     alert("Por favor, ingrese el mes a consultar.");
     return;
   }
 
+  if (nombreDia === "") {
+    alert("Por favor, ingrese el día a consultar.");
+    return;
+  }
+
   $.ajax({
-    url: base_url + "/report/RecordByResumeMonth",
-    type: "POST",
-    data: { mes: nombreMes.toUpperCase() },
+    url: base_url + "/report/RecordByResumeDay",
+    type: "GET",
+    data: { 
+      mes: parseInt(nombreMes),
+      dia: parseInt(nombreDia)
+    },
     beforeSend: function () {
-     
+      $('#table-result tbody').html('<tr><td colspan="9">Cargando...</td></tr>');
     },
-    success: function (response) {
-      if (response.status !== "success") {
-        $("#table-resultado tbody").html(`
-          <tr><td colspan="5" class="text-center text-muted">${response.message || "Error al obtener datos."
-          }</td></tr>
-        `);
-        return;
-      }
+success: function (response) {
+  const tbody = $('#table-result tbody');
+  tbody.empty();
 
-      $("#result-nombre-est").html(
-        (
-          response.student.nombres +
-          " " +
-          response.student.apellidos
-        ).toUpperCase()
-      );
-      $("#result-codigo-est").html(response.student.codigo.toUpperCase());
+  if (response.status !== 'success') {
+    alert(response.message || "Ocurrió un error.");
+    return;
+  }
 
-      $("#result-grado-est").html(
-        response.student.grado_nombre + " - " + response.student.seccion
-      );
+  const estudiantes = response.list_students || [];
+  const registros = response.data || [];
 
-      $(".left-text").html(
-        (
-          response.student.nombres +
-          " " +
-          response.student.apellidos +
-          " - " +
-          response.student.codigo
-        ).toUpperCase()
-      );
+  if (estudiantes.length === 0) {
+    tbody.append('<tr><td colspan="9">No hay grupos registrados.</td></tr>');
+    return;
+  }
 
-      const attendance = response.attendance_records;
+  // Mapear asistencia para acceso rápido
+  const mapAsistencia = {};
+  registros.forEach(item => {
+    const key = `${item.Grado}_${item.Sección}`;
+    mapAsistencia[key] = item;
+  });
 
-      if (!attendance.length) {
-        $("#table-resultado tbody").html(`
-          <tr><td colspan="5" class="text-center text-muted">No se encontraron registros de asistencia.</td></tr>
-        `);
-        return;
-      }
+  // Inicializar contadores
+  let totalEstudiantes = 0;
+  let totalPresentes = 0;
+  let totalTardanzas = 0;
+  let totalAusentes = 0;
+  let totalJustificados = 0;
 
-      attendance.forEach((record, index) => {
-        table.row.add([
-          index + 1,
-          `${getNombreMes(record.fecha_asistencia).toUpperCase()}`,
-          `${getDia(
-            record.fecha_asistencia
-          )} - ${record.nombre_dia.toUpperCase()}`,
-          record.estado_asistencia,
-          record.observacion || "",
-        ]);
-      });
+  // Recorremos los grupos
+  estudiantes.forEach((grupo, index) => {
+    const key = `${grupo.Grado}_${grupo.Sección}`;
+    const asistencia = mapAsistencia[key] || {};
 
-      table.draw(false);
-      table.buttons().enable();
+    const presentes = parseInt(asistencia.Presentes || 0);
+    const tardanzas = parseInt(asistencia.Tardanzas || 0);
+    const ausentes = parseInt(asistencia.Ausentes || 0);
+    const justificados = parseInt(asistencia.Justificados || 0);
+    const totalGrupo = parseInt(grupo.Total_Estudiantes);
 
-      let totalAsistencias = 0;
-      let totalFaltas = 0;
-      let totalJustificados = 0;
-      let totalTardanzas = 0;
+    totalEstudiantes += totalGrupo;
+    totalPresentes += presentes;
+    totalTardanzas += tardanzas;
+    totalAusentes += ausentes;
+    totalJustificados += justificados;
 
-      attendance.forEach((registro) => {
-        const abrev = registro.abreviatura;
+    tbody.append(`
+      <tr>
+        <td>${index + 1}</td>
+        <td>${grupo.Grado}</td>
+        <td>${grupo.Sección}</td>
+        <td>${totalGrupo}</td>
+        <td>${presentes}</td>
+        <td>${ausentes}</td>
+        <td>${justificados}</td>
+        <td>${tardanzas}</td>
+        <td>${asistencia["% Asistencia"] || '0%'}</td>
+      </tr>
+    `);
+  });
+  
+    // Usar el total de estudiantes cargado previamente desde el DOM
+  const totalEstudiantesGeneral = parseInt($('#total-estudiantes').text()) || 0;
+  const totalAsistenciasEfectivas = totalPresentes + totalTardanzas;
 
-        if (abrev === "P") totalAsistencias++;
-        else if (abrev === "F") totalFaltas++;
-        else if (abrev === "J") totalJustificados++;
-        else if (abrev === "T") totalTardanzas++;
-      });
-
-      // Actualiza en el DOM
-      $(".total-asistencias").html(totalAsistencias);
-      $(".total-inasistencias").html(totalFaltas);
-      $(".total-justificados").html(totalJustificados);
-      $(".total-tardanzas").html(totalTardanzas);
-    },
-    error: function () {
-      alert("Error del servidor");
-    },
-    complete: function () {
-      $("#searchStudentButton").prop("disabled", false);
-      $('#student-info-loader').hide();
-      $('#info-student-contain').show();
+  const porcentajeAsistencia = totalEstudiantesGeneral > 0
+    ? ((totalAsistenciasEfectivas / totalEstudiantesGeneral) * 100).toFixed(2) + '%'
+    : '0%';
 
 
-    },
+  // Actualizar resumen general
+  $('#total-estudiantes').text(totalEstudiantes);
+  $('#total-asistencias').text(totalAsistenciasEfectivas);
+  $('#total-tardanzas').text(totalTardanzas);
+  $('#total-ausentes').text(totalAusentes);
+  $('#total-justificados').text(totalJustificados);
+  $('#total-porcentaje').text(porcentajeAsistencia);
+},
+
+
+
+
+
+    error: function (xhr, status, error) {
+      console.error("Error en la solicitud AJAX:", error);
+      alert("Ocurrió un error al consultar el reporte.");
+    }
   });
 });
+
+

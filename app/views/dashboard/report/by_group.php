@@ -97,15 +97,7 @@
                                     </table>
                                 </div>
 
-                                <!-- Resumen debajo -->
-                                <div class="mt-3">
-                                    <p>
-                                        Total asistencias: <span class="text-success">2</span><br>
-                                        Total inasistencias: <span class="text-danger">1</span><br>
-                                        Total justificaciones: <span class="text-warning">0</span><br>
-                                        Total tardanzas: <span class="text-info">0</span>
-                                    </p>
-                                </div>
+
                             </div>
 
 

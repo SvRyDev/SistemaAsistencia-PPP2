@@ -118,7 +118,7 @@ $("#searchGroupButton").on("click", function () {
     <th class="small" rowspan="2">Grado</th>
     <th class="small" rowspan="2">Sección</th>
     ${diasMes
-          .map((d) => `<th class="small text-center">${d.diaNombre}</th>`)
+          .map((d) => `<th class="small text-center">${d.diaAbrev}</th>`)
           .join("")}
   </tr>
 `;
@@ -158,7 +158,7 @@ $("#searchGroupButton").on("click", function () {
             ${diasMes.map((d) => {
             const key = `${s.estudiante_id}_${d.fecha}`;
             const abrev = asistenciaMap[key] || "-";
-            const isWeekend = d.diaNombre === "S" || d.diaNombre === "D";
+            const isWeekend = d.diaAbrev === "S" || d.diaAbrev === "D";
             const clase = isWeekend ? "table-warning text-dark" : "";
             return `<td class="small text-center ${clase}">${abrev}</td>`;
           }).join("")}

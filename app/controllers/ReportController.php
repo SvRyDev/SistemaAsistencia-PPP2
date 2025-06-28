@@ -49,7 +49,7 @@ class ReportController extends Controller
         $view = "report.by_resume_day";
         $data = [
             'view_js' => $view,
-            'title' => 'Reporte Resumen Diario',
+            'title' => 'Resumen Diario',
             'message' => 'Esta es la página de reporte.'
         ];
 
@@ -193,7 +193,7 @@ class ReportController extends Controller
         }
     }
 
-        public function record_by_day_report()
+    public function record_by_day_report()
     {
         if (!isAjax()) {
             http_response_code(403);
@@ -207,30 +207,34 @@ class ReportController extends Controller
         header('Content-Type: application/json');
 
         // Validar el método y los parámetros
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET' || !isset($_GET['mes'])) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET' || !isset($_GET['mes']) || !isset($_GET['dia'])) {
             echo json_encode([
                 'status' => 'error',
-                'message' => 'Mes no proporcionado.'
+                'message' => 'Mes o día no proporcionado.'
             ]);
             return;
         }
 
         $mes = (int) $_GET['mes'];
+        $dia = (int) $_GET['dia'];
 
-        if ($mes < 1 || $mes > 12) {
+        if ($mes < 1 || $mes > 12 || $dia < 1 || $dia > 31) {
             echo json_encode([
                 'status' => 'error',
-                'message' => 'Mes inválido.'
+                'message' => 'Mes o día inválido.'
             ]);
             return;
         }
 
         try {
+            $StudentModel = $this->model('StudentModel');
+            $students = $StudentModel->getAllStudentByGrade();
             $ReportModel = $this->model('ReportModel');
-            $attendanceData = $ReportModel->getRecordByResumeDay($mes);
+            $attendanceData = $ReportModel->getRecordByResumeDay($mes, $dia); // Ajusta tu modelo
 
             echo json_encode([
                 'status' => 'success',
+                'list_students' => $students,
                 'data' => $attendanceData
             ]);
         } catch (Exception $e) {
@@ -238,10 +242,11 @@ class ReportController extends Controller
             echo json_encode([
                 'status' => 'error',
                 'message' => 'Error al generar el reporte.',
-                'error' => $e->getMessage() // Quitar en producción
+                'error' => $e->getMessage() // Quitar o desactivar en producción
             ]);
         }
     }
+
 
     public function load_data_for_group_filter()
     {
@@ -290,6 +295,4 @@ class ReportController extends Controller
             ]);
         }
     }
-
-
 }

@@ -81,7 +81,7 @@ class ReportModel extends Model
     }
 
 
-    public function getRecordByResumeDay($fecha_dia)
+    public function getRecordByResumeDay($fecha_mes, $fecha_dia)
     {
         $stmt = $this->db->prepare("
             SELECT
@@ -107,11 +107,12 @@ class ReportModel extends Model
             JOIN secciones s ON e.seccion_id = s.id_seccion
             JOIN dia_asistencia da ON ae.dia_fecha_id = da.dia_fecha_id
             LEFT JOIN estados_asistencia ea ON ae.estado_asistencia_id = ea.id_estado
-            WHERE MONTH(da.fecha) = :fecha_dia
+            WHERE MONTH(da.fecha) = :fecha_mes AND DAY(da.fecha) = :fecha_dia
             GROUP BY g.id_grado, s.id_seccion
             ORDER BY g.id_grado, s.id_seccion;
             ");
 
+        $stmt->bindParam(':fecha_mes', $fecha_mes, PDO::PARAM_INT);
         $stmt->bindParam(':fecha_dia', $fecha_dia, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

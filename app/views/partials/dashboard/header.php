@@ -206,14 +206,6 @@
                 </p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="<?= base_url() ?>/report/resume/month" class="nav-link">
-                <i class="nav-icon fas fa-chart-bar"></i>
-                <p>
-                  Resumen Mensual
-                </p>
-              </a>
-            </li>
             
             <li class="nav-item">
               <a href="<?= base_url() ?>/report/resume/daily" class="nav-link">
