@@ -24,6 +24,7 @@ $router->addRoute('GET', '/report/student', 'ReportController@view_student_repor
 $router->addRoute('GET', '/report/group', 'ReportController@view_group_report');
 $router->addRoute('GET', '/report/resume/month', 'ReportController@view_resume_month_report');
 $router->addRoute('GET', '/report/resume/daily', 'ReportController@view_resume_day_report');
+$router->addRoute('GET', '/setting', 'SettingController@index');
 
 
 
@@ -46,6 +47,8 @@ $router->addRoute('POST', '/report/RecordByStudent', 'ReportController@record_by
 $router->addRoute('POST', '/report/RecordByGroup', 'ReportController@record_by_group');
 $router->addRoute('GET', '/report/getGroupFilterOptions', 'ReportController@load_data_for_group_filter');
 $router->addRoute('GET', '/report/RecordByResumeDay', 'ReportController@record_by_day_report');
+$router->addRoute('POST', '/setting/getConfig', 'SettingController@load_data_setting');
+$router->addRoute('POST', '/setting/saveConfig', 'SettingController@save_setting');
 $router->run()
 
 ?>

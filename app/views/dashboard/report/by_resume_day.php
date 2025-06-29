@@ -22,7 +22,7 @@
                                 <label for="anio" class="font-weight-bold">
                                     <i class="fas fa-graduation-cap mr-2"></i> Año Académico:
                                 </label>
-                                <input type="text" class="form-control" value="2025" disabled>
+                                <input id="year-academic" type="text" class="form-control" value="----" disabled>
                             </div>
 
                             <div class="form-group col-md-3">

@@ -68,3 +68,22 @@ function obtenerDiasDelMes(mes, anio = new Date().getFullYear()) {
   return dias;
 }
 
+
+function formatearFechaLegible(fechaISO) {
+  if (!fechaISO) return "Fecha no disponible";
+
+  const opciones = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+
+  // Asegura compatibilidad reemplazando espacio por 'T'
+  const fecha = new Date(fechaISO.replace(" ", "T"));
+
+  if (isNaN(fecha.getTime())) return "Fecha inválida";
+
+  return fecha.toLocaleString("es-PE", opciones);
+}

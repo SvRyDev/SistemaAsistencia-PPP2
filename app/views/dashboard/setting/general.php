@@ -1,0 +1,133 @@
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-12">
+
+
+                <!-- Configuración General -->
+                <div class="card border-left-primary shadow mb-4">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-sliders-h"></i> Configuración General
+                        </div>
+                        <div>
+                            <span class="badge bg-light text-dark ">
+                                <i class="fas fa-clock me-1"></i> Última actualización: <span
+                                    id="last-updated">--</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <!-- Nombre del colegio -->
+                        <div class="form-group">
+                            <label>Nombre del colegio</label>
+                            <input id="name-school" type="text" class="form-control"
+                                placeholder="Ej: Colegio Santa María">
+                        </div>
+
+                        <!-- Sección fechas -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="mb-0 font-weight-bold">
+                                Periodo académico
+                            </span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="edit-dates-check">
+                                <label class="form-check-label small" for="edit-dates-check">Habilitar
+                                    edición</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="start-date-academic" class="form-label text-secondary">Fecha de
+                                    inicio</label>
+                                <input id="start-date-academic" type="date" class="form-control" disabled>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="end-date-academic" class="form-label text-secondary">Fecha de
+                                    finalización</label>
+                                <input id="end-date-academic" type="date" class="form-control" disabled>
+                            </div>
+                        </div>
+
+                        <!-- Zona horaria -->
+                        <div class="form-group mt-1">
+                            <label>Zona horaria</label>
+                            <select id="time-zone" class="form-control" disabled>
+                                <option selected>America/Lima (UTC-5)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-6">
+
+
+                <!-- Parámetros de Asistencia -->
+                <div class="card border-left-success shadow mb-4">
+                    <div class="card-header bg-warning text-white">
+                        <i class="fas fa-user-check"></i> Parámetros de Asistencia
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Hora de entrada</label>
+                            <input id="entry-time" type="time" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Tolerancia (minutos)</label>
+                            <input id="time-tolerance" type="number" class="form-control" inputmode="numeric"
+                                pattern="[0-9]*">
+                        </div>
+                        <div class="form-group">
+                            <label>Días de clases</label>
+                            <select id="school-days" class="form-control" disabled>
+                                <option>Lunes a Viernes</option>
+                                <option>Lunes a Sábado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Notificaciones -->
+
+            <div class="col-6">
+                <div class="card border-left-info shadow mb-4">
+                    <div class="card-header bg-info text-white">
+                        <i class="fas fa-users-cog"></i> Gestión de Usuarios
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Rol predeterminado</label>
+                            <select class="form-control">
+                                <option>Profesor</option>
+                                <option>Administrador</option>
+                            </select>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="2fa">
+                            <label class="form-check-label" for="2fa">Habilitar autenticación en dos pasos</label>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        <!-- Botón Guardar -->
+        <div class="text-center pb-4">
+            <button id="btnSaveSetting" class="btn btn-success">
+                <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+        </div>
+    </div>
+</section>
+
+<script src="<?= assets() ?>/js/validations.js"></script>
