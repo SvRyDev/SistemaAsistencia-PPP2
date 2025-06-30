@@ -1,23 +1,169 @@
 let ventana = null;
 let verificador = null;
 
-$("#btnOpenAttendance").click(function (e) {
-  e.preventDefault();
+const ctx = document.getElementById("pieAsistencia").getContext("2d");
 
+const pieAsistencia = new Chart(ctx, {
+  type: "pie",
+  data: {
+    labels: ["Temprano", "Tardíos", "Justificados", "Restantes"],
+    datasets: [
+      {
+        data: [95, 10, 15, 0], // datos ficticios
+        backgroundColor: [
+          "#28a745", // Temprano
+          "#17a2b8", // Tardíos
+          "#ffc107", // Justificados
+          "#dc3545", // Restantes
+        ],
+        borderWidth: 1,
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    legend: {
+      display: true,
+      position: "right", // ✅ Leyenda a la derecha en Chart.js v2
+    },
+    tooltips: {
+      callbacks: {
+        label: function (tooltipItem, data) {
+          const label = data.labels[tooltipItem.index] || "";
+          const value = data.datasets[0].data[tooltipItem.index];
+          const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+          const percentage = ((value / total) * 100).toFixed(1);
+          return `${label}: ${value} (${percentage}%)`;
+        },
+      },
+    },
+  },
+});
 
+$(document).ready(function () {
+  iniciarReloj("hora-actual", "fecha-actual");
+
+  // -------------------------------
+  // Cargar configuración inicial
+  // -------------------------------
   $.ajax({
-    url: base_url + '/attendance/openNewDay', // Cambia esto a la URL de tu endpoint
-    type: 'POST',
-    data: {},
+    url: base_url + "/attendance/getConfig",
+    type: "POST",
+    dataType: "json",
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+    },
     success: function (response) {
-      console.log(response);
+      if (response.status === "success") {
+        const s = response.setting;
+        const d = response.day_active;
+        const t = response.total_students;
+
+        $("#time-entry").html(formatearHoraAmPm(s.entry_time));
+        $("#time-tolerance").html(s.time_tolerance + " min");
+        $("#time-finish").html(formatearHoraAmPm(s.exit_time));
+        $("#total_estudiantes").html(t.total);
+
+
+        if (d) {
+          $("#dia-activo")
+            .html("Sí")
+            .removeClass("badge-danger")
+            .addClass("badge-success");
+          $("#btnOpenDay").prop("disabled", true);
+          $("#btnOpenRegister").prop("disabled", false);
+          $("#btnOpenManualRegister").prop("disabled", false);
+          $("#btnOpenEditor").prop("disabled", false);
+          $("#btnOpenJustify").prop("disabled", false);
+        } else {
+          $("#dia-activo")
+            .html("No")
+            .removeClass("badge-success")
+            .addClass("badge-danger");
+          $("#btnOpenDay").prop("disabled", false);
+          $("#btnOpenRegister").prop("disabled", true);
+          $("#btnOpenManualRegister").prop("disabled", true);
+          $("#btnOpenEditor").prop("disabled", true);
+          $("#btnOpenJustify").prop("disabled", true);
+        }
+      } else {
+        mostrarError("Error", response.message);
+      }
     },
     error: function (xhr, status, error) {
-      // Manejo de errores
-      console.error('Error al generar generar dia:', error);
-      // $('#studentInfo').html('<p>Error al Generar Dia.</p>');
-    }
+      console.error("AJAX Error:", error);
+      mostrarError(
+        "Error",
+        "No se pudieron cargar los datos de configuración."
+      );
+    },
   });
+
+  $("#btnOpenDay").click(function (e) {
+    e.preventDefault();
+
+    Swal.fire({
+      title: "¿Aperturar el día de asistencia?",
+      text: "Esto habilitará el día para registrar asistencias.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, aperturar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#28a745", // Verde
+      cancelButtonColor: "#d33",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: base_url + "/attendance/openNewDay",
+          type: "POST",
+          data: {},
+          success: function (response) {
+            console.log(response);
+            if (response.status === "success") {
+              $("#dia-activo")
+                .html("Sí")
+                .removeClass("badge-danger")
+                .addClass("badge-success");
+
+              Swal.fire({
+                icon: "success",
+                title: "Éxito",
+                text: "Día habilitado correctamente.",
+              });
+              $("#dia-activo")
+                .html("No")
+                .removeClass("badge-success")
+                .addClass("badge-danger");
+              $("#btnOpenDay").prop("disabled", true);
+              $("#btnOpenRegister").prop("disabled", false);
+              $("#btnOpenManualRegister").prop("disabled", false);
+              $("#btnOpenEditor").prop("disabled", false);
+              $("#btnOpenJustify").prop("disabled", false);
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: response.message,
+              });
+              console.log(response);
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Error al habilitar el día:", error);
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "No se pudo habilitar el día.",
+            });
+          },
+        });
+      }
+    });
+  });
+});
+
+$("#btnOpenAttendance").click(function (e) {
+  e.preventDefault();
 
   if (ventana && !ventana.closed) {
     ventana.focus(); // Si la ventana ya está abierta, solo la enfocamos
@@ -54,7 +200,6 @@ function abrirVentana() {
   }, 500);
 }
 
-
 let contadorAsistencias = 0;
 window.addEventListener("message", function (event) {
   // Asegurarse de que sea un objeto y tenga las propiedades requeridas
@@ -71,24 +216,23 @@ window.addEventListener("message", function (event) {
         <div class="container-fluid">
     <div class="row">
       <div class="col-md-1 font-weight-bold text-truncate">
-        ${contadorAsistencias}
+        <small>${contadorAsistencias} </small>
       </div>
       <div class="col-md-2 text-muted">
-        Código: <span class="text-dark">${event.data.codigo}</span>
+        <span class="text-dark">${event.data.codigo}</span>
       </div>
       <div class="col-md-4">
-        <span class="text-muted"> Nombres: </span> <span> ${event.data.nombres} ${event.data.apellidos}</span>
+        <span> ${event.data.nombres} ${event.data.apellidos}</span>
+      </div>
+      <div class="col-md-1 text-muted">
+        <span class="text-dark">${event.data.grado || "--"}</span>
       </div>
 
       <div class="col-md-1 text-muted">
-        Grado: <span class="text-dark">${event.data.grado || "--"}</span>
-      </div>
-
-      <div class="col-md-1 text-muted">
-        Sección: <span class="text-dark">${event.data.seccion || "--"}</span>
+        <span class="text-dark">${event.data.seccion || "--"}</span>
       </div>
       <div class="col-md-2 text-muted">
-        Hora Llegada: <span class="text-dark">00:00:00</span>
+        <span class="text-dark">00:00:00</span>
       </div>
       <div class="col-md-1 text-right">
         <span class="badge badge-success">Asistido</span>
@@ -125,18 +269,3 @@ window.addEventListener("beforeunload", function () {
 // Inicializar con "No abierta"
 $("#estadoVentana").addClass("badge-secondary").html("No Abierta");
 
-$(document).ready(function () {
-  // Ejecutar solicitud GET al cargar
-  $.ajax({
-    url: base_url + "/student/getTotalStudents", // cambia por tu ruta real
-    method: "GET",
-    beforeSend: function () { },
-    success: function (response) {
-      console.log("El total es : " + response.total);
-      $("#totalEstudiantes").html(response.total);
-      $("#totalRestantes").html(response.total);
-    },
-    error: function (xhr, status, error) { },
-    complete: function () { },
-  });
-});

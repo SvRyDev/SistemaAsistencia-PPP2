@@ -11,4 +11,25 @@ class AttendanceModel extends Model
 
 
     public function registerAttendance($data) {}
+
+    public function registerNewDay($fecha, $name_day, $entry_time, $exit_time, $tolerance)
+    {
+        $stmt = $this->db->prepare("INSERT INTO dia_asistencia (fecha, nombre_dia, hora_entrada, hora_salida, min_tolerancia)
+        VALUES
+        (
+        :fecha,
+        :nombre_dia,
+        :hora_entrada,
+        :hora_salida,
+        :min_tolerancia
+        )");
+
+        $stmt->bindParam(':fecha', $fecha);
+        $stmt->bindParam(':nombre_dia', $name_day);
+        $stmt->bindParam(':hora_entrada', $entry_time);
+        $stmt->bindParam(':hora_salida', $exit_time);
+        $stmt->bindParam(':min_tolerancia', $tolerance);
+
+        return $stmt->execute();
+    }
 }

@@ -5,6 +5,21 @@
         <div class="row">
 
             <div class="col-12">
+                <div class="card shadow-sm border-left-secondary">
+                    <div class="card-body d-flex  align-items-center">
+                        <div>
+                            <i class="fas fa-info-circle text-secondary me-2"></i>
+                            <strong>Última actualización:</strong>
+                            <span id="last-updated" class="text-muted">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="col-6">
 
 
                 <!-- Configuración General -->
@@ -13,12 +28,7 @@
                         <div>
                             <i class="fas fa-sliders-h"></i> Configuración General
                         </div>
-                        <div>
-                            <span class="badge bg-light text-dark ">
-                                <i class="fas fa-clock me-1"></i> Última actualización: <span
-                                    id="last-updated">--</span>
-                            </span>
-                        </div>
+
                     </div>
 
                     <div class="card-body">
@@ -95,30 +105,48 @@
                     </div>
                 </div>
             </div>
-            <!-- Notificaciones -->
+            <!-- Gestión de Usuarios -->
 
-            <div class="col-6">
+            <div class="col-12">
                 <div class="card border-left-info shadow mb-4">
                     <div class="card-header bg-info text-white">
-                        <i class="fas fa-users-cog"></i> Gestión de Usuarios
+                        <i class="fas fa-user-cog"></i> Configuración de Cuenta
                     </div>
                     <div class="card-body">
+                        <!-- Nombre de usuario -->
                         <div class="form-group">
-                            <label>Rol predeterminado</label>
-                            <select class="form-control">
-                                <option>Profesor</option>
-                                <option>Administrador</option>
-                            </select>
+                            <label for="user-username">Nombre de usuario</label>
+                            <input type="text" class="form-control" id="user-username" placeholder="Ej: jdoe123">
                         </div>
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="2fa">
-                            <label class="form-check-label" for="2fa">Habilitar autenticación en dos pasos</label>
+
+                        <!-- Rol (solo lectura si no se puede cambiar) -->
+                        <div class="form-group">
+                            <label for="user-role">Rol</label>
+                            <input type="text" class="form-control" id="user-role" disabled>
+                        </div>
+
+                        <!-- Cambiar contraseña -->
+                        <hr>
+                        <p class="text-muted mb-2"><i class="fas fa-key me-1"></i> Cambiar contraseña</p>
+
+                        <div class="form-group">
+                            <label for="user-password-current">Contraseña actual</label>
+                            <input type="password" class="form-control" id="user-password-current">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="user-password-new">Nueva contraseña</label>
+                            <input type="password" class="form-control" id="user-password-new">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="user-password-confirm">Confirmar nueva contraseña</label>
+                            <input type="password" class="form-control" id="user-password-confirm">
                         </div>
                     </div>
-
                 </div>
-
             </div>
+
 
         </div>
         <!-- Botón Guardar -->

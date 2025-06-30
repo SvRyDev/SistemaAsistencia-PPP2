@@ -158,13 +158,23 @@ $(document).ready(function () {
         "X-Requested-With": "XMLHttpRequest",
       },
       beforeSend: function () {
+        // Cierra cualquier modal anterior si aún está abierto
+        if (Swal.isVisible()) Swal.close();
+      
         Swal.fire({
           title: "Guardando configuración...",
           text: "Por favor, espera.",
           allowOutsideClick: false,
-          didOpen: Swal.showLoading,
+          showConfirmButton: false,
+          willOpen: () => {
+            Swal.showLoading();
+          }
         });
-      },
+      }
+      
+      
+      ,
+      
       success: function (response) {
         Swal.fire({
           title: response.status === "success" ? "Éxito" : "Error",

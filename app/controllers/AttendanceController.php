@@ -31,18 +31,101 @@ class AttendanceController extends Controller
     }
 
 
+    public function get_config_attendance()
+    {
+        if (!isAjax()) {
+            http_response_code(403);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Acceso no autorizado.'
+            ]);
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Método no permitido.'
+            ]);
+            return;
+        }
+
+        try {
+
+            $StudentModel = $this->model('StudentModel');
+            $totalStudents = $StudentModel->getTotalStudents();
+
+            $SettingModel = $this->model('SettingModel');
+            $config = $SettingModel->getConfig();
+
+            $DayModel = $this->model('DayModel');
+            $currentDate = date('Y-m-d');
+            $dayActive = $DayModel->validDayActive($currentDate);
+
+            if ($config) {
+                echo json_encode([
+                    'status' => 'success',
+                    'setting' => $config,
+                    'day_active' => $dayActive,
+                    'total_students' => $totalStudents,
+                ]);
+            } else {
+                http_response_code(404);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'No se encontró configuración de asistencia.'
+                ]);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error interno del servidor.',
+                'details' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+
     public function register_new_day()
     {
         if (!isAjax()) {
             return;
         }
-    
+
         header('Content-Type: application/json');
-    
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $currentDate = date('Y-m-d');
+            $nameDay = date('l', strtotime($currentDate));
+
+            $SettingModel = $this->model('SettingModel');
+            $config = $SettingModel->getConfig();
+
+
+            if (!$config || !isset($config['entry_time'], $config['exit_time'], $config['time_tolerance'])) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Faltan parámetros de configuración.'
+                ]);
+                return;
+            }
+
+
             $AttendanceModel = $this->model('AttendanceModel');
-            $result = $AttendanceModel->registerNewDay();
-    
+            $result = $AttendanceModel->registerNewDay(
+                $currentDate,
+                $nameDay,
+                $config['entry_time'],
+                $config['exit_time'],
+                $config['time_tolerance']
+            );
+
             if ($result) {
                 echo json_encode([
                     'status' => 'success',
@@ -62,21 +145,21 @@ class AttendanceController extends Controller
         }
     }
 
-    
+
     public function register_attendance()
     {
         if (!isAjax()) {
             return;
         }
-    
+
         header('Content-Type: application/json');
-    
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
             $codigoEstudiante = $_POST['codigo'];
-    
+
             $StudentModel = $this->model('StudentModel');
             $student = $StudentModel->getStudentByCode($codigoEstudiante);
-    
+
             if (!$student) {
                 echo json_encode([
                     'status' => 'error',
@@ -84,7 +167,7 @@ class AttendanceController extends Controller
                 ]);
                 return;
             }
-    
+
 
             echo json_encode([
                 'status' => 'success',
@@ -98,6 +181,6 @@ class AttendanceController extends Controller
             ]);
         }
     }
-    
+
 
 }

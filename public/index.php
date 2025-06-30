@@ -42,6 +42,7 @@ $router->addRoute('GET', '/carnet/generateCarnet', 'CarnetController@generate_ca
 $router->addRoute('GET', '/carnet/previewCarnet', 'CarnetController@preview_single_carnet_pdf');
 $router->addRoute('POST', '/attendance/registerAttendance', 'AttendanceController@register_attendance');
 $router->addRoute('POST', '/attendance/openNewDay', 'AttendanceController@register_new_day');
+$router->addRoute('POST', '/attendance/getConfig', 'AttendanceController@get_config_attendance');
 $router->addRoute('GET', '/student/getTotalStudents', 'StudentController@get_total_students');
 $router->addRoute('POST', '/report/RecordByStudent', 'ReportController@record_by_student');
 $router->addRoute('POST', '/report/RecordByGroup', 'ReportController@record_by_group');
@@ -49,6 +50,7 @@ $router->addRoute('GET', '/report/getGroupFilterOptions', 'ReportController@load
 $router->addRoute('GET', '/report/RecordByResumeDay', 'ReportController@record_by_day_report');
 $router->addRoute('POST', '/setting/getConfig', 'SettingController@load_data_setting');
 $router->addRoute('POST', '/setting/saveConfig', 'SettingController@save_setting');
+
 $router->run()
 
 ?>

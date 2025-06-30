@@ -105,14 +105,15 @@ DROP TABLE IF EXISTS `dia_asistencia`;
 CREATE TABLE `dia_asistencia` (
   `dia_fecha_id` int(11) NOT NULL AUTO_INCREMENT,
   `fecha` date DEFAULT NULL,
-  `nombre` varchar(20) DEFAULT NULL,
+  `nombre_dia` varchar(20) DEFAULT NULL,
   `hora_entrada` time DEFAULT NULL,
   `hora_salida` time DEFAULT NULL,
+  `min_tolerancia` int(11) DEFAULT NULL,
   `total_asistidos` int(11) DEFAULT NULL,
   `total_justificados` int(11) DEFAULT NULL,
   `total_tardanza` int(11) DEFAULT NULL,
   PRIMARY KEY (`dia_fecha_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -122,13 +123,14 @@ CREATE TABLE `dia_asistencia` (
 LOCK TABLES `dia_asistencia` WRITE;
 /*!40000 ALTER TABLE `dia_asistencia` DISABLE KEYS */;
 INSERT INTO `dia_asistencia` VALUES
-(1,'2025-05-12','Jueves','08:00:00','13:00:00',NULL,NULL,NULL),
-(2,'2025-05-13','Miércoles','08:00:00','13:00:00',NULL,NULL,NULL),
-(3,'2025-05-14','Martes','08:00:00','13:00:00',NULL,NULL,NULL),
-(4,'2025-05-15','Lunes','08:00:00','13:00:00',NULL,NULL,NULL),
-(5,'2025-08-02','Viernes','08:00:00','13:00:00',NULL,NULL,NULL),
-(6,'2025-08-02','Lunes','08:00:00','13:00:00',NULL,NULL,NULL),
-(7,'2025-08-03','Martes','08:00:00','13:00:00',NULL,NULL,NULL);
+(1,'2025-05-12','Jueves','08:00:00','13:00:00',NULL,NULL,NULL,NULL),
+(2,'2025-05-13','Miércoles','08:00:00','13:00:00',NULL,NULL,NULL,NULL),
+(3,'2025-05-14','Martes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),
+(4,'2025-05-15','Lunes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),
+(5,'2025-08-02','Viernes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),
+(6,'2025-08-02','Lunes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),
+(7,'2025-08-03','Martes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),
+(10,'2025-06-30','Monday','08:15:00','08:20:00',10,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `dia_asistencia` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -287,10 +289,14 @@ DROP TABLE IF EXISTS `system_config`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `system_config` (
   `id` int(11) NOT NULL,
+  `name_school` varchar(100) NOT NULL,
   `academic_year` varchar(9) NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
-  `punctual_time` time NOT NULL,
+  `entry_time` time NOT NULL,
+  `exit_time` time DEFAULT NULL,
+  `time_tolerance` int(11) DEFAULT NULL,
+  `time_zone` varchar(100) DEFAULT NULL,
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -303,7 +309,7 @@ CREATE TABLE `system_config` (
 LOCK TABLES `system_config` WRITE;
 /*!40000 ALTER TABLE `system_config` DISABLE KEYS */;
 INSERT INTO `system_config` VALUES
-(1,'2025','2025-03-01','2025-12-20','08:15:00','2025-06-10 19:46:09');
+(1,'Institución Educativa Mixto San Luis','2024','2024-01-03','2024-12-25','08:15:00','08:20:00',10,'America/Lima','2025-06-30 05:09:36');
 /*!40000 ALTER TABLE `system_config` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -360,4 +366,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-06-24  1:41:18
+-- Dump completed on 2025-06-30  1:32:02

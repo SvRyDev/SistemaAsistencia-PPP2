@@ -13,7 +13,7 @@ class ReportModel extends Model
                 
                 f.dia_fecha_id,
                 f.fecha AS fecha_asistencia,
-                f.nombre AS nombre_dia,
+                f.nombre_dia AS nombre_dia,
                 
                 ea.id_estado,
                 ea.nombre_estado AS estado_asistencia,
@@ -52,7 +52,7 @@ class ReportModel extends Model
                 
                 f.dia_fecha_id,
                 f.fecha AS fecha_asistencia,
-                f.nombre AS nombre_dia,
+                f.nombre_dia AS nombre_dia,
                 
                 ea.id_estado,
                 ea.nombre_estado AS estado_asistencia,

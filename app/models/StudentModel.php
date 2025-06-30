@@ -42,6 +42,13 @@ class StudentModel extends Model
     }
 
 
+    public function getStudentByCode($codigo)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM vista_estudiantes WHERE codigo = :codigo");
+        $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
     public function getStudentByDNI($dni)
     {
         $stmt = $this->db->prepare("SELECT * FROM vista_estudiantes WHERE dni = :dni");
