@@ -241,8 +241,8 @@ class AttendanceController extends Controller
                     'status' => 'warning',
                     'message' => 'Este estudiante ya ha registrado su asistencia hoy.',
                     'student' => $student,
-                    'hora_registrada' => $yaRegistrado['hora_registro'],
-                    'estado_registrado' => $yaRegistrado['nombre_estado']
+                    'hora_registrada' => $yaRegistrado['hora_entrada'],
+
                 ]);
                 return;
             }

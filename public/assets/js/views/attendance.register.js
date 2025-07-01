@@ -69,8 +69,7 @@ $(document).ready(function () {
         } else if (response.status === "warning") {
           // Estudiante ya tiene asistencia registrada
           let mensaje = "<b>ASISTENCIA YA REGISTRADA</b><br>";
-          mensaje += "Estado previo: <b>" + response.estado_registrado.toUpperCase() + "</b><br>";
-          mensaje += "Hora registrada: " + response.hora_registrada;
+         mensaje += "Hora registrada: " + response.hora_registrada;
 
           $("#mensajeRespuesta").html(mensaje);
 
