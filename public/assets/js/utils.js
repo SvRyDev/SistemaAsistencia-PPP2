@@ -92,36 +92,36 @@ function formatearFechaLegible(fechaISO) {
 
   return fecha.toLocaleString("es-PE", opciones);
 }
-
+function getHoraMinuto() {
+  const now = new Date();
+  const horas = now.getHours().toString().padStart(2, '0');
+  const minutos = now.getMinutes().toString().padStart(2, '0');
+  return `${horas}:${minutos}`;
+}
 
 function iniciarReloj(idHora, idFecha = null) {
+  const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
   function actualizar() {
     const now = new Date();
+    const horas = now.getHours().toString().padStart(2, '0');
+    const minutos = now.getMinutes().toString().padStart(2, '0');
+    const segundos = now.getSeconds();
 
-    let horas = now.getHours().toString().padStart(2, '0');
-    let minutos = now.getMinutes().toString().padStart(2, '0');
-    let segundos = now.getSeconds();
-
-    let separador = segundos % 2 === 0 ? ':' : ' '; // Parpadeo
-
-    const horaTexto = `${horas}${separador}${minutos}`;
-    $(`#${idHora}`).text(horaTexto);
+    const separador = segundos % 2 === 0 ? ':' : ' ';
+    $(`#${idHora}`).text(`${horas}${separador}${minutos}`);
 
     if (idFecha) {
-      const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-      const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-
-      let dia = dias[now.getDay()];
-      let fecha = now.getDate().toString().padStart(2, '0');
-      let mes = meses[now.getMonth()];
-      let año = now.getFullYear();
-
-      const fechaTexto = `${dia}, ${fecha} ${mes} ${año}`;
-      $(`#${idFecha}`).text(fechaTexto);
+      const dia = dias[now.getDay()];
+      const fecha = now.getDate().toString().padStart(2, '0');
+      const mes = meses[now.getMonth()];
+      const año = now.getFullYear();
+      $(`#${idFecha}`).text(`${dia}, ${fecha} ${mes} ${año}`);
     }
   }
 
-  actualizar(); // Se ejecuta inmediatamente
+  actualizar(); // Ejecutar una vez
   setInterval(actualizar, 1000); // Luego cada segundo
 }
 

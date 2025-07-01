@@ -75,7 +75,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Estado Actual -->
             <div class="col-sm-12 col-md-6 col-lg-12 col-xl-4">
                 <div class="card shadow border-left-secondary bg-light">
@@ -88,7 +88,7 @@
                             <i class="fas fa-check-circle fa-2x"></i> <!-- Ícono representando "Temprano" -->
                         </div>
                         <div class="text-left flex-grow-1 ">
-                            <div class="h3 font-weight-bold text-success mb-0 ">Temprano</div>
+                            <div id="estadoDiaRegistro" class="h3 font-weight-bold text-success mb-0 ">Temprano</div>
                             <small class="text-muted">Estado de Asistencia</small>
                         </div>
                     </div>
@@ -135,7 +135,7 @@
                         <div class="row justify-content-center text-center">
                             <!-- Habilitar Periodo -->
                             <div class="col-auto mb-2">
-                                <button id="btnOpenDay"class="btn btn-success">
+                                <button id="btnOpenDay" class="btn btn-success">
                                     <i class="fas fa-toggle-on mr-1"></i> Aperturar Dia
                                 </button>
                             </div>
@@ -217,8 +217,9 @@
                     <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
                         <div class="text-center p-2 bg-white border-left border-success rounded shadow h-100">
                             <h6 class="text-success font-weight-bold mb-1">Temprano</h6>
-                            <div class="h5 font-weight-bold text-success mb-0">0</div>
-                            <small class="text-muted">0%</small>
+                            <div class="h5 font-weight-bold text-success mb-0" id="contadorTemprano">0</div>
+                            <small id="porcentajeTemprano" class="text-muted">0%</small>
+
                         </div>
                     </div>
 
@@ -226,8 +227,8 @@
                     <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
                         <div class="text-center p-2 bg-white border-left border-info rounded shadow h-100">
                             <h6 class="text-info font-weight-bold mb-1">Tardíos</h6>
-                            <div class="h5 font-weight-bold text-info mb-0">0</div>
-                            <small class="text-muted">0%</small>
+                            <div class="h5 font-weight-bold text-info mb-0" id="contadorTardios">0</div>
+                            <small id="porcentajeTardios" class="text-muted">0%</small>
                         </div>
                     </div>
 
@@ -235,8 +236,8 @@
                     <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
                         <div class="text-center p-2 bg-white border-left border-warning rounded shadow h-100">
                             <h6 class="text-warning font-weight-bold mb-1">Justificados</h6>
-                            <div class="h5 font-weight-bold text-warning mb-0">0</div>
-                            <small class="text-muted">0%</small>
+                            <div class="h5 font-weight-bold text-warning mb-0" id="contadorJustificados">0</div>
+                            <small id="porcentajeJustificados" class="text-muted">0%</small>
                         </div>
                     </div>
 
@@ -244,8 +245,8 @@
                     <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
                         <div class="text-center p-2 bg-white border-left border-danger rounded shadow h-100">
                             <h6 class="text-danger font-weight-bold mb-1">Restantes</h6>
-                            <div class="h5 font-weight-bold text-danger mb-0">0</div>
-                            <small class="text-muted">0%</small>
+                            <div class="h5 font-weight-bold text-danger mb-0" id="contadorRestantes">0</div>
+                            <small id="porcentajeRestantes" class="text-muted">0%</small>
                         </div>
                     </div>
 

@@ -212,7 +212,7 @@ class AttendanceController extends Controller
             } else {
                 echo json_encode([
                     'status' => 'error',
-                    'message' => 'Fuera del horario permitido para registrar asistencia.'
+                    'message' => 'Fuera del horario permitido para registrar asistencia. El current time es ' . $currentTime . 'y el max_puntual_time es ' . $max_punctual_time
                 ]);
                 return;
             }
@@ -227,7 +227,7 @@ class AttendanceController extends Controller
     
             // Registrar asistencia
             $AttendanceModel = $this->model('AttendanceModel');
-            $AttendanceModel->registerAtendance(
+            $AttendanceModel->registerAttendance(
                 $student['estudiante_id'],
                 $dayActive['dia_fecha_id'],
                 $currentTime,

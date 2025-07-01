@@ -1,8 +1,66 @@
 let ventana = null;
 let verificador = null;
 
-const ctx = document.getElementById("pieAsistencia").getContext("2d");
 
+// Variables de hora
+let hora_entrada;
+let min_tolerancia;
+let hora_cierre;
+// Contadores en memoria
+const contadorEstados = {
+  1: 0, // id_estado == 1 , Temprano
+  2: 0, // id_estado == 2 , Tarde
+  3: 0  // id_estado == 3 , Justificado
+};
+let totalEstudiantes = 0;
+let total_restantes = 0;
+//Funcion para Actualizar los datos de la Grafica de Torta
+function actualizarGrafica(elemento) {
+  elemento.data.datasets[0].data = [
+    contadorEstados[1],
+    contadorEstados[2],
+    contadorEstados[3],
+    total_restantes
+  ];
+  elemento.update();
+}
+//Funcion para actualizar los contadores (Presente, Tardanza, Justificados, Restantes)
+function actualizarContadores() {
+  $('#contadorTemprano').html(contadorEstados[1]);
+  $('#contadorTardios').html(contadorEstados[2]);
+  $('#contadorJustificados').html(contadorEstados[3]);
+  $('#contadorRestantes').html(total_restantes);
+};
+//actualizar mensaje de estado de hora 
+function evaluarHoraEstado(horaEntrada, toleranciaMin, horaSalida) {
+  const ahora = new Date();
+
+  // Parsear hora de entrada
+  const [hEntrada, mEntrada] = horaEntrada.split(":").map(Number);
+  const horaLimite = new Date(); // hora de entrada + tolerancia
+  horaLimite.setHours(hEntrada);
+  horaLimite.setMinutes(mEntrada + toleranciaMin);
+  horaLimite.setSeconds(0);
+
+  // Parsear hora de salida
+  const [hSalida, mSalida] = horaSalida.split(":").map(Number);
+  const horaMaxima = new Date();
+  horaMaxima.setHours(hSalida);
+  horaMaxima.setMinutes(mSalida);
+  horaMaxima.setSeconds(0);
+
+  // Comparaciones
+  if (ahora <= horaLimite) {
+    return "Temprano";
+  } else if (ahora <= horaMaxima) {
+    return "Tarde";
+  } else {
+    return "Fuera de tiempo";
+  }
+}
+
+
+const ctx = document.getElementById("pieAsistencia").getContext("2d");
 const pieAsistencia = new Chart(ctx, {
   type: "pie",
   data: {
@@ -58,12 +116,27 @@ $(document).ready(function () {
         const s = response.setting;
         const d = response.day_active;
         const t = response.total_students;
+        totalEstudiantes = t.total;
+        total_restantes = totalEstudiantes;
 
-        $("#time-entry").html(formatearHoraAmPm(s.entry_time));
-        $("#time-tolerance").html(s.time_tolerance + " min");
-        $("#time-finish").html(formatearHoraAmPm(s.exit_time));
-        $("#total_estudiantes").html(t.total);
+        hora_entrada = s.entry_time;
+        hora_cierre = s.exit_time;
+        min_tolerancia = s.time_tolerance;
 
+        const hora_actual = getHoraMinuto();
+        actualizarGrafica(pieAsistencia);
+
+        $("#time-entry").html(formatearHoraAmPm(hora_entrada));
+        $("#time-tolerance").html(min_tolerancia + " min");
+        $("#time-finish").html(formatearHoraAmPm(hora_cierre));
+        $("#contadorRestantes").html(total_restantes);
+        $("#total_estudiantes").html(totalEstudiantes);
+
+
+        console.log('la hora actual es ' + hora_actual);
+        $('#estadoDiaRegistro').html(evaluarHoraEstado(hora_entrada, min_tolerancia, hora_cierre));
+
+        ;
 
         if (d) {
           actualizarEstadoDia(1);
@@ -83,7 +156,11 @@ $(document).ready(function () {
         }
       } else {
         mostrarError("Error", response.message);
-      }
+      };
+
+
+
+
     },
     error: function (xhr, status, error) {
       console.error("AJAX Error:", error);
@@ -152,6 +229,8 @@ $(document).ready(function () {
     });
   });
 });
+
+
 
 $("#btnOpenAttendance").click(function (e) {
   e.preventDefault();
@@ -228,23 +307,23 @@ window.addEventListener("message", function (event) {
         <small>${contadorAsistencias} </small>
       </div>
       <div class="col-md-2 text-muted">
-        <span class="text-dark">${event.data.codigo}</span>
+        <span class="text-dark">${event.data.student.codigo}</span>
       </div>
       <div class="col-md-4">
-        <span> ${event.data.nombres} ${event.data.apellidos}</span>
+        <span> ${event.data.student.nombres} ${event.data.student.apellidos}</span>
       </div>
       <div class="col-md-1 text-muted">
-        <span class="text-dark">${event.data.grado || "--"}</span>
+        <span class="text-dark">${event.data.student.grado || "--"}</span>
       </div>
 
       <div class="col-md-1 text-muted">
-        <span class="text-dark">${event.data.seccion || "--"}</span>
+        <span class="text-dark">${event.data.student.seccion || "--"}</span>
       </div>
       <div class="col-md-2 text-muted">
-        <span class="text-dark">00:00:00</span>
+        <span class="text-dark">${event.data.hora_actual}</span>
       </div>
       <div class="col-md-1 text-right">
-        <span class="badge badge-success">Asistido</span>
+        <span data-id="${event.data.estado.id_estado}" class="badge badge-${event.data.estado.clase_boostrap} ">${event.data.estado.nombre_estado}</span>
       </div>
     </div>
   </div>
@@ -252,17 +331,28 @@ window.addEventListener("message", function (event) {
 
     lista.appendChild(nuevoItem);
 
-    // Sumar 1 al contador de registrados
-    let registrados = parseInt($("#totalRegistrados").text(), 10) || 0;
-    $("#totalRegistrados").text(registrados + 1);
-    actualizarRestantes(); // 🧠 aquí restamos automáticamente
 
-    function actualizarRestantes() {
-      const total = parseInt($("#totalEstudiantes").text(), 10) || 0;
-      const registrados = parseInt($("#totalRegistrados").text(), 10) || 0;
-      const restantes = total - registrados;
-      $("#totalRestantes").text(restantes >= 0 ? restantes : 0);
-    }
+
+
+
+
+    const estadoId = event.data.estado.id_estado;
+
+    // Actualizar contadores
+    contadorEstados[estadoId]++;
+
+    const total_registrados = contadorEstados[1] + contadorEstados[2] + contadorEstados[3];
+    total_restantes = totalEstudiantes - total_registrados;
+
+
+    actualizarGrafica(pieAsistencia);
+    actualizarContadores();
+
+    console.log('El contador por ahora de asistencia es ' + contadorEstados[1]);
+
+
+
+
   } else {
     console.warn("Mensaje recibido inválido:", event.data);
   }
