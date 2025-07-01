@@ -145,18 +145,16 @@ class AttendanceController extends Controller
         }
     }
 
-
     public function register_attendance()
     {
-        if (!isAjax()) {
-            return;
-        }
+        if (!isAjax()) return;
 
         header('Content-Type: application/json');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
             $codigoEstudiante = $_POST['codigo'];
 
+            // Obtener estudiante
             $StudentModel = $this->model('StudentModel');
             $student = $StudentModel->getStudentByCode($codigoEstudiante);
 
@@ -168,11 +166,72 @@ class AttendanceController extends Controller
                 return;
             }
 
+            // Obtener configuración
+            $SettingModel = $this->model('SettingModel');
+            $config = $SettingModel->getConfig();
+
+            // Establecer zona horaria
+            date_default_timezone_set($config['time_zone'] ?? 'America/Lima');
+
+            $currentDate = date('Y-m-d');
+            $currentTime = date('H:i');
+
+            $DayModel = $this->model('DayModel');
+            // Validar si esta activo el dia
+            $dayActive = $DayModel->validDayActive($currentDate);
+
+
+            // Validar si el día está activo
+            if (!$dayActive) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'El día actual no está habilitado para registrar asistencia.'
+                ]);
+                return;
+            }
+
+
+            
+            // Cargar Estados de Asistencia
+            $StatusAttendaceModel = $this->model('');
+
+            // Preparar horarios configurados
+            $entry_time     = $config['entry_time'];          // ej. '07:30'
+            $exit_time      = $config['exit_time'];            // ej. '13:00'
+            $tolerance_min  = intval($config['time_tolerance']); // ej. 10
+
+            // Calcular hora máxima para puntualidad (entry_time + tolerancia)
+            $max_punctual_time = date("H:i", strtotime("+{$tolerance_min} minutes", strtotime($entry_time)));
+
+            // Determinar estado
+            if ($currentTime <= $max_punctual_time) {
+                $estado = 1; //Presente
+            } elseif ($currentTime > $max_punctual_time && $currentTime <= $exit_time) {
+                $estado = 2; //Tarde
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Fuera del horario permitido para registrar asistencia.'
+                ]);
+                return;
+            }
+
+            // Registrar asistencia
+            $AttendanceModel = $this->model('AttendanceModel');
+            $AttendanceModel->registerAtendance(
+                $student['estudiante_id'],
+                $dayActive['dia_fecha_id'],
+                $currentTime,
+                $estado
+            );
 
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Asistencia registrada para el estudiante.',
-                'student' => $student
+                'message' => 'Asistencia registrada correctamente.',
+                'student' => $student,
+                'estado' => $estado,
+                'hora_actual' => $currentTime,
+                'limite_puntualidad' => $max_punctual_time
             ]);
         } else {
             echo json_encode([
@@ -181,6 +240,4 @@ class AttendanceController extends Controller
             ]);
         }
     }
-
-
 }

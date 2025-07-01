@@ -75,6 +75,7 @@
                     </div>
                 </div>
             </div>
+            
             <!-- Estado Actual -->
             <div class="col-sm-12 col-md-6 col-lg-12 col-xl-4">
                 <div class="card shadow border-left-secondary bg-light">
@@ -88,6 +89,7 @@
                         </div>
                         <div class="text-left flex-grow-1 ">
                             <div class="h3 font-weight-bold text-success mb-0 ">Temprano</div>
+                            <small class="text-muted">Estado de Asistencia</small>
                         </div>
                     </div>
                 </div>

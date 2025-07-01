@@ -1,4 +1,22 @@
 $(document).ready(function () {
+  let datosDesdePrincipal = {};
+
+  window.addEventListener("message", function (event) {
+    if (typeof event.data === "object" && event.data.entry_time) {
+      datosDesdePrincipal = event.data;
+
+      console.log("Recibido desde ventana principal:", datosDesdePrincipal);
+
+      // Puedes mostrarlo en el HTML si quieres:
+      $("#horaEntrada").text("Entrada: " + datosDesdePrincipal.entry_time);
+      $("#horaSalida").text("Salida: " + datosDesdePrincipal.exit_time);
+      $("#tolerancia").text("Tolerancia: " + datosDesdePrincipal.tolerance + " min");
+    }
+  });
+
+
+
+
   const $input = $("#codigoEstudiante");
   const $warning = $("#focusWarning");
 
@@ -30,39 +48,43 @@ $(document).ready(function () {
       },
       success: function (response) {
         if (response.status === "success") {
-          $("#mensajeRespuesta").html("<b>ESTUDIANTE REGISTRADO CORRECTAMENTE</b>");
-          //$("#resultadoBusqueda span").addClass("text-success");
+          let mensaje = "<b>ASISTENCIA REGISTRADA</b><br>";
+          mensaje += "Estado: <b>" + response.estado.toUpperCase() + "</b><br>";
+          mensaje += "Hora actual: " + response.hora_actual + "<br>";
+          mensaje += "Límite puntualidad: " + response.limite_puntualidad;
+
+          $("#mensajeRespuesta").html(mensaje);
+
           // Mostrar datos del estudiante
-          $("#nombre").html('Nombre: ' + response.student.nombres);
-          $("#apellido").html('Estudiante: ' + response.student.apellidos);
-          $("#codigo").html('Código: ' + response.student.codigo);
+          $("#nombre").html("Nombre: " + response.student.nombres);
+          $("#apellido").html("Apellido: " + response.student.apellidos);
+          $("#codigo").html("Código: " + response.student.codigo);
 
           // Enviar a la ventana principal
           if (window.opener) {
             window.opener.postMessage(response.student, "*");
             $input.focus();
           }
+
         } else {
+          // Error del backend como fuera de horario o estudiante no encontrado
           $("#mensajeRespuesta").html(
-            "Error al registrar el código: " + response.message
+            "<b>Error:</b> " + response.message
           );
-          //$("#resultadoBusqueda span").removeClass("text-success").addClass("text-danger");
         }
       },
       error: function (xhr, status, error) {
-        $("#mensajeRespuesta").html("Error en la búsqueda del código:", error);
+        $("#mensajeRespuesta").html("Error en la búsqueda del código.");
         alert("Error al buscar el código. Intenta nuevamente.");
       },
       complete: function () {
         $input.val("");
-        // Limpiar la información después de 0.5 segundos
-
         setTimeout(() => {
           $("#resultadoBusqueda span").html("");
-          //$("#resultadoBusqueda span").removeClass("text-success").removeClass("text-danger");
         }, 1500);
       },
     });
+
   });
 
   // Mostrar advertencia si se pierde el foco

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,10 +13,11 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    body, html {
+    body,
+    html {
       height: 100%;
       margin: 0;
-      background: linear-gradient(135deg,rgb(255, 255, 255),rgb(28, 34, 44));
+      background: linear-gradient(135deg, rgb(255, 255, 255), rgb(28, 34, 44));
       color: #fff;
     }
 
@@ -29,7 +31,7 @@
     h2 {
       font-size: 32px;
       margin-bottom: 30px;
-      color:rgb(0, 55, 158);
+      color: rgb(0, 55, 158);
     }
 
     #focusWarning {
@@ -41,7 +43,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background:rgba(0, 0, 0, 0.27);
+      background: rgba(0, 0, 0, 0.27);
       color: white;
 
       z-index: 9999;
@@ -87,7 +89,7 @@
     }
 
 
-    #resultadoBusqueda{
+    #resultadoBusqueda {
       margin-top: 20px;
       padding: 20px;
 
@@ -111,11 +113,21 @@
 
     <div id="resultadoBusqueda">
 
-  
+
       <span id="mensajeRespuesta"></span>
       <span id="nombre"></span><span id="apellido"></span>
       <span id="codigo"></span>
     </div>
+
+
+
+
+    <div class="mb-3">
+  <span id="horaEntrada" class="badge badge-info p-2"></span>
+  <span id="horaSalida" class="badge badge-info p-2 ml-2"></span>
+  <span id="tolerancia" class="badge badge-warning p-2 ml-2"></span>
+</div>
+
   </div>
 
   <!-- jQuery -->

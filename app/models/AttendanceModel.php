@@ -10,7 +10,23 @@ class AttendanceModel extends Model
 
 
 
-    public function registerAttendance($data) {}
+    public function registerAttendance($estudiante_id, $dia_fecha_id, $hora_entrada, $estado_asistencia_id, $observacion = null)
+    {
+        $stmt = $this->db->prepare("
+        INSERT INTO asistencia_estudiante 
+        (estudiante_id, dia_fecha_id, hora_entrada, estado_asistencia_id, observacion)
+        VALUES 
+        (:estudiante_id, :dia_fecha_id, :hora_entrada, :estado_asistencia_id, :observacion)
+    ");
+
+        $stmt->bindParam(':estudiante_id', $estudiante_id);
+        $stmt->bindParam(':dia_fecha_id', $dia_fecha_id);
+        $stmt->bindParam(':hora_entrada', $hora_entrada); // Debe ser formato 'Y-m-d H:i:s'
+        $stmt->bindParam(':estado_asistencia_id', $estado_asistencia_id);
+        $stmt->bindParam(':observacion', $observacion);
+
+        return $stmt->execute();
+    }
 
     public function registerNewDay($fecha, $name_day, $entry_time, $exit_time, $tolerance)
     {

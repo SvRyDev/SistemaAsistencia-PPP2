@@ -66,21 +66,16 @@ $(document).ready(function () {
 
 
         if (d) {
-          $("#dia-activo")
-            .html("Sí")
-            .removeClass("badge-danger")
-            .addClass("badge-success");
+          actualizarEstadoDia(1);
           $("#btnOpenDay").prop("disabled", true);
           $("#btnOpenRegister").prop("disabled", false);
           $("#btnOpenManualRegister").prop("disabled", false);
           $("#btnOpenEditor").prop("disabled", false);
           $("#btnOpenJustify").prop("disabled", false);
         } else {
-          $("#dia-activo")
-            .html("No")
-            .removeClass("badge-success")
-            .addClass("badge-danger");
+          actualizarEstadoDia(0);
           $("#btnOpenDay").prop("disabled", false);
+          $("#btnOpenAttendance").prop("disabled", true);
           $("#btnOpenRegister").prop("disabled", true);
           $("#btnOpenManualRegister").prop("disabled", true);
           $("#btnOpenEditor").prop("disabled", true);
@@ -120,25 +115,21 @@ $(document).ready(function () {
           success: function (response) {
             console.log(response);
             if (response.status === "success") {
-              $("#dia-activo")
-                .html("Sí")
-                .removeClass("badge-danger")
-                .addClass("badge-success");
-
+              actualizarEstadoDia(1);
               Swal.fire({
                 icon: "success",
                 title: "Éxito",
                 text: "Día habilitado correctamente.",
               });
-              $("#dia-activo")
-                .html("No")
-                .removeClass("badge-success")
-                .addClass("badge-danger");
+
               $("#btnOpenDay").prop("disabled", true);
+              $("#btnOpenAttendance").prop("disabled", false);
               $("#btnOpenRegister").prop("disabled", false);
               $("#btnOpenManualRegister").prop("disabled", false);
               $("#btnOpenEditor").prop("disabled", false);
               $("#btnOpenJustify").prop("disabled", false);
+
+
             } else {
               Swal.fire({
                 icon: "error",
@@ -177,6 +168,12 @@ function abrirVentana() {
   const alto = screen.availHeight;
   const opciones = `width=${ancho},height=${alto},top=0,left=0`;
 
+  const datos = {
+    entry_time: "07:30",
+    exit_time: "13:00",
+    tolerance: 10,
+  };
+
   ventana = window.open(
     base_url + "/attendance/openAttendance",
     "registro",
@@ -195,10 +192,22 @@ function abrirVentana() {
       $("#estadoVentana")
         .addClass("badge-danger")
         .removeClass("badge-success")
-        .html("Cerrada");
+        .html("Cerrado");
     }
   }, 500);
+
+  // Esperar a que cargue antes de enviar los datos
+  const enviarDatos = () => {
+    if (ventana && !ventana.closed) {
+      ventana.postMessage(datos, "*"); // 🔐 Puedes cambiar * por tu origen exacto si quieres más seguridad
+    } else {
+      setTimeout(enviarDatos, 500);
+    }
+  };
+
+  setTimeout(enviarDatos, 1000); // Da tiempo para que cargue el DOM de la ventana nueva
 }
+
 
 let contadorAsistencias = 0;
 window.addEventListener("message", function (event) {
@@ -269,3 +278,58 @@ window.addEventListener("beforeunload", function () {
 // Inicializar con "No abierta"
 $("#estadoVentana").addClass("badge-secondary").html("No Abierta");
 
+
+
+function actualizarEstadoDia(estado) {
+  const badge = $("#dia-activo");
+  const btnOpenDay = $("#btnOpenDay");
+  const botonesRegistro = [
+    "#btnOpenRegister",
+    "#btnOpenManualRegister",
+    "#btnOpenEditor",
+    "#btnOpenJustify",
+  ];
+
+  // Mapear valores numéricos a texto
+  const estados = {
+    0: "desactivado",
+    1: "activo",
+    2: "finalizado",
+  };
+
+  const estadoTexto = estados[estado];
+
+  if (!estadoTexto) {
+    console.warn("Estado de día no reconocido:", estado);
+    return;
+  }
+
+  switch (estadoTexto) {
+    case "activo":
+      badge.html("Activo")
+        .removeClass("badge-danger badge-secondary")
+        .addClass("badge-success");
+
+      btnOpenDay.prop("disabled", true);
+      botonesRegistro.forEach(id => $(id).prop("disabled", false));
+      break;
+
+    case "desactivado":
+      badge.html("Desactivado")
+        .removeClass("badge-success badge-secondary")
+        .addClass("badge-danger");
+
+      btnOpenDay.prop("disabled", false);
+      botonesRegistro.forEach(id => $(id).prop("disabled", true));
+      break;
+
+    case "finalizado":
+      badge.html("Finalizado")
+        .removeClass("badge-success badge-danger")
+        .addClass("badge-secondary");
+
+      btnOpenDay.prop("disabled", true);
+      botonesRegistro.forEach(id => $(id).prop("disabled", true));
+      break;
+  }
+}
