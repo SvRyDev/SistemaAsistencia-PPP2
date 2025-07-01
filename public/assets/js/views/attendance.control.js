@@ -32,32 +32,107 @@ function actualizarContadores() {
   $('#contadorRestantes').html(total_restantes);
 };
 //actualizar mensaje de estado de hora 
-function evaluarHoraEstado(horaEntrada, toleranciaMin, horaSalida) {
+function actualizarEstadoVisual(estado, destinoId) {
+  const $texto = $(`#${destinoId}`);
+  const $iconBox = $("#iconEstado");
+  const $icono = $("#iconoAsistencia");
+
+  let color = "";
+  let icono = "";
+  let texto = "";
+
+switch (estado.tipo) {
+  case "temprano":
+    color = "success";
+    icono = "fa-check-circle";
+    texto = `Temprano <small class="h6">(-${estado.minutos}m ${estado.segundos}s)</small>`;
+    break;
+  case "tolerancia":
+    color = "info";
+    icono = "fa-clock";
+    texto = `Tolerancia <small class="h6">(+${estado.restantesMin}m ${estado.restantesSeg}s)</small>`;
+    break;
+  case "tarde":
+    color = "warning";
+    icono = "fa-exclamation-circle";
+    texto = `Tarde <small class="h6 ">(+${estado.minutosTarde}m ${estado.segundosTarde}s)</small>`;
+    break;
+  case "fuera":
+    color = "danger";
+    icono = "fa-times-circle";
+    texto = `Fuera de tiempo`;
+    break;
+}
+
+
+  $texto
+    .removeClass("text-secondary text-success text-info text-warning text-danger")
+    .addClass(`text-${color}`)
+    .html(texto);
+
+  $icono
+    .removeClass()
+    .addClass(`fas ${icono} fa-2x`);
+
+  $iconBox
+    .removeClass("bg-secondary bg-success bg-info bg-warning bg-danger")
+    .addClass(`bg-${color}`);
+}
+
+
+
+function iniciarEvaluacionEstado(hEntrada, toleranciaMin, hSalida, destinoId) {
+  if (window._intervalEstado) clearInterval(window._intervalEstado);
+
+  window._intervalEstado = setInterval(() => {
+    const resultado = evaluarHoraEstadoDetalle(hEntrada, toleranciaMin, hSalida);
+    actualizarEstadoVisual(resultado, destinoId);
+  }, 1000);
+}
+
+function evaluarHoraEstadoDetalle(hEntrada, toleranciaMin, hSalida) {
   const ahora = new Date();
 
-  // Parsear hora de entrada
-  const [hEntrada, mEntrada] = horaEntrada.split(":").map(Number);
-  const horaLimite = new Date(); // hora de entrada + tolerancia
-  horaLimite.setHours(hEntrada);
-  horaLimite.setMinutes(mEntrada + toleranciaMin);
-  horaLimite.setSeconds(0);
+  const [hEnt, mEnt] = hEntrada.split(":").map(Number);
+  const entrada = new Date();
+  entrada.setHours(hEnt, mEnt, 0, 0);
 
-  // Parsear hora de salida
-  const [hSalida, mSalida] = horaSalida.split(":").map(Number);
-  const horaMaxima = new Date();
-  horaMaxima.setHours(hSalida);
-  horaMaxima.setMinutes(mSalida);
-  horaMaxima.setSeconds(0);
+  const limite = new Date(entrada.getTime() + toleranciaMin * 60000);
 
-  // Comparaciones
-  if (ahora <= horaLimite) {
-    return "Temprano";
-  } else if (ahora <= horaMaxima) {
-    return "Tarde";
-  } else {
-    return "Fuera de tiempo";
+  const [hSal, mSal] = hSalida.split(":").map(Number);
+  const salida = new Date();
+  salida.setHours(hSal, mSal, 0, 0);
+
+  const segundosDiferencia = (tiempoFinal, tiempoInicio) =>
+    Math.max(0, Math.round((tiempoFinal - tiempoInicio) / 1000));
+
+  if (ahora < entrada) {
+    const totalSegs = segundosDiferencia(entrada, ahora);
+    const mins = Math.floor(totalSegs / 60);
+    const segs = totalSegs % 60;
+    return { tipo: "temprano", minutos: mins, segundos: segs };
   }
+
+  if (ahora >= entrada && ahora <= limite) {
+    const totalSegs = segundosDiferencia(limite, ahora);
+    const mins = Math.floor(totalSegs / 60);
+    const segs = totalSegs % 60;
+    return { tipo: "tolerancia", restantesMin: mins, restantesSeg: segs };
+  }
+
+  if (ahora > limite && ahora <= salida) {
+    const totalSegs = segundosDiferencia(ahora, limite);
+    const mins = Math.floor(totalSegs / 60);
+    const segs = totalSegs % 60;
+    return { tipo: "tarde", minutosTarde: mins, segundosTarde: segs };
+  }
+
+  return { tipo: "fuera" };
 }
+
+
+
+
 
 
 const ctx = document.getElementById("pieAsistencia").getContext("2d");
@@ -134,7 +209,8 @@ $(document).ready(function () {
 
 
         console.log('la hora actual es ' + hora_actual);
-        $('#estadoDiaRegistro').html(evaluarHoraEstado(hora_entrada, min_tolerancia, hora_cierre));
+        // Iniciar evaluación automática del estado
+        iniciarEvaluacionEstado(hora_entrada, min_tolerancia, hora_cierre, "estadoDiaRegistro");
 
         ;
 

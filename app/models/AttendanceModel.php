@@ -28,6 +28,23 @@ class AttendanceModel extends Model
         return $stmt->execute();
     }
 
+public function checkIfAlreadyRegistered($estudianteId, $diaFechaId)
+{
+    $sql = "SELECT ae.hora_registro, ea.nombre_estado
+            FROM asistencia_estudiante ae
+            INNER JOIN estado_asistencia ea ON ae.estado_id = ea.id_estado
+            WHERE ae.estudiante_id = :estudianteId AND ae.dia_fecha_id = :diaFechaId
+            LIMIT 1";
+    
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':estudianteId', $estudianteId);
+    $stmt->bindParam(':diaFechaId', $diaFechaId);
+    $stmt->execute();
+
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+
     public function registerNewDay($fecha, $name_day, $entry_time, $exit_time, $tolerance)
     {
         $stmt = $this->db->prepare("INSERT INTO dia_asistencia (fecha, nombre_dia, hora_entrada, hora_salida, min_tolerancia)

@@ -148,16 +148,16 @@ class AttendanceController extends Controller
     public function register_attendance()
     {
         if (!isAjax()) return;
-    
+
         header('Content-Type: application/json');
-    
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['codigo'])) {
             $codigoEstudiante = $_POST['codigo'];
-    
+
             // Obtener estudiante
             $StudentModel = $this->model('StudentModel');
             $student = $StudentModel->getStudentByCode($codigoEstudiante);
-    
+
             if (!$student) {
                 echo json_encode([
                     'status' => 'error',
@@ -165,20 +165,20 @@ class AttendanceController extends Controller
                 ]);
                 return;
             }
-    
+
             // Obtener configuración
             $SettingModel = $this->model('SettingModel');
             $config = $SettingModel->getConfig();
-    
+
             date_default_timezone_set($config['time_zone'] ?? 'America/Lima');
-    
+
             $currentDate = date('Y-m-d');
             $currentTime = date('H:i');
-    
+
             // Validar si el día está activo
             $DayModel = $this->model('DayModel');
             $dayActive = $DayModel->validDayActive($currentDate);
-    
+
             if (!$dayActive) {
                 echo json_encode([
                     'status' => 'error',
@@ -186,24 +186,24 @@ class AttendanceController extends Controller
                 ]);
                 return;
             }
-    
+
             // Obtener estados de asistencia
             $StatusAttendaceModel = $this->model('StatusAttendanceModel');
             $statusAttendance = $StatusAttendaceModel->getAllStatus();
-    
+
             // Mapear estados por nombre en minúscula
             $estadoMap = [];
             foreach ($statusAttendance as $estadoData) {
                 $estadoMap[strtolower($estadoData['nombre_estado'])] = $estadoData;
             }
-    
+
             // Configuración de horario
             $entry_time    = $config['entry_time'];               // Ej: 07:30
             $exit_time     = $config['exit_time'];                // Ej: 13:00
             $tolerance_min = intval($config['time_tolerance']);   // Ej: 10
-    
+
             $max_punctual_time = date("H:i", strtotime("+{$tolerance_min} minutes", strtotime($entry_time)));
-    
+
             // Determinar estado según la hora
             if ($currentTime <= $max_punctual_time) {
                 $estadoSeleccionado = $estadoMap['presente'] ?? null;
@@ -216,7 +216,7 @@ class AttendanceController extends Controller
                 ]);
                 return;
             }
-    
+
             if (!$estadoSeleccionado) {
                 echo json_encode([
                     'status' => 'error',
@@ -224,16 +224,37 @@ class AttendanceController extends Controller
                 ]);
                 return;
             }
-    
+
             // Registrar asistencia
             $AttendanceModel = $this->model('AttendanceModel');
+
+
+
+            // Verificar si ya tiene asistencia registrada para hoy
+            $yaRegistrado = $AttendanceModel->checkIfAlreadyRegistered(
+                $student['estudiante_id'],
+                $dayActive['dia_fecha_id']
+            );
+
+            if ($yaRegistrado) {
+                echo json_encode([
+                    'status' => 'warning',
+                    'message' => 'Este estudiante ya ha registrado su asistencia hoy.',
+                    'student' => $student,
+                    'hora_registrada' => $yaRegistrado['hora_registro'],
+                    'estado_registrado' => $yaRegistrado['nombre_estado']
+                ]);
+                return;
+            }
+
+
             $AttendanceModel->registerAttendance(
                 $student['estudiante_id'],
                 $dayActive['dia_fecha_id'],
                 $currentTime,
                 $estadoSeleccionado['id_estado']
             );
-    
+
             echo json_encode([
                 'status' => 'success',
                 'message' => 'Asistencia registrada correctamente.',
@@ -249,5 +270,4 @@ class AttendanceController extends Controller
             ]);
         }
     }
-    
 }

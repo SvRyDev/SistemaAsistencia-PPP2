@@ -77,21 +77,22 @@
             </div>
 
             <!-- Estado Actual -->
-            <div class="col-sm-12 col-md-6 col-lg-12 col-xl-4">
+            <div class="col-sm-12 col-md-6 col-lg-12 col-xl-6">
                 <div class="card shadow border-left-secondary bg-light">
                     <div class="card-header bg-light">
                         <i class="fas fa-info-circle mr-2"></i> Estado Actual
                     </div>
                     <div class="card-body d-flex align-items-center p-3">
-                        <div class="bg-success text-white d-flex align-items-center justify-content-center mr-3"
+                        <div id="iconEstado" class="bg-secondary text-white d-flex align-items-center justify-content-center mr-3"
                             style="width: 60px; height: 60px; border-radius: 50%;">
-                            <i class="fas fa-check-circle fa-2x"></i> <!-- Ícono representando "Temprano" -->
+                            <i id="iconoAsistencia" class="fas fa-check-circle fa-2x"></i>
                         </div>
-                        <div class="text-left flex-grow-1 ">
-                            <div id="estadoDiaRegistro" class="h3 font-weight-bold text-success mb-0 ">Temprano</div>
+                        <div class="text-left flex-grow-1">
+                            <div id="estadoDiaRegistro" class="h3 font-weight-bold mb-0">----</div>
                             <small class="text-muted">Estado de Asistencia</small>
                         </div>
                     </div>
+
                 </div>
             </div>
 
