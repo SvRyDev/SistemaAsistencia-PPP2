@@ -89,7 +89,24 @@ class AttendanceController extends Controller
         }
     }
 
+    public function get_list_status_attendance()
+    {
+        if (!isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(400); // Bad Request
+            echo json_encode(['status' => 'error', 'message' => 'Petición no válida.']);
+            return;
+        }
 
+        header('Content-Type: application/json');
+
+        $StatusAModel = $this->model('StatusAttendanceModel');
+        $allStatus = $StatusAModel->getAllStatus();
+
+        echo json_encode([
+            'status' => 'success',
+            'estados' => $allStatus
+        ]);
+    }
 
     public function register_new_day()
     {

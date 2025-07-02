@@ -43,6 +43,7 @@ $router->addRoute('GET', '/carnet/previewCarnet', 'CarnetController@preview_sing
 $router->addRoute('POST', '/attendance/registerAttendance', 'AttendanceController@register_attendance');
 $router->addRoute('POST', '/attendance/openNewDay', 'AttendanceController@register_new_day');
 $router->addRoute('POST', '/attendance/getConfig', 'AttendanceController@get_config_attendance');
+$router->addRoute('POST', '/attendance/getListStatusAttendance', 'AttendanceController@get_list_status_attendance');
 $router->addRoute('GET', '/student/getTotalStudents', 'StudentController@get_total_students');
 $router->addRoute('POST', '/report/RecordByStudent', 'ReportController@record_by_student');
 $router->addRoute('POST', '/report/RecordByGroup', 'ReportController@record_by_group');

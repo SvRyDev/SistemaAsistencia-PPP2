@@ -92,6 +92,8 @@ function formatearFechaLegible(fechaISO) {
 
   return fecha.toLocaleString("es-PE", opciones);
 }
+
+
 function getHoraMinuto() {
   const now = new Date();
   const horas = now.getHours().toString().padStart(2, '0');

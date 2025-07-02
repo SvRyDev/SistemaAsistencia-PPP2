@@ -28,20 +28,20 @@ class AttendanceModel extends Model
         return $stmt->execute();
     }
 
-public function checkIfAlreadyRegistered($estudianteId, $diaFechaId)
-{
-    $sql = "SELECT hora_entrada
+    public function checkIfAlreadyRegistered($estudianteId, $diaFechaId)
+    {
+        $sql = "SELECT hora_entrada
             FROM asistencia_estudiante
             WHERE estudiante_id = :estudianteId AND dia_fecha_id = :diaFechaId
             LIMIT 1";
-    
-    $stmt = $this->db->prepare($sql);
-    $stmt->bindParam(':estudianteId', $estudianteId);
-    $stmt->bindParam(':diaFechaId', $diaFechaId);
-    $stmt->execute();
 
-    return $stmt->fetch(PDO::FETCH_ASSOC); // Devuelve null si no hay registro
-}
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':estudianteId', $estudianteId);
+        $stmt->bindParam(':diaFechaId', $diaFechaId);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC); // Devuelve null si no hay registro
+    }
 
 
 

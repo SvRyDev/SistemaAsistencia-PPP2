@@ -1,3 +1,7 @@
+<?php include('modal/register_justify.php'); ?>
+
+
+
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -13,6 +17,8 @@
 
             </div>
         </div>
+
+
 
 
         <!-- Resumen del día -->
@@ -168,6 +174,15 @@
                                     <i class="fas fa-file-signature mr-1"></i> Registrar Justificación
                                 </button>
                             </div>
+
+                            <!-- Botón para abrir el modal -->
+                            <div class="col-auto mb-2">
+                                <button type="button" class="btn btn-primary" id="btnAbrirModal">
+                                    Abrir Modal jlkjlkjl
+                                </button>
+
+                            </div>
+
                         </div>
                     </div>
                 </div>

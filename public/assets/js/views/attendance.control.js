@@ -41,28 +41,28 @@ function actualizarEstadoVisual(estado, destinoId) {
   let icono = "";
   let texto = "";
 
-switch (estado.tipo) {
-  case "temprano":
-    color = "success";
-    icono = "fa-check-circle";
-    texto = `Temprano <small class="h6">(-${estado.minutos}m ${estado.segundos}s)</small>`;
-    break;
-  case "tolerancia":
-    color = "info";
-    icono = "fa-clock";
-    texto = `Tolerancia <small class="h6">(+${estado.restantesMin}m ${estado.restantesSeg}s)</small>`;
-    break;
-  case "tarde":
-    color = "warning";
-    icono = "fa-exclamation-circle";
-    texto = `Tarde <small class="h6 ">(+${estado.minutosTarde}m ${estado.segundosTarde}s)</small>`;
-    break;
-  case "fuera":
-    color = "danger";
-    icono = "fa-times-circle";
-    texto = `Fuera de tiempo`;
-    break;
-}
+  switch (estado.tipo) {
+    case "temprano":
+      color = "success";
+      icono = "fa-check-circle";
+      texto = `Temprano <small class="h6">(-${estado.minutos}m ${estado.segundos}s)</small>`;
+      break;
+    case "tolerancia":
+      color = "info";
+      icono = "fa-clock";
+      texto = `Tolerancia <small class="h6">(+${estado.restantesMin}m ${estado.restantesSeg}s)</small>`;
+      break;
+    case "tarde":
+      color = "warning";
+      icono = "fa-exclamation-circle";
+      texto = `Tarde <small class="h6 ">(+${estado.minutosTarde}m ${estado.segundosTarde}s)</small>`;
+      break;
+    case "fuera":
+      color = "danger";
+      icono = "fa-times-circle";
+      texto = `Fuera de tiempo`;
+      break;
+  }
 
 
   $texto
@@ -304,7 +304,51 @@ $(document).ready(function () {
       }
     });
   });
+
+
+  $('#btnAbrirModal').on('click', function () {
+    const hora = getHoraMinuto();
+    $('#mdlHoraEntrada').val(hora);
+
+    // Limpiar opciones anteriores excepto la primera
+    $('#estadoAsistencia').find('option:not(:first)').remove();
+
+    $.ajax({
+      url: base_url + "/attendance/getListStatusAttendance",
+      type: "POST",
+      dataType: "json",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      success: function (response) {
+        if (response.status === "success") {
+          const estados = response.estados;
+          estados.forEach(function (estado) {
+            $('#estadoAsistencia').append(
+              `<option value="${estado.id_estado}">${estado.nombre_estado}</option>`
+            );
+          });
+        } else {
+          console.error("Error al cargar estados:", response.message);
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error AJAX:", error);
+      },
+      complete: function () {
+        // Mostrar el modal solo después de haber cargado todo
+        $('#modalAuxiliar').modal('show');
+      }
+    });
+  });
+
+
+
+
+
+
 });
+
 
 
 
