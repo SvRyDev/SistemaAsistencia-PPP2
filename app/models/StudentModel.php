@@ -8,6 +8,39 @@ class StudentModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function searchByDniOrName($query)
+    {
+        $sql = "SELECT estudiante_id AS id, codigo, nombres, apellidos, dni, grado_nombre, seccion
+            FROM vista_estudiantes
+            WHERE nombres LIKE :q OR apellidos LIKE :q OR dni LIKE :q
+            ORDER BY apellidos ASC, nombres ASC
+            LIMIT 10";
+
+        $stmt = $this->db->prepare($sql);
+        $likeQuery = '%' . $query . '%';
+        $stmt->bindParam(':q', $likeQuery, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    public function getStudentByCode($codigo)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM vista_estudiantes WHERE codigo = :codigo");
+        $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    public function getStudentByDNI($dni)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM vista_estudiantes WHERE dni = :dni");
+        $stmt->bindParam(':dni', $dni, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+
 
     public function getTotalStudents()
     {
@@ -39,22 +72,6 @@ class StudentModel extends Model
             $this->db->rollBack();
             return false;
         }
-    }
-
-
-    public function getStudentByCode($codigo)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM vista_estudiantes WHERE codigo = :codigo");
-        $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-    public function getStudentByDNI($dni)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM vista_estudiantes WHERE dni = :dni");
-        $stmt->bindParam(':dni', $dni, PDO::PARAM_STR);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
 

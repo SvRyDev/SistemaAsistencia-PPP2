@@ -143,6 +143,47 @@ class StudentController extends Controller
         }
     }
 
+    public function search_by_dni_or_name()
+    {
+        if (!isAjax()) {
+            return;
+        }
 
+        header('Content-Type: application/json');
 
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['query'])) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'No se recibió parámetro de búsqueda.'
+            ]);
+            return;
+        }
+
+        $query = trim($_POST['query']);
+
+        if (strlen($query) < 2) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'El término de búsqueda es demasiado corto.'
+            ]);
+            return;
+        }
+
+        $StudentModel = $this->model('StudentModel');
+        $resultados = $StudentModel->searchByDniOrName($query);
+
+        if (empty($resultados)) {
+            echo json_encode([
+                'status' => 'success',
+                'estudiantes' => [],
+                'message' => 'No se encontraron coincidencias.'
+            ]);
+            return;
+        }
+
+        echo json_encode([
+            'status' => 'success',
+            'estudiantes' => $resultados
+        ]);
+    }
 }

@@ -89,6 +89,67 @@ class AttendanceController extends Controller
         }
     }
 
+    public function get_list_attendance_last_day()
+    {
+        // Validar si la solicitud es AJAX
+        if (!isAjax()) {
+            http_response_code(403);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Acceso no autorizado.'
+            ]);
+            return;
+        }
+
+        // Validar método HTTP
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Método no permitido.'
+            ]);
+            return;
+        }
+
+        // Definir tipo de respuesta
+        header('Content-Type: application/json');
+
+        try {
+            $currentDate = date('Y-m-d');
+
+            $DayModel = $this->model('DayModel');
+            $dayActive = $DayModel->validDayActive($currentDate);
+
+            // Verificar si se obtuvo un día activo válido
+            if (!$dayActive || empty($dayActive['dia_fecha_id'])) {
+                http_response_code(404);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'No se encontró un día activo válido.'
+                ]);
+                return;
+            }
+
+            $AttendanceModel = $this->model('AttendanceModel');
+            $listAttendance = $AttendanceModel->getAllAttendanceByDate($dayActive['dia_fecha_id']);
+
+            echo json_encode([
+                'status' => 'success',
+                'day_active' => $dayActive,
+                'list_attendance' => $listAttendance
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error interno del servidor.',
+                'details' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+
     public function get_list_status_attendance()
     {
         if (!isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -248,7 +309,7 @@ class AttendanceController extends Controller
 
 
             // Verificar si ya tiene asistencia registrada para hoy
-            $yaRegistrado = $AttendanceModel->checkIfAlreadyRegistered(
+            $yaRegistrado = $AttendanceModel->getRegisteredByStudentAndDate(
                 $student['estudiante_id'],
                 $dayActive['dia_fecha_id']
             );
@@ -284,6 +345,153 @@ class AttendanceController extends Controller
             echo json_encode([
                 'status' => 'error',
                 'message' => 'Código de estudiante no proporcionado.'
+            ]);
+        }
+    }
+
+    public function save_attendance()
+    {
+        if (!isAjax()) {
+            http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Acceso no permitido']);
+            return;
+        }
+
+        // Obtener datos del POST
+        $estudianteId = $_POST['estudiante_id'] ?? null;
+        $horaEntrada = $_POST['hora_entrada'] ?? null;
+        $estadoAsistenciaId = $_POST['estado_asistencia_id'] ?? null;
+        $observacion = $_POST['observacion'] ?? null;
+
+        // Validación básica
+        if (!$estudianteId || !$horaEntrada || !$estadoAsistenciaId) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Faltan campos obligatorios (estudiante, hora o estado).'
+            ]);
+            return;
+        }
+
+        // Obtener fecha actual del servidor
+        $currentDate = date('Y-m-d');
+
+
+        // Validar si el día está activo
+        $DayModel = $this->model('DayModel');
+        $dayActive = $DayModel->validDayActive($currentDate);
+
+        if (!$dayActive) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'El día actual no está habilitado para registrar asistencia.'
+            ]);
+            return;
+        }
+        $fecha_id = $dayActive['dia_fecha_id'];
+
+        // Modelo
+        $asistenciaModel = $this->model('AttendanceModel');
+        $registro = $asistenciaModel->getRegisteredByStudentAndDate($estudianteId, $fecha_id);
+
+        if ($registro) {
+            // Actualizar asistencia
+            $updated = $asistenciaModel->updateAttendance(
+                $estudianteId,
+                $fecha_id, // asegúrate del nombre correcto de la PK
+                $horaEntrada,
+                $estadoAsistenciaId,
+                $observacion
+            );
+
+            echo json_encode([
+                'status' => $updated ? 'success' : 'error',
+                'message' => $updated ? 'Asistencia actualizada correctamente.' : 'Error al actualizar asistencia.'
+            ]);
+        } else {
+            // Insertar nueva asistencia
+            $created = $asistenciaModel->createAttendance(
+                $estudianteId,
+                $fecha_id,
+                $horaEntrada,
+                $estadoAsistenciaId,
+                $observacion
+            );
+
+            echo json_encode([
+                'status' => $created ? 'success' : 'error',
+                'message' => $created ? 'Asistencia registrada correctamente.' : 'Error al registrar asistencia.'
+            ]);
+        }
+    }
+
+
+    public function edit_attendance_registered()
+    {
+        if (!isAjax()) {
+            http_response_code(400);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Acceso no permitido.'
+            ]);
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Método inválido.'
+            ]);
+            return;
+        }
+
+        $estudianteId = $_POST['estudiante_id'] ?? null;
+        $fecha = date('Y-m-d'); // Fecha actual del servidor en formato YYYY-MM-DD
+
+
+        if (!$estudianteId || !$fecha) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Datos incompletos.'
+            ]);
+            return;
+        }
+
+        // Buscar el ID de día correspondiente a la fecha
+        $DayModel = $this->model('DayModel');
+        $dia = $DayModel->validDayActive($fecha); // Devuelve fila con dia_fecha_id, etc.
+
+        if (!$dia || empty($dia['dia_fecha_id'])) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'No hay día registrado con esa fecha.'
+            ]);
+            return;
+        }
+
+        $diaFechaId = $dia['dia_fecha_id'];
+
+        // Consultar si ya existe un registro de asistencia
+        $AttendanceModel = $this->model('AttendanceModel');
+        $asistencia = $AttendanceModel->getRegisteredByStudentAndDate($estudianteId, $diaFechaId);
+
+        if ($asistencia) {
+            echo json_encode([
+                'status' => 'found',
+                'message' => 'Asistencia ya registrada.',
+                'data' => [
+                    'asistencia_id' => $asistencia['asistencia_estudiante_id'],
+                    'hora_entrada' => $asistencia['hora_entrada'],
+                    'hora_salida' => $asistencia['hora_salida'],
+                    'estado_asistencia_id' => $asistencia['estado_asistencia_id'],
+                    'observacion' => $asistencia['observacion']
+                ]
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'not_found',
+                'message' => 'No hay asistencia registrada. Puedes crearla.',
             ]);
         }
     }

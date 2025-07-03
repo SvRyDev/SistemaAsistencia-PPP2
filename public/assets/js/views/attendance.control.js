@@ -343,7 +343,207 @@ $(document).ready(function () {
   });
 
 
+  /* ------------------------------------------------ */
+  // Evento para busqueda de asistencia de estudiante
+  /* ------------------------------------------------ */
+  $('#buscarEstudiante').on('input', function () {
+    const query = $(this).val().trim();
 
+    if (query.length < 2) {
+      $('#resultadoBusqueda').empty().hide();
+      return;
+    }
+
+    $.ajax({
+      url: base_url + "/student/searchByDniOrName", // AJUSTA TU RUTA
+      type: "POST",
+      data: { query: query },
+      dataType: "json",
+      success: function (response) {
+        const results = response.estudiantes;
+        const $resultados = $('#resultadoBusqueda');
+        $resultados.empty();
+
+        if (results.length === 0) {
+          $resultados.append('<div class="list-group-item disabled">No encontrado</div>');
+        } else {
+          results.forEach(est => {
+            const item = `
+                        <a href="#" class="list-group-item list-group-item-action"
+                            data-id="${est.id}" data-nombre="${est.nombres} ${est.apellidos}">
+                            ${est.nombres} ${est.apellidos} - <small>${est.dni}</small>
+                        </a>`;
+            $resultados.append(item);
+          });
+        }
+
+        $resultados.show();
+      },
+      error: function () {
+        $('#resultadoBusqueda').html('<div class="list-group-item text-danger">Error al buscar</div>').show();
+      }
+    });
+  });
+
+
+
+
+  // Seleccionar estudiante del autocompletado
+  $('#resultadoBusqueda').on('click', 'a', function (e) {
+    e.preventDefault();
+    const estudianteId = $(this).data('id');
+    const nombreCompleto = $(this).data('nombre');
+
+    $('#estudianteId').val(estudianteId);
+    $('#estudianteNombre').val(nombreCompleto);
+    $('#resultadoBusqueda').hide();
+
+    $.ajax({
+      url: base_url + "/attendance/EditIfRegistered",
+      type: "POST",
+      dataType: "json",
+      data: {
+        estudiante_id: estudianteId,
+      },
+      beforeSend: function () {
+        $('#estadoAsistenciaMensaje')
+          .removeClass('text-muted text-success text-danger text-warning')
+          .addClass('text-muted') // o text-danger según el caso
+          .text('Cargando...');
+
+      },
+      success: function (res) {
+        if (res.status === 'found') {
+          // Modo edición
+          actualizarFormularioSegunEstado(true, res);
+        } else {
+          // Modo nuevo
+          actualizarFormularioSegunEstado(false, res);
+        }
+      }
+    });
+
+  });
+
+  function actualizarFormularioSegunEstado(asistenciaExiste, res) {
+    const $btn = $('#btnGuardarAsistencia');
+    const $mensaje = $('#estadoAsistenciaMensaje');
+    const $header = $('#modalAsistenciaHeader');
+    const $input_entrada = $('');
+
+    if (asistenciaExiste) {
+      $('#mdlHoraEntrada').val(res.data.hora_entrada);
+      $('#estadoAsistencia').val(res.data.estado_asistencia_id);
+      $('#observacion').val(res.data.observacion || '');
+      $('#formEditarAsistencia').attr('data-modo', 'editar');
+
+      // Cambiar a modo editar
+      $btn.text('Actualizar')
+        .removeClass('btn-primary')
+        .addClass('btn-warning');
+
+      $mensaje
+        .removeClass()
+        .addClass('form-text mt-1 font-weight-bold text-warning')
+        .html('<i class="fas fa-check-circle mr-1"></i> Ya hay una asistencia registrada.');
+
+      // Cambiar color del encabezado
+      $header
+        .removeClass('bg-primary bg-light')
+        .addClass('bg-warning text-white');
+
+    } else {
+      const ahora = getHoraMinuto();
+      $('#mdlHoraEntrada').val(ahora);
+      $('#estadoAsistencia').val('');
+      $('#observacion').val('');
+      $('#formEditarAsistencia').attr('data-modo', 'nuevo');
+
+      // Cambiar a modo registrar
+      $btn.text('Guardar')
+        .removeClass('btn-warning')
+        .addClass('btn-primary');
+
+      $mensaje
+        .removeClass()
+        .addClass('form-text mt-1 font-weight-bold text-primary')
+        .html('<i class="fas fa-exclamation-circle mr-1"></i> Sin registro previo.');
+
+      // Cambiar color del encabezado
+      $header
+        .removeClass('bg-warning bg-light')
+        .addClass('bg-primary text-white');
+    }
+  }
+
+
+
+
+  $('#btnGuardarAsistencia').on('click', function (e) {
+    e.preventDefault(); // Evita que el formulario se envíe automáticamente
+
+    // Obtener el formulario y serializar los datos
+    const form = $('#formEditarAsistencia');
+    const formData = form.serialize();
+
+    // Enviar por AJAX al backend
+    $.ajax({
+      url: base_url + '/attendance/saveAttendance', // Cambia esta URL según tu ruta real
+      method: 'POST',
+      data: formData,
+      dataType: 'json',
+      success: function (res) {
+        if (res.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: res.message
+          });
+
+          $('#modalAuxiliar').modal('hide'); // Cierra modal si deseas
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: res.message
+          });
+        }
+      },
+      error: function () {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de servidor',
+          text: 'No se pudo procesar la solicitud.'
+        });
+        console.log(formData);
+
+      }
+    });
+
+
+  });
+
+  $('#modalAuxiliar').on('hidden.bs.modal', function () {
+    // Ejemplo: Limpiar todos los campos del formulario dentro del modal
+    $(this).find('form')[0].reset();
+
+    // Opcional: también puedes limpiar mensajes de error, alertas, etc.
+    $(this).find('#buscarEstudiante').val('');
+    $(this).find('#estadoAsistenciaMensaje').html('');
+
+      // Cambiar a modo editar
+      $('#btnGuadarAsistencia').html('Guardar')
+        .removeClass('btn-primary btn-success btn-warning')
+        .addClass('btn-primary');
+
+      // Cambiar color del encabezado
+      $('#modalAsistenciaHeader')
+        .removeClass('bg-primary bg-success bg-warning')
+        .addClass('bg-light text-dark');
+
+      $('#resultadoBusqueda').empty();
+
+});
 
 
 
@@ -543,3 +743,6 @@ function actualizarEstadoDia(estado) {
       break;
   }
 }
+
+
+

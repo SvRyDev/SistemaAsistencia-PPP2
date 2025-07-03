@@ -3,7 +3,14 @@ class AttendanceModel extends Model
 {
     public function getAllAttendance()
     {
-        $stmt = $this->db->prepare("SELECT * FROM estudiante");
+        $stmt = $this->db->prepare("SELECT * FROM asistencia_estudiante");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllAttendanceByDate($dia_fecha_id){
+        $stmt = $this->db->prepare("SELECT * FROM asistencia_estudiante WHERE dia_fecha_id = :dia_fecha_id");        
+        $stmt->bindParam(':dia_fecha_id', $dia_fecha_id);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -28,9 +35,9 @@ class AttendanceModel extends Model
         return $stmt->execute();
     }
 
-    public function checkIfAlreadyRegistered($estudianteId, $diaFechaId)
+    public function getRegisteredByStudentAndDate($estudianteId, $diaFechaId)
     {
-        $sql = "SELECT hora_entrada
+        $sql = "SELECT *
             FROM asistencia_estudiante
             WHERE estudiante_id = :estudianteId AND dia_fecha_id = :diaFechaId
             LIMIT 1";
@@ -43,7 +50,41 @@ class AttendanceModel extends Model
         return $stmt->fetch(PDO::FETCH_ASSOC); // Devuelve null si no hay registro
     }
 
+    public function createAttendance($estudiante_id, $dia_fecha_id, $hora_entrada, $estado_asistencia_id, $observacion = null)
+    {
+        $sql = "INSERT INTO asistencia_estudiante 
+        (estudiante_id, dia_fecha_id, hora_entrada, estado_asistencia_id, observacion)
+        VALUES 
+        (:estudiante_id, :dia_fecha_id, :hora_entrada, :estado_asistencia_id, :observacion)";
 
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':estudiante_id', $estudiante_id, PDO::PARAM_INT);
+        $stmt->bindParam(':dia_fecha_id', $dia_fecha_id, PDO::PARAM_INT);
+        $stmt->bindParam(':hora_entrada', $hora_entrada); // formato 'H:i:s'
+        $stmt->bindParam(':estado_asistencia_id', $estado_asistencia_id, PDO::PARAM_INT);
+        $stmt->bindParam(':observacion', $observacion);
+
+        return $stmt->execute();
+    }
+
+    public function updateAttendance($estudiante_id, $dia_fecha_id, $hora_entrada, $estado_asistencia_id, $observacion = null)
+
+    {
+        $sql = "UPDATE asistencia_estudiante 
+            SET hora_entrada = :hora_entrada,
+                estado_asistencia_id = :estado_asistencia_id,
+                observacion = :observacion
+            WHERE estudiante_id = :estudiante_id AND dia_fecha_id = :dia_fecha_id";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':estudiante_id', $estudiante_id, PDO::PARAM_INT);
+        $stmt->bindParam(':dia_fecha_id', $dia_fecha_id, PDO::PARAM_INT);
+        $stmt->bindParam(':hora_entrada', $hora_entrada);
+        $stmt->bindParam(':estado_asistencia_id', $estado_asistencia_id, PDO::PARAM_INT);
+        $stmt->bindParam(':observacion', $observacion);
+
+        return $stmt->execute();
+    }
 
     public function registerNewDay($fecha, $name_day, $entry_time, $exit_time, $tolerance)
     {

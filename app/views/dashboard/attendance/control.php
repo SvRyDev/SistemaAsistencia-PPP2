@@ -163,25 +163,13 @@
 
                             <!-- Editar Asistencia -->
                             <div class="col-auto mb-2">
-                                <button id="btnOpenEditor" class="btn btn-dark" id="btnEditarAsistencia">
-                                    <i class="fas fa-edit mr-1"></i> Editar Asistencia
-                                </button>
-                            </div>
-
-                            <!-- Registrar Justificación -->
-                            <div class="col-auto mb-2">
-                                <button id="btnOpenJustify" class="btn btn-warning">
-                                    <i class="fas fa-file-signature mr-1"></i> Registrar Justificación
+                                <button type="button" class="btn btn-warning" id="btnAbrirModal">
+                                    <i class="fas fa-edit mr-1"></i> Entrada Manual
                                 </button>
                             </div>
 
                             <!-- Botón para abrir el modal -->
-                            <div class="col-auto mb-2">
-                                <button type="button" class="btn btn-primary" id="btnAbrirModal">
-                                    Abrir Modal jlkjlkjl
-                                </button>
 
-                            </div>
 
                         </div>
                     </div>
@@ -232,7 +220,7 @@
                     <!-- Temprano -->
                     <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
                         <div class="text-center p-2 bg-white border-left border-success rounded shadow h-100">
-                            <h6 class="text-success font-weight-bold mb-1">Temprano</h6>
+                            <h6 class="text-success font-weight-bold mb-1">Asistencias</h6>
                             <div class="h5 font-weight-bold text-success mb-0" id="contadorTemprano">0</div>
                             <small id="porcentajeTemprano" class="text-muted">0%</small>
 
@@ -242,7 +230,7 @@
                     <!-- Tardíos -->
                     <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
                         <div class="text-center p-2 bg-white border-left border-info rounded shadow h-100">
-                            <h6 class="text-info font-weight-bold mb-1">Tardíos</h6>
+                            <h6 class="text-info font-weight-bold mb-1">Tardanzas</h6>
                             <div class="h5 font-weight-bold text-info mb-0" id="contadorTardios">0</div>
                             <small id="porcentajeTardios" class="text-muted">0%</small>
                         </div>
@@ -297,7 +285,7 @@
             <div class="col-lg-12 col-xl-9 mb-3 d-flex">
                 <div class="card shadow  w-100 h-100">
                     <div class="card-header border-left-dark bg-light">
-                        <i class="fas fa-list-alt mr-2"></i> Listado del Estudiantes
+                        <i class="fas fa-list-alt mr-2"></i> Listado del Estudiantes <small>(Se actualizara cada día)</small>
                     </div>
                     <div class="card-body table-responsive">
                         <div class="list-group" id="listaAsistencia">
