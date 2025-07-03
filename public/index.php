@@ -25,6 +25,7 @@ $router->addRoute('GET', '/report/group', 'ReportController@view_group_report');
 $router->addRoute('GET', '/report/resume/month', 'ReportController@view_resume_month_report');
 $router->addRoute('GET', '/report/resume/daily', 'ReportController@view_resume_day_report');
 $router->addRoute('GET', '/setting', 'SettingController@index');
+$router->addRoute('GET', '/backup', 'BackupController@index');
 
 
 
