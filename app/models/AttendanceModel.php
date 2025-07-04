@@ -14,17 +14,13 @@ class AttendanceModel extends Model
                 e.nombres,
                 e.apellidos,
                 g.nombre_completo AS grado,
+                g.orden_num AS grado_orden,
                 s.nombre_seccion AS seccion,
+
                 ae.hora_entrada AS hora_actual,
                 ea.id_estado,
                 ea.nombre_estado,
-                -- Mapeo manual de clase Bootstrap (puedes ajustar según tus clases)
-                CASE ea.id_estado
-                    WHEN 1 THEN 'success'
-                    WHEN 2 THEN 'warning'
-                    WHEN 3 THEN 'danger'
-                    ELSE 'secondary'
-                END AS clase_boostrap
+                ea.clase_boostrap
             FROM asistencia_estudiante ae
             INNER JOIN estudiante e ON ae.estudiante_id = e.estudiante_id
             LEFT JOIN grados g ON e.grado_id = g.id_grado

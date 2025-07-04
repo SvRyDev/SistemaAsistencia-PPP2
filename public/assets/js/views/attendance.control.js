@@ -132,7 +132,94 @@ function evaluarHoraEstadoDetalle(hEntrada, toleranciaMin, hSalida) {
 }
 
 
+function refreshListAttendance() {
 
+  contadorEstados[1] = 0;
+  contadorEstados[2] = 0;
+  contadorEstados[3] = 0;
+
+
+  $('#listaAsistencia').empty();
+  // -------------------------------
+  // Cargar registro del dia
+  // -------------------------------
+  $.ajax({
+    url: base_url + "/attendance/getListRegisteredLastDay",
+    type: "POST",
+    dataType: "json",
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    success: function (response) {
+      if (response.status === "success" && Array.isArray(response.list_attendance)) {
+        const lista = document.getElementById("listaAsistencia");
+        lista.innerHTML = ""; // Limpiar lista anterior
+        contadorAsistencias = 0;
+
+        response.list_attendance.forEach((student) => {
+          contadorAsistencias++;
+
+          const nuevoItem = document.createElement("div");
+          nuevoItem.className =
+            "list-group-item list-group-item-action pt-2 pb-2 animate__animated animate__fadeInUp";
+
+          nuevoItem.innerHTML = `
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-1 font-weight-bold text-truncate">
+                  <small>${contadorAsistencias}</small>
+                </div>
+                <div class="col-md-2 text-muted">
+                  <span class="text-dark">${student.codigo}</span>
+                </div>
+                <div class="col-md-5" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  <span>${student.nombres} ${student.apellidos}</span>
+                </div>
+                <div class="col-md-1 text-muted">
+                  <span class="text-dark">${student.grado_orden || "--"}</span>
+                </div>
+                <div class="col-md-1 text-muted">
+                  <span class="text-dark">${student.seccion || "--"}</span>
+                </div>
+                <div class="col-md-1 text-muted">
+                  <span class="text-dark">${getHoraMinuto(student.hora_actual) || "--"}</span>
+                </div>
+                <div class="col-md-1 text-left">
+                  <span data-id="${student.id_estado}" class="badge badge-${student.clase_boostrap}">
+                    ${student.nombre_estado}
+                  </span>
+                </div>
+              </div>
+            </div>
+          `;
+
+          lista.appendChild(nuevoItem);
+
+          // Contadores
+          const estadoId = student.id_estado;
+          if (contadorEstados[estadoId] !== undefined) {
+            contadorEstados[estadoId]++;
+          }
+        });
+
+        // Actualizar gráficos y contadores
+        const total_registrados = contadorEstados[1] + contadorEstados[2] + contadorEstados[3];
+        total_restantes = totalEstudiantes - total_registrados;
+
+        console.log(total_registrados);
+        console.log(total_restantes);
+
+        actualizarGrafica(pieAsistencia);
+        actualizarContadores();
+      } else {
+        console.warn("Respuesta vacía o inválida:", response);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error al cargar asistencia:", error);
+    },
+  });
+}
 
 
 
@@ -235,91 +322,12 @@ $(document).ready(function () {
       };
 
 
+      refreshListAttendance();
 
 
 
 
-        // -------------------------------
-  // Cargar registro del dia
-  // -------------------------------
-  $.ajax({
-    url: base_url + "/attendance/getListRegisteredLastDay",
-    type: "POST",
-    dataType: "json",
-    headers: {
-      "X-Requested-With": "XMLHttpRequest",
-    },
-    success: function (response) {
-      if (response.status === "success" && Array.isArray(response.list_attendance)) {
-        const lista = document.getElementById("listaAsistencia");
-        lista.innerHTML = ""; // Limpiar lista anterior
-        contadorAsistencias = 0;
-  
-        response.list_attendance.forEach((student) => {
-          contadorAsistencias++;
-  
-          const nuevoItem = document.createElement("div");
-          nuevoItem.className =
-            "list-group-item list-group-item-action pt-2 pb-2 animate__animated animate__fadeInUp";
-  
-          nuevoItem.innerHTML = `
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-md-1 font-weight-bold text-truncate">
-                  <small>${contadorAsistencias}</small>
-                </div>
-                <div class="col-md-2 text-muted">
-                  <span class="text-dark">${student.codigo}</span>
-                </div>
-                <div class="col-md-4">
-                  <span>${student.nombres} ${student.apellidos}</span>
-                </div>
-                <div class="col-md-1 text-muted">
-                  <span class="text-dark">${student.grado || "--"}</span>
-                </div>
-                <div class="col-md-1 text-muted">
-                  <span class="text-dark">${student.seccion || "--"}</span>
-                </div>
-                <div class="col-md-2 text-muted">
-                  <span class="text-dark">${student.hora_actual || "--"}</span>
-                </div>
-                <div class="col-md-1 text-right">
-                  <span data-id="${student.id_estado}" class="badge badge-${student.clase_boostrap}">
-                    ${student.nombre_estado}
-                  </span>
-                </div>
-              </div>
-            </div>
-          `;
-  
-          lista.appendChild(nuevoItem);
-  
-          // Contadores
-          const estadoId = student.id_estado;
-          if (contadorEstados[estadoId] !== undefined) {
-            contadorEstados[estadoId]++;
-          }
-        });
-  
-        // Actualizar gráficos y contadores
-        const total_registrados = contadorEstados[1] + contadorEstados[2] + contadorEstados[3];
-        total_restantes = totalEstudiantes - total_registrados;
-  
-        console.log(total_registrados);
-        console.log(total_restantes);
-        
-        actualizarGrafica(pieAsistencia);
-        actualizarContadores();
-      } else {
-        console.warn("Respuesta vacía o inválida:", response);
-      }
-    },
-    error: function (xhr, status, error) {
-      console.error("Error al cargar asistencia:", error);
-    },
-  });
-  
-  
+
 
 
     },
@@ -332,7 +340,7 @@ $(document).ready(function () {
     },
   });
 
-  
+
 
 
 
@@ -590,7 +598,7 @@ $(document).ready(function () {
             title: 'Éxito',
             text: res.message
           });
-
+          refreshListAttendance();
           $('#modalAuxiliar').modal('hide'); // Cierra modal si deseas
         } else {
           Swal.fire({
@@ -622,19 +630,19 @@ $(document).ready(function () {
     $(this).find('#buscarEstudiante').val('');
     $(this).find('#estadoAsistenciaMensaje').html('');
 
-      // Cambiar a modo editar
-      $('#btnGuadarAsistencia').html('Guardar')
-        .removeClass('btn-primary btn-success btn-warning')
-        .addClass('btn-primary');
+    // Cambiar a modo editar
+    $('#btnGuadarAsistencia').html('Guardar')
+      .removeClass('btn-primary btn-success btn-warning')
+      .addClass('btn-primary');
 
-      // Cambiar color del encabezado
-      $('#modalAsistenciaHeader')
-        .removeClass('bg-primary bg-success bg-warning')
-        .addClass('bg-light text-dark');
+    // Cambiar color del encabezado
+    $('#modalAsistenciaHeader')
+      .removeClass('bg-primary bg-success bg-warning')
+      .addClass('bg-light text-dark');
 
-      $('#resultadoBusqueda').empty();
+    $('#resultadoBusqueda').empty();
 
-});
+  });
 
 
 
@@ -720,7 +728,7 @@ window.addEventListener("message", function (event) {
       <div class="col-md-2 text-muted">
         <span class="text-dark">${event.data.student.codigo}</span>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-5" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
         <span> ${event.data.student.nombres} ${event.data.student.apellidos}</span>
       </div>
       <div class="col-md-1 text-muted">
@@ -730,10 +738,10 @@ window.addEventListener("message", function (event) {
       <div class="col-md-1 text-muted">
         <span class="text-dark">${event.data.student.seccion || "--"}</span>
       </div>
-      <div class="col-md-2 text-muted">
+      <div class="col-md-1 text-muted">
         <span class="text-dark">${event.data.hora_actual}</span>
       </div>
-      <div class="col-md-1 text-right">
+      <div class="col-md-1 text-left">
         <span data-id="${event.data.estado.id_estado}" class="badge badge-${event.data.estado.clase_boostrap} ">${event.data.estado.nombre_estado}</span>
       </div>
     </div>

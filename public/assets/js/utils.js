@@ -94,12 +94,27 @@ function formatearFechaLegible(fechaISO) {
 }
 
 
-function getHoraMinuto() {
-  const now = new Date();
-  const horas = now.getHours().toString().padStart(2, '0');
-  const minutos = now.getMinutes().toString().padStart(2, '0');
+function getHoraMinuto(fecha = null) {
+  let date;
+
+  if (!fecha) {
+    date = new Date();
+  } else if (typeof fecha === "string" && /^\d{2}:\d{2}(:\d{2})?$/.test(fecha)) {
+    // Si solo es una hora, convertirla a formato completo ISO
+    date = new Date(`1970-01-01T${fecha}`);
+  } else {
+    date = new Date(fecha);
+  }
+
+  // Validar que sea una fecha válida
+  if (isNaN(date.getTime())) return "--";
+
+  const horas = date.getHours().toString().padStart(2, '0');
+  const minutos = date.getMinutes().toString().padStart(2, '0');
   return `${horas}:${minutos}`;
 }
+
+
 
 function iniciarReloj(idHora, idFecha = null) {
   const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];

@@ -154,14 +154,7 @@
                                 </button>
                             </div>
 
-                            <!-- Marcar Asistencia Manual -->
-                            <div class="col-auto mb-2">
-                                <button id="btnOpenManualRegister" class="btn btn-secondary" id="btnMarcarManual">
-                                    <i class="fas fa-user-check mr-1"></i> Marcar Manual
-                                </button>
-                            </div>
-
-                            <!-- Editar Asistencia -->
+                            <!-- Entrada Asistencia Manual -->
                             <div class="col-auto mb-2">
                                 <button type="button" class="btn btn-warning" id="btnAbrirModal">
                                     <i class="fas fa-edit mr-1"></i> Entrada Manual
@@ -300,7 +293,7 @@
                                         <div class="col-md-2 text-white">
                                             Código
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-5">
                                             Nombres
                                         </div>
 
@@ -311,8 +304,8 @@
                                         <div class="col-md-1 text-white">
                                             Sección
                                         </div>
-                                        <div class="col-md-2 text-white">
-                                            Hora Llegada
+                                        <div class="col-md-1 text-white">
+                                            Hora
                                         </div>
                                         <div class="col-md-1 text-white">
                                             Estado
