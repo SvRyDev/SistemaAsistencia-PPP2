@@ -37,7 +37,7 @@ CREATE TABLE `asistencia_estudiante` (
   CONSTRAINT `asistencia_estudiante_ibfk_1` FOREIGN KEY (`estudiante_id`) REFERENCES `estudiante` (`estudiante_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `asistencia_estudiante_ibfk_2` FOREIGN KEY (`dia_fecha_id`) REFERENCES `dia_asistencia` (`dia_fecha_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_asistencia_estudiante_estado` FOREIGN KEY (`estado_asistencia_id`) REFERENCES `estados_asistencia` (`id_estado`)
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,7 +46,7 @@ CREATE TABLE `asistencia_estudiante` (
 
 LOCK TABLES `asistencia_estudiante` WRITE;
 /*!40000 ALTER TABLE `asistencia_estudiante` DISABLE KEYS */;
-INSERT INTO `asistencia_estudiante` VALUES (1,1,3,'08:01:00','13:00:00',1,''),(2,1,2,'08:10:00','13:05:00',2,'Llegó 10 min tarde'),(3,1,1,'08:10:00','08:10:00',1,'Sin registrar'),(4,4,2,'08:00:00','13:00:00',1,''),(5,5,3,'07:58:00','12:55:00',1,''),(6,1,4,'07:58:00','12:55:00',1,NULL),(7,1,5,'07:58:00','12:55:00',1,NULL),(8,1,6,'07:58:00','07:58:00',1,NULL),(9,1,7,'07:58:00','07:58:00',1,NULL),(57,6,15,'17:29:00',NULL,2,NULL);
+INSERT INTO `asistencia_estudiante` VALUES (1,1,3,'08:01:00','13:00:00',1,''),(2,1,2,'08:10:00','13:05:00',2,'Llegó 10 min tarde'),(3,1,1,'08:10:00','08:10:00',1,'Sin registrar'),(4,4,2,'08:00:00','13:00:00',1,''),(5,5,3,'07:58:00','12:55:00',1,''),(6,1,4,'07:58:00','12:55:00',1,NULL),(7,1,5,'07:58:00','12:55:00',1,NULL),(8,1,6,'07:58:00','07:58:00',1,NULL),(9,1,7,'07:58:00','07:58:00',1,NULL),(70,6,17,'11:59:00',NULL,2,'OBservacion por parte de los docentes'),(84,6,18,'09:11:00',NULL,3,'askdhadkuhdaw'),(85,12,18,'09:11:00',NULL,4,'Easta enferma'),(86,11,18,'09:11:00',NULL,1,NULL),(87,10,18,'09:13:00',NULL,2,NULL),(88,2,18,'09:24:00',NULL,2,''),(89,1,18,'09:45:00',NULL,1,'');
 /*!40000 ALTER TABLE `asistencia_estudiante` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,7 +98,7 @@ CREATE TABLE `dia_asistencia` (
   `total_justificados` int(11) DEFAULT NULL,
   `total_tardanza` int(11) DEFAULT NULL,
   PRIMARY KEY (`dia_fecha_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,7 +107,7 @@ CREATE TABLE `dia_asistencia` (
 
 LOCK TABLES `dia_asistencia` WRITE;
 /*!40000 ALTER TABLE `dia_asistencia` DISABLE KEYS */;
-INSERT INTO `dia_asistencia` VALUES (1,'2025-05-12','Jueves','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(2,'2025-05-13','Miércoles','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(3,'2025-05-14','Martes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(4,'2025-05-15','Lunes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(5,'2025-08-02','Viernes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(6,'2025-08-02','Lunes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(7,'2025-08-03','Martes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(14,'2025-06-30','Monday','08:15:00','08:20:00',10,NULL,NULL,NULL),(15,'2025-07-01','Tuesday','08:15:00','08:20:00',10,NULL,NULL,NULL);
+INSERT INTO `dia_asistencia` VALUES (1,'2025-05-12','Jueves','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(2,'2025-05-13','Miércoles','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(3,'2025-05-14','Martes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(4,'2025-05-15','Lunes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(5,'2025-08-02','Viernes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(6,'2025-08-02','Lunes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(7,'2025-08-03','Martes','08:00:00','13:00:00',NULL,NULL,NULL,NULL),(14,'2025-06-30','Monday','08:15:00','08:20:00',10,NULL,NULL,NULL),(15,'2025-07-01','Tuesday','08:15:00','08:20:00',10,NULL,NULL,NULL),(16,'2025-07-02','Wednesday','16:46:00','23:20:00',1,NULL,NULL,NULL),(17,'2025-07-03','Thursday','10:01:00','23:20:00',2,NULL,NULL,NULL),(18,'2025-07-04','Friday','10:01:00','23:20:00',2,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `dia_asistencia` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -249,7 +249,7 @@ CREATE TABLE `system_config` (
 
 LOCK TABLES `system_config` WRITE;
 /*!40000 ALTER TABLE `system_config` DISABLE KEYS */;
-INSERT INTO `system_config` VALUES (1,'Institución Educativa Mixto San Luis','2024','2024-01-03','2024-12-25','16:46:00','23:20:00',1,'America/Lima','2025-07-01 21:45:12');
+INSERT INTO `system_config` VALUES (1,'Institución Educativa Mixto San Luis','2024','2024-01-03','2024-12-25','09:10:00','23:20:00',2,'America/Lima','2025-07-04 14:11:13');
 /*!40000 ALTER TABLE `system_config` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -306,4 +306,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-01 21:44:29
+-- Dump completed on 2025-07-04 12:10:25
