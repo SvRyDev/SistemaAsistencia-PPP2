@@ -26,6 +26,7 @@ function actualizarGrafica(elemento) {
 }
 //Funcion para actualizar los contadores (Presente, Tardanza, Justificados, Restantes)
 function actualizarContadores() {
+  $('#total_estudiantes').html(totalEstudiantes);
   $('#contadorTemprano').html(contadorEstados[1]);
   $('#contadorTardios').html(contadorEstados[2]);
   $('#contadorJustificados').html(contadorEstados[3]);
@@ -204,8 +205,7 @@ $(document).ready(function () {
         $("#time-entry").html(formatearHoraAmPm(hora_entrada));
         $("#time-tolerance").html(min_tolerancia + " min");
         $("#time-finish").html(formatearHoraAmPm(hora_cierre));
-        $("#contadorRestantes").html(total_restantes);
-        $("#total_estudiantes").html(totalEstudiantes);
+
 
 
         console.log('la hora actual es ' + hora_actual);
@@ -237,6 +237,91 @@ $(document).ready(function () {
 
 
 
+
+
+        // -------------------------------
+  // Cargar registro del dia
+  // -------------------------------
+  $.ajax({
+    url: base_url + "/attendance/getListRegisteredLastDay",
+    type: "POST",
+    dataType: "json",
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    success: function (response) {
+      if (response.status === "success" && Array.isArray(response.list_attendance)) {
+        const lista = document.getElementById("listaAsistencia");
+        lista.innerHTML = ""; // Limpiar lista anterior
+        contadorAsistencias = 0;
+  
+        response.list_attendance.forEach((student) => {
+          contadorAsistencias++;
+  
+          const nuevoItem = document.createElement("div");
+          nuevoItem.className =
+            "list-group-item list-group-item-action pt-2 pb-2 animate__animated animate__fadeInUp";
+  
+          nuevoItem.innerHTML = `
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-1 font-weight-bold text-truncate">
+                  <small>${contadorAsistencias}</small>
+                </div>
+                <div class="col-md-2 text-muted">
+                  <span class="text-dark">${student.codigo}</span>
+                </div>
+                <div class="col-md-4">
+                  <span>${student.nombres} ${student.apellidos}</span>
+                </div>
+                <div class="col-md-1 text-muted">
+                  <span class="text-dark">${student.grado || "--"}</span>
+                </div>
+                <div class="col-md-1 text-muted">
+                  <span class="text-dark">${student.seccion || "--"}</span>
+                </div>
+                <div class="col-md-2 text-muted">
+                  <span class="text-dark">${student.hora_actual || "--"}</span>
+                </div>
+                <div class="col-md-1 text-right">
+                  <span data-id="${student.id_estado}" class="badge badge-${student.clase_boostrap}">
+                    ${student.nombre_estado}
+                  </span>
+                </div>
+              </div>
+            </div>
+          `;
+  
+          lista.appendChild(nuevoItem);
+  
+          // Contadores
+          const estadoId = student.id_estado;
+          if (contadorEstados[estadoId] !== undefined) {
+            contadorEstados[estadoId]++;
+          }
+        });
+  
+        // Actualizar gráficos y contadores
+        const total_registrados = contadorEstados[1] + contadorEstados[2] + contadorEstados[3];
+        total_restantes = totalEstudiantes - total_registrados;
+  
+        console.log(total_registrados);
+        console.log(total_restantes);
+        
+        actualizarGrafica(pieAsistencia);
+        actualizarContadores();
+      } else {
+        console.warn("Respuesta vacía o inválida:", response);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error al cargar asistencia:", error);
+    },
+  });
+  
+  
+
+
     },
     error: function (xhr, status, error) {
       console.error("AJAX Error:", error);
@@ -246,6 +331,12 @@ $(document).ready(function () {
       );
     },
   });
+
+  
+
+
+
+
 
   $("#btnOpenDay").click(function (e) {
     e.preventDefault();

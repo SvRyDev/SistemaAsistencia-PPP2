@@ -7,13 +7,39 @@ class AttendanceModel extends Model
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
     public function getAllAttendanceByDate($dia_fecha_id){
-        $stmt = $this->db->prepare("SELECT * FROM asistencia_estudiante WHERE dia_fecha_id = :dia_fecha_id");        
+        $sql = "
+            SELECT 
+                e.codigo,
+                e.nombres,
+                e.apellidos,
+                g.nombre_completo AS grado,
+                s.nombre_seccion AS seccion,
+                ae.hora_entrada AS hora_actual,
+                ea.id_estado,
+                ea.nombre_estado,
+                -- Mapeo manual de clase Bootstrap (puedes ajustar según tus clases)
+                CASE ea.id_estado
+                    WHEN 1 THEN 'success'
+                    WHEN 2 THEN 'warning'
+                    WHEN 3 THEN 'danger'
+                    ELSE 'secondary'
+                END AS clase_boostrap
+            FROM asistencia_estudiante ae
+            INNER JOIN estudiante e ON ae.estudiante_id = e.estudiante_id
+            LEFT JOIN grados g ON e.grado_id = g.id_grado
+            LEFT JOIN secciones s ON e.seccion_id = s.id_seccion
+            LEFT JOIN estados_asistencia ea ON ae.estado_asistencia_id = ea.id_estado
+            WHERE ae.dia_fecha_id = :dia_fecha_id
+            ORDER BY ae.hora_entrada ASC
+        ";
+    
+        $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':dia_fecha_id', $dia_fecha_id);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
 
 
 

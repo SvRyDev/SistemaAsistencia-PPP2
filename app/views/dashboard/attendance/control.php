@@ -288,10 +288,7 @@
                         <i class="fas fa-list-alt mr-2"></i> Listado del Estudiantes <small>(Se actualizara cada día)</small>
                     </div>
                     <div class="card-body table-responsive">
-                        <div class="list-group" id="listaAsistencia">
-                            <!-- Aquí se mostrarán los estudiantes registrados -->
-
-
+                        <div class="list-group" id="">
                             <div
                                 class="list-group-item pt-2 pb-2 animate__animated animate__fadeInUp  bg-dark text-left">
 
@@ -323,6 +320,9 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="list-group" id="listaAsistencia">
+                            <!-- Aquí se mostrarán los estudiantes registrados -->
                         </div>
                     </div>
                 </div>

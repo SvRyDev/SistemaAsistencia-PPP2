@@ -1,52 +1,77 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Gestión de Backup</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
 
-<div class="container py-5">
-  <div class="card shadow">
-    <div class="card-header bg-primary text-white">
-      <h4 class="mb-0">💾 Gestión de Backup</h4>
-    </div>
-    <div class="card-body">
-
-      <!-- Fechas de acciones recientes -->
-      <div class="alert alert-info">
-        <p class="mb-1">📤 Última exportación: <strong><?= $fecha_exportacion ?? 'Sin registro' ?></strong></p>
-        <p class="mb-0">📥 Última importación: <strong><?= $fecha_importacion ?? 'Sin registro' ?></strong></p>
+      <!-- Columna izquierda: Información general -->
+      <div class="col-md-12">
+        <div class="card bg-light border-0 shadow-sm mb-4">
+          <div class="card-header bg-primary">
+          <strong class="text-white"><i class="fas fa-exclamation-circle mr-2"></i>Nota importante:</strong>
+          </div>
+          <div class="card-body py-3">
+            
+            <ul class=" mt-2 mb-0 text-dark pl-3">
+              <li>Haz clic en <strong>Descargar Backup</strong> para generar una copia de seguridad.</li>
+              <li>Selecciona un archivo válido (.sql, .zip, .gz) para restaurar la base de datos.</li>
+              <li>No recargues ni cierres la página durante el proceso.</li>
+            </ul>
+          </div>
+        </div>
       </div>
 
-      <!-- Exportar backup -->
-      <h5>📤 Exportar Backup</h5>
-      <p>Haz clic para generar y descargar una copia actual de la base de datos.</p>
-      <form method="POST" action="/backup/exportar">
-        <button type="submit" class="btn btn-success mb-4">⬇️ Descargar Backup (.sql)</button>
-      </form>
+      <!-- Columna derecha: Exportar + Importar -->
+      <div class="col-md-12 col-xl-6">
 
-      <hr>
-
-      <!-- Importar backup -->
-      <h5>📥 Importar Backup</h5>
-      <p>Sube un archivo de respaldo válido para restaurar la base de datos.</p>
-      <ul>
-        <li>Formatos aceptados: <strong>.sql</strong>, <strong>.zip</strong>, <strong>.gz</strong></li>
-        <li>Debe ser un respaldo generado por herramientas como <code>mysqldump</code>.</li>
-      </ul>
-      <form method="POST" action="/backup/importar" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="archivo_backup">Seleccionar archivo:</label>
-          <input type="file" name="archivo_backup" id="archivo_backup" class="form-control-file" accept=".sql,.zip,.gz" required>
+        <!-- Card Exportar -->
+        <div class="card shadow mb-4">
+          <div class="card-header bg-success text-white">
+            <span class="mb-0"><i class="fas fa-upload mr-2"></i>Exportar Backup</span>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-light">
+              <i class="fas fa-calendar-alt mr-1"></i>Última exportación:
+              <strong><?= $fecha_exportacion ?? 'Sin registro' ?></strong>
+            </div>
+            <p>Haz clic en el botón para generar y descargar una copia actual de la base de datos.</p>
+            <form method="POST" action="/backup/exportar">
+              <button type="submit" class="btn btn-success">
+                <i class="fas fa-download mr-1"></i> Descargar Backup (.sql)
+              </button>
+            </form>
+          </div>
         </div>
-        <button type="submit" class="btn btn-warning">♻️ Restaurar desde Archivo</button>
-      </form>
+      </div>
+      <div class="col-md-12 col-xl-6">
+        <!-- Card Importar -->
+        <div class="card shadow">
+          <div class="card-header bg-warning text-dark">
+            <span class="mb-0"><i class="fas fa-download mr-2"></i>Importar Backup</span>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-light">
+              <i class="fas fa-calendar-check mr-1"></i>Última importación:
+              <strong><?= $fecha_importacion ?? 'Sin registro' ?></strong>
+            </div>
+            <p>Sube un archivo de respaldo válido para restaurar la base de datos.</p>
+            <ul>
+              <li>Formatos permitidos: <strong>.sql</strong>, <strong>.zip</strong>, <strong>.gz</strong></li>
+              <li>Generado con herramientas como <code>mysqldump</code>.</li>
+            </ul>
+            <form method="POST" action="/backup/importar" enctype="multipart/form-data">
+              <div class="form-group">
+                <label for="archivo_backup"><i class="fas fa-file-upload mr-1"></i>Seleccionar archivo:</label>
+                <input type="file" name="archivo_backup" id="archivo_backup" class="form-control-file"
+                  accept=".sql,.zip,.gz" required>
+              </div>
+              <button type="submit" class="btn btn-warning text-dark">
+                <i class="fas fa-sync-alt mr-1"></i> Restaurar desde Archivo
+              </button>
+            </form>
+          </div>
+        </div>
 
-    </div>
+      </div> <!-- fin col-md-8 -->
+
+    </div> <!-- fin row -->
   </div>
-</div>
-
-</body>
-</html>
+</section>
