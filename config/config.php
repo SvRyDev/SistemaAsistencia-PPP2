@@ -13,6 +13,9 @@ define('DB_NAME', 'db_asistencia_estudiantes');
 define('APP_URL', 'http://localhost/SistemaAsistencia-PPP2');
 define('BASE_PATH', 'SistemaAsistencia-PPP2');
 
+// Ruta de PATH Mysql
+define('MYSQLDUMP_PATH', 'C:\\xampp\\mysql\\bin\\mysqldump.exe');
+
 
 define('DEFAULT_CONTROLLER', 'HomeController');
 

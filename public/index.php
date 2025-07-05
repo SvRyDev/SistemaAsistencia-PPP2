@@ -62,6 +62,9 @@ $router->addRoute('GET', '/report/RecordByResumeDay', 'ReportController@record_b
 $router->addRoute('POST', '/setting/getConfig', 'SettingController@load_data_setting');
 $router->addRoute('POST', '/setting/saveConfig', 'SettingController@save_setting');
 
+$router->addRoute('GET', '/backup/export', 'BackupController@export');
+$router->addRoute('POST', '/backup/import', 'BackupController@import');
+
 $router->run()
 
 ?>
