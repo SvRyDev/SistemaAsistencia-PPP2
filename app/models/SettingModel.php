@@ -28,19 +28,31 @@ class SettingModel extends Model
             time_zone       = :time_zone,
             time_tolerance  = :time_tolerance
         WHERE id = :id");
-    
+
         // Bind individual parameters
-        $stmt->bindParam(':id',              $id, PDO::PARAM_INT);
-        $stmt->bindParam(':academic_year',   $academic_year);
-        $stmt->bindParam(':start_date',      $start_date);
-        $stmt->bindParam(':end_date',        $end_date);
-        $stmt->bindParam(':entry_time',      $entry_time);
-        $stmt->bindParam(':name_school',     $name_school);
-        $stmt->bindParam(':time_zone',       $time_zone);
-        $stmt->bindParam(':time_tolerance',  $time_tolerance);
-    
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':academic_year', $academic_year);
+        $stmt->bindParam(':start_date', $start_date);
+        $stmt->bindParam(':end_date', $end_date);
+        $stmt->bindParam(':entry_time', $entry_time);
+        $stmt->bindParam(':name_school', $name_school);
+        $stmt->bindParam(':time_zone', $time_zone);
+        $stmt->bindParam(':time_tolerance', $time_tolerance);
+
         return $stmt->execute();
     }
-    
+
+
+    public function updateDateImport()
+    {
+        $stmt = $this->db->prepare("UPDATE system_config SET last_date_import = NOW() WHERE id = 1");
+        $stmt->execute();
+    }
+
+    public function updateDateExport()
+    {
+        $stmt = $this->db->prepare("UPDATE system_config SET last_date_export = NOW() WHERE id = 1");
+        $stmt->execute();
+    }
 
 }

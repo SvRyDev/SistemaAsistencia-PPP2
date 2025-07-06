@@ -53,5 +53,39 @@ class BackupModel extends Model
         return true;
     }
 
+    public function resetSystem()
+    {
+        try {
+            $this->db->beginTransaction();
+
+            // Eliminación en orden lógico
+            $this->db->query("DELETE FROM asistencia_estudiante");
+            $this->db->query("DELETE FROM dia_asistencia");
+            $this->db->query("DELETE FROM carnet_estudiante");
+            $this->db->query("DELETE FROM estudiante");
+            // Restablecer valores predeterminados en system_config
+            $this->db->query("
+                UPDATE system_config SET
+                    name_school = 'Nombre del Colegio',
+                    academic_year = YEAR(CURDATE()),
+                    start_date = DATE_FORMAT(CURDATE(), '%Y-03-01'),
+                    end_date = DATE_FORMAT(CURDATE(), '%Y-12-15'),
+                    entry_time = '07:30:00',
+                    exit_time = '13:00:00',
+                    time_tolerance = 10,
+                    time_zone = 'America/Lima',
+                    updated_at = NOW()
+                WHERE id = 1
+                ");
+
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw new Exception("Error al reiniciar el sistema: " . $e->getMessage());
+        }
+    }
+
 
 }

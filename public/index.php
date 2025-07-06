@@ -14,7 +14,8 @@ require_once '../app/core/Router.php';
 $router = new Router();
 $router->addRoute('GET', '/', 'HomeController@index');
 $router->addRoute('GET', '/home', 'HomeController@index');
-$router->addRoute('GET', '/student', 'StudentController@index');
+$router->addRoute('GET', '/student', 'StudentController@view_list_students');
+$router->addRoute('GET', '/student/manage', 'StudentController@view_manage_students');
 $router->addRoute('GET', '/student/import', 'StudentController@view_import_data');
 $router->addRoute('GET', '/carnet', 'CarnetController@index');
 $router->addRoute('GET', '/attendance', 'AttendanceController@index');
@@ -37,6 +38,7 @@ $router->addRoute('GET', '/user/{tipo}/buscar/{nivel}/{id}', 'HomeController@det
 
 //Api Endpoints
 $router->addRoute('GET', '/student/getAll', 'StudentController@show');
+$router->addRoute('POST', '/student/getDetail', 'StudentController@get_detail_student');
 $router->addRoute('POST', '/student/readExcel', 'StudentController@read_from_Excel');
 $router->addRoute('POST', '/student/importData', 'StudentController@import_data_file');
 $router->addRoute('POST', '/student/searchByDniOrName', 'StudentController@search_by_dni_or_name');
@@ -64,6 +66,7 @@ $router->addRoute('POST', '/setting/saveConfig', 'SettingController@save_setting
 
 $router->addRoute('GET', '/backup/export', 'BackupController@export');
 $router->addRoute('POST', '/backup/import', 'BackupController@import');
+$router->addRoute('POST', '/backup/reset', 'BackupController@reset');
 
 $router->run()
 

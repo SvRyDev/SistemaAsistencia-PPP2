@@ -11,7 +11,10 @@
                     <!-- /.card-header -->
 
                     <div class="card-header bg-success text-white">
-                        <i class="fas fa-clipboard-check mr-2"></i> Informacion del Día
+                        <h3 class="card-title">
+                            <i class="fas fa-clipboard-check mr-2"></i> Informacion del Día
+
+                        </h3>
                     </div>
                 </div>
 
@@ -89,7 +92,8 @@
                         <i class="fas fa-info-circle mr-2"></i> Estado Actual
                     </div>
                     <div class="card-body d-flex align-items-center p-3">
-                        <div id="iconEstado" class="bg-secondary text-white d-flex align-items-center justify-content-center mr-3"
+                        <div id="iconEstado"
+                            class="bg-secondary text-white d-flex align-items-center justify-content-center mr-3"
                             style="width: 60px; height: 60px; border-radius: 50%;">
                             <i id="iconoAsistencia" class="fas fa-check-circle fa-2x"></i>
                         </div>
@@ -113,21 +117,24 @@
                             <div class="col-4 ">
                                 <i class="fas fa-sign-in-alt fa-lg text-primary mb-1"></i>
                                 <div class="small text-muted">Entrada</div>
-                                <span id="time-entry" class="badge badge-primary px-3 py-1 font-weight-bold">--:--</span>
+                                <span id="time-entry"
+                                    class="badge badge-primary px-3 py-1 font-weight-bold">--:--</span>
                             </div>
 
                             <!-- Tolerancia -->
                             <div class="col-4 ">
                                 <i class="fas fa-clock fa-lg text-warning mb-1"></i>
                                 <div class="small text-muted">Tolerancia</div>
-                                <span id="time-tolerance" class="badge badge-warning px-3 py-1 font-weight-bold">--</span>
+                                <span id="time-tolerance"
+                                    class="badge badge-warning px-3 py-1 font-weight-bold">--</span>
                             </div>
 
                             <!-- Salida -->
                             <div class="col-4">
                                 <i class="fas fa-sign-out-alt fa-lg text-danger mb-1"></i>
                                 <div class="small text-muted">Salida</div>
-                                <span id="time-finish" class="badge badge-danger px-3 py-1 font-weight-bold">--:--</span>
+                                <span id="time-finish"
+                                    class="badge badge-danger px-3 py-1 font-weight-bold">--:--</span>
                             </div>
 
                         </div>
@@ -278,7 +285,8 @@
             <div class="col-lg-12 col-xl-9 mb-3 d-flex">
                 <div class="card shadow  w-100 h-100">
                     <div class="card-header border-left-dark bg-light">
-                        <i class="fas fa-list-alt mr-2"></i> Listado del Estudiantes <small>(Se actualizara cada día)</small>
+                        <i class="fas fa-list-alt mr-2"></i> Listado del Estudiantes <small>(Se actualizara cada
+                            día)</small>
                     </div>
                     <div class="card-body table-responsive">
                         <div class="list-group" id="">

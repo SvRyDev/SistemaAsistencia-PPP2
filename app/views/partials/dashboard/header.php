@@ -147,13 +147,14 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="<?= base_url() ?>/student" class="nav-link">
-                <i class="nav-icon fas fa-user-plus"></i>
+              <a href="<?= base_url() ?>/student/manage" class="nav-link">
+                <i class="nav-icon fas fa-chalkboard-teacher"></i>
                 <p>
-                  Registrar Estudiante
+                  Gestión Estudiantes
                 </p>
               </a>
             </li>
+            
             <li class="nav-item">
               <a href="<?= base_url() ?>/student/import" class="nav-link">
                 <i class="nav-icon fas fa-file-import"></i>

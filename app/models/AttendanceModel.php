@@ -7,7 +7,38 @@ class AttendanceModel extends Model
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    public function getAllAttendanceByDate($dia_fecha_id){
+
+    // AttendanceModel.php
+    public function getLastAttendanceByStudent($studentId, $limit = 15)
+    {
+        $stmt = $this->db->prepare("
+            SELECT 
+                d.fecha,
+                d.nombre_dia,
+                e.nombre_estado,
+                e.abreviatura,
+                e.clase_boostrap,
+                e.color_hex,
+                e.icon
+
+            FROM asistencia_estudiante a
+            JOIN dia_asistencia d ON a.dia_fecha_id = d.dia_fecha_id
+            JOIN estados_asistencia e ON a.estado_asistencia_id = e.id_estado
+            WHERE a.estudiante_id = :estudiante_id
+            ORDER BY d.fecha DESC
+            LIMIT :limit
+        ");
+    
+        $stmt->bindValue(':estudiante_id', $studentId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT); 
+        $stmt->execute();
+    
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+
+    public function getAllAttendanceByDate($dia_fecha_id)
+    {
         $sql = "
             SELECT 
                 e.codigo,
@@ -29,13 +60,13 @@ class AttendanceModel extends Model
             WHERE ae.dia_fecha_id = :dia_fecha_id
             ORDER BY ae.hora_entrada ASC
         ";
-    
+
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':dia_fecha_id', $dia_fecha_id);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+
 
 
 
@@ -90,7 +121,6 @@ class AttendanceModel extends Model
     }
 
     public function updateAttendance($estudiante_id, $dia_fecha_id, $hora_entrada, $estado_asistencia_id, $observacion = null)
-
     {
         $sql = "UPDATE asistencia_estudiante 
             SET hora_entrada = :hora_entrada,

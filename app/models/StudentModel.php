@@ -8,6 +8,12 @@ class StudentModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getStudentById($id){
+        $stmt = $this->db->prepare("SELECT * FROM vista_estudiantes WHERE estudiante_id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
     public function searchByDniOrName($query)
     {
         $sql = "SELECT estudiante_id AS id, codigo, nombres, apellidos, dni, grado_nombre, seccion

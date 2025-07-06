@@ -17,7 +17,96 @@ class StudentController extends Controller
             'message' => 'Esta es la página de vista de estudiantes.'
         ];
 
-        View::render($view, $data,  $this->layout);
+        View::render($view, $data, $this->layout);
+    }
+
+
+    public function view_list_students()
+    {
+        $view = "student.list";
+        $data = [
+            'view_js' => $view,
+            'title' => 'Estudiantes',
+            'message' => 'Esta es la página de vista de estudiantes.'
+        ];
+
+        View::render($view, $data, $this->layout);
+    }
+
+
+    public function view_manage_students()
+    {
+        $view = "student.manage";
+        $data = [
+            'view_js' => $view,
+            'title' => 'Gestionar Estudiantes',
+            'message' => 'Esta es la página de gestión de estudiantes.'
+        ];
+
+        View::render($view, $data, $this->layout);
+    }
+
+    public function view_import_data()
+    {
+        $view = "student.import_data";
+        $data = [
+            'view_js' => $view,
+            'title' => 'Importar Estudiantes',
+            'message' => 'Esta es la página de vista de estudiantes.'
+        ];
+        View::render($view, $data, $this->layout);
+    }
+
+
+    public function get_detail_student()
+    {
+        if (!isAjax()) {
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['id'])) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'ID del estudiante no proporcionado.'
+            ]);
+            return;
+        }
+
+        $estudianteId = (int) $_POST['id'];
+
+        if ($estudianteId <= 0) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'ID inválido.'
+            ]);
+            return;
+        }
+
+        // Carga del modelo
+        $StudentModel = $this->model('StudentModel');
+        $AttendanceModel = $this->model('AttendanceModel');
+
+        // Buscar estudiante
+        $estudiante = $StudentModel->getStudentById($estudianteId);
+
+        if (!$estudiante) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Estudiante no encontrado.'
+            ]);
+            return;
+        }
+
+        // Obtener los últimos 15 registros de asistencia
+        $asistencias = $AttendanceModel->getLastAttendanceByStudent($estudianteId, 15);
+
+        echo json_encode([
+            'status' => 'success',
+            'estudiante' => $estudiante,
+            'asistencias' => $asistencias
+        ]);
     }
 
 
@@ -46,16 +135,6 @@ class StudentController extends Controller
         }
     }
 
-    public function view_import_data()
-    {
-        $view = "student.import_data";
-        $data = [
-            'view_js' => $view,
-            'title' => 'Importar Estudiantes',
-            'message' => 'Esta es la página de vista de estudiantes.'
-        ];
-        View::render($view, $data, $this->layout);
-    }
 
 
     public function read_from_Excel()
