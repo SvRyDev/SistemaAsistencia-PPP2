@@ -21,6 +21,7 @@ $router->addRoute('GET', '/student/import', 'StudentController@view_import_data'
 $router->addRoute('GET', '/carnet/individual', 'CarnetController@view_individual_generate_carnet');
 $router->addRoute('GET', '/carnet/grupal', 'CarnetController@view_grupal_generate_carnet');
 $router->addRoute('GET', '/attendance', 'AttendanceController@index');
+$router->addRoute('GET', '/attendance/query', 'AttendanceController@view_fetch_list_by_day');
 $router->addRoute('GET', '/attendance/openAttendance', 'AttendanceController@open_attendance');
 $router->addRoute('GET', '/attendance/searchStudentByCode', 'AttendanceController@open_attendance');
 $router->addRoute('GET', '/report/student', 'ReportController@view_student_report');
@@ -64,6 +65,7 @@ $router->addRoute('POST', '/attendance/registerAttendance', 'AttendanceControlle
 $router->addRoute('POST', '/attendance/openNewDay', 'AttendanceController@register_new_day');
 $router->addRoute('POST', '/attendance/getConfig', 'AttendanceController@get_config_attendance');
 $router->addRoute('POST', '/attendance/getListRegisteredLastDay', 'AttendanceController@get_list_attendance_last_day');
+$router->addRoute('POST', '/attendance/getListByFilter', 'AttendanceController@fetch_by_filters');
 $router->addRoute('POST', '/attendance/getListStatusAttendance', 'AttendanceController@get_list_status_attendance');
 $router->addRoute('POST', '/attendance/EditIfRegistered', 'AttendanceController@edit_attendance_registered');
 $router->addRoute('POST', '/attendance/saveAttendance', 'AttendanceController@save_attendance');

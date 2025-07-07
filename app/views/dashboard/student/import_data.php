@@ -77,7 +77,7 @@
                 <b>Nota importante:</b>
                 <br>
                 <ul>
-                  <li>El archivo debe contener las columnas: <b>Dni, Nombres, Apellidos, Grado y Sección</b>.</li>
+                  <li>El archivo debe contener las columnas: <b>Nombres, Apellidos, Dni, Grado y Sección</b>.</li>
                   <li>El formato de fecha debe ser compatible con el sistema.</li>
                   <li>Los datos serán validados antes de ser importados.</li>
               </div>

@@ -18,6 +18,17 @@ class AttendanceController extends Controller
         View::render($view, $data, $this->layout);
     }
 
+    public function view_fetch_list_by_day()
+    {
+        $view = "attendance.fetch";
+        $data = [
+            'view_js' => $view,
+            'title' => 'Consulta Asistencia',
+            'message' => 'Esta es la página de asistencia.'
+        ];
+        View::render($view, $data, $this->layout);
+    }
+
     public function open_attendance()
     {
         $view = "attendance.register";
@@ -84,6 +95,80 @@ class AttendanceController extends Controller
             echo json_encode([
                 'status' => 'error',
                 'message' => 'Error interno del servidor.',
+                'details' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function fetch_by_filters()
+    {
+        if (!isAjax()) {
+            http_response_code(403);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Acceso no autorizado.'
+            ]);
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Método no permitido.'
+            ]);
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        try {
+            // Obtener los parámetros enviados
+            $fecha = $_POST['fecha'] ?? null;
+            $grado = $_POST['grado'] ?? null;
+            $seccion = $_POST['seccion'] ?? null;
+
+
+            // Validación: la fecha es obligatoria
+            if (!$fecha) {
+                http_response_code(400);
+                echo json_encode(['status' => 'error', 'message' => 'La fecha es obligatoria.']);
+                return;
+            }
+
+            // Si grado o seccion están vacíos, interpretarlos como "todos"
+            $grado = empty($grado) ? null : $grado;
+            $seccion = empty($seccion) ? null : $seccion;
+
+            $DayModel = $this->model('DayModel');
+            $dia = $DayModel->validDayActive($fecha); // Esta función deberías tenerla
+
+            if (!$dia || empty($dia['dia_fecha_id'])) {
+                http_response_code(404);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'No se encontró información para la fecha proporcionada.'
+                ]);
+                return;
+            }
+
+            $AttendanceModel = $this->model('AttendanceModel');
+            $lista = $AttendanceModel->getAttendanceByFilter(
+                $dia['dia_fecha_id'],
+                $grado,
+                $seccion
+            );
+
+            echo json_encode([
+                'status' => 'success',
+                'data' => $lista
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error del servidor.',
                 'details' => $e->getMessage()
             ]);
         }
@@ -225,7 +310,8 @@ class AttendanceController extends Controller
 
     public function register_attendance()
     {
-        if (!isAjax()) return;
+        if (!isAjax())
+            return;
 
         header('Content-Type: application/json');
 
@@ -276,8 +362,8 @@ class AttendanceController extends Controller
             }
 
             // Configuración de horario
-            $entry_time    = $config['entry_time'];               // Ej: 07:30
-            $exit_time     = $config['exit_time'];                // Ej: 13:00
+            $entry_time = $config['entry_time'];               // Ej: 07:30
+            $exit_time = $config['exit_time'];                // Ej: 13:00
             $tolerance_min = intval($config['time_tolerance']);   // Ej: 10
 
             $max_punctual_time = date("H:i", strtotime("+{$tolerance_min} minutes", strtotime($entry_time)));

@@ -23,7 +23,7 @@
                                         <i class="fas fa-id-card mr-2"></i> DNI del Estudiante:
                                     </label>
                                     <input type="text" class="form-control" id="studentDNIInput"
-                                        placeholder="Ej. 12345678" value="12345678" maxlength="8">
+                                        placeholder="Ej. 12345678" value="" maxlength="8" data-validate="numeric">
                                 </div>
 
                                 <div class="form-group">

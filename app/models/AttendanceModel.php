@@ -8,7 +8,65 @@ class AttendanceModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // AttendanceModel.php
+
+    public function getAttendanceByFilter($dia_id, $grado = null, $seccion = null)
+    {
+        // Construir base del SQL
+        $sql = "
+            SELECT 
+                a.asistencia_estudiante_id,
+                a.observacion,
+                a.hora_entrada,
+                d.fecha,
+                d.nombre_dia,
+                ve.nombres,
+                ve.codigo,
+                ve.apellidos,
+                ve.grado_nombre AS grado,
+                ve.seccion,
+                e.nombre_estado,
+                e.abreviatura,
+                e.clase_boostrap,
+                e.color_hex,
+                e.icon
+            FROM asistencia_estudiante a
+            JOIN dia_asistencia d ON a.dia_fecha_id = d.dia_fecha_id
+            JOIN estados_asistencia e ON a.estado_asistencia_id = e.id_estado
+            JOIN vista_estudiantes ve ON a.estudiante_id = ve.estudiante_id
+            WHERE d.dia_fecha_id = :dia_id
+        ";
+    
+        // Agregar filtros dinámicos
+        if (!is_null($grado)) {
+            $sql .= " AND ve.id_grado = :grado";
+        }
+    
+        if (!is_null($seccion)) {
+            $sql .= " AND ve.id_seccion = :seccion";
+        }
+    
+        // Ahora preparar el SQL ya construido
+        $stmt = $this->db->prepare($sql);
+    
+        // Asignar valores
+        $stmt->bindValue(':dia_id', $dia_id, PDO::PARAM_INT);
+    
+        if (!is_null($grado)) {
+            $stmt->bindValue(':grado', $grado, PDO::PARAM_INT);
+        }
+    
+        if (!is_null($seccion)) {
+            $stmt->bindValue(':seccion', $seccion, PDO::PARAM_INT);
+        }
+    
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+
+
+
+
     public function getLastAttendanceByStudent($studentId, $limit = 15)
     {
         $stmt = $this->db->prepare("
@@ -28,14 +86,14 @@ class AttendanceModel extends Model
             ORDER BY d.fecha DESC
             LIMIT :limit
         ");
-    
+
         $stmt->bindValue(':estudiante_id', $studentId, PDO::PARAM_INT);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT); 
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
-    
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+
 
     public function getAllAttendanceByDate($dia_fecha_id)
     {
@@ -157,9 +215,9 @@ class AttendanceModel extends Model
 
 
     public function deleteByEstudianteId($id)
-{
-    $stmt = $this->db->prepare("DELETE FROM asistencia_estudiante WHERE estudiante_id = :id");
-    return $stmt->execute([':id' => $id]);
-}
+    {
+        $stmt = $this->db->prepare("DELETE FROM asistencia_estudiante WHERE estudiante_id = :id");
+        return $stmt->execute([':id' => $id]);
+    }
 
 }

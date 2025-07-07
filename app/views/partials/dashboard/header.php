@@ -190,6 +190,14 @@
                 </p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="<?= base_url() ?>/attendance/query" class="nav-link">
+                <i class="nav-icon far fa-image"></i>
+                <p>
+                  Consulta del dia
+                </p>
+              </a>
+            </li>
             <li class="nav-header">REPORTES</li>
             <li class="nav-item">
               <a href="<?= base_url() ?>/report/student" class="nav-link">
