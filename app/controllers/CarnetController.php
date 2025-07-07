@@ -260,15 +260,38 @@ class CarnetController extends Controller
 
         // Armar contenido HTML con una tabla para colocar carnets
         $html = '<html><head><style>
-            table { border-collapse: collapse; width: 100%; }
-            td { padding: 30px; vertical-align: top; }
-            .carnet-card { width: 85mm; height: 55mm; margin: auto; }
-        </style></head><body>';
-        $html .= '<table>';
 
-
-        $html .= '<tr>'; // abrir fila nueva
-
+              .carnet-card {    
+        width: 20px;
+        height: 30px; /* Mantén proporción similar a 85mm x 55mm */
+        margin: 40px auto 40px auto;
+        overflow: visible !important;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        transform-origin: top center;
+        transition: transform 0.3s ease;
+        transform: scale(1.7);
+    }
+    @media (max-width: 900px) {
+        .carnet-card {
+            transform: scale(1.5);
+        }
+    }
+    @media (max-width: 700px) {
+        .carnet-card {
+            transform: scale(1.2);
+        }
+    }
+    @media (max-width: 500px) {
+        .carnet-card {
+            transform: scale(1);
+        }
+    }
+    @media (max-width: 350px) {
+        .carnet-card {
+            transform: scale(0.8);
+        }
+    }
+            </style></head><body>';
 
         // Generar barcode para cada estudiante
         $generator = new BarcodeGeneratorPNG();
@@ -286,12 +309,10 @@ class CarnetController extends Controller
 
         ]);
 
-        $html .= '<td><div class="carnet-card">' . $carnet_html . '</div></td>';
+        $html .= '<div class="carnet-card">' . $carnet_html . '</div>';
 
 
-        $html .= '</tr>'; // cerrar fila
-
-        $html .= '</table></body></html>';
+        $html .= '</body></html>';
 
 
 
@@ -299,7 +320,7 @@ class CarnetController extends Controller
         exit;
     }
 
-    
+
     public function preview_single_carnet_pdf()
     {
         $dompdf = new Dompdf();

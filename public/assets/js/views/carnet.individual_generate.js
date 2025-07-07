@@ -17,6 +17,7 @@ $(function () {
   // Asignar el evento load del iframe UNA SOLA VEZ
 // Al cargar el iframe (cuando el PDF está listo)
 $("#preview-carnets").on("load", function () {
+  ajustarAlturaIframe();
   // Mostrar alerta
   $("#carnet-alert").show();
 
@@ -45,11 +46,26 @@ $("#preview-carnets").on("load", function () {
       return;
     }
 
+   
+   // Intentar limpiar el contenido del iframe
+   var iframe = document.getElementById("preview-carnets");
+   if (iframe && iframe.contentWindow) {
+     try {
+       iframe.contentWindow.document.open();
+       iframe.contentWindow.document.write("");
+       iframe.contentWindow.document.close();
+     } catch (err) {
+       // No se puede limpiar por CORS, fallback a about:blank
+       iframe.src = "about:blank";
+     }
+   } else {
+     iframe.src = "about:blank";
+   }
 
     // Crear formulario dinámico para enviar al iframe
     const form = $("<form>", {
       method: "POST",
-      action: base_url + "/carnet/generateCarnetIndividual",
+      action: base_url + "/carnet/previewCarnetIndividual",
       target: "preview-carnets",
     });
 
@@ -105,5 +121,22 @@ $("#preview-carnets").on("load", function () {
     });
   });
 
+
+
+  $(window).on("resize", function () {
+    ajustarAlturaIframe()
+   
+  });
+
+  function ajustarAlturaIframe(){
+    try {
+      var iframe = document.getElementById("preview-carnets");
+      var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      var newHeight = $(iframeDoc).height();
+      $("#preview-carnets").height(newHeight);
+    } catch (e) {
+      console.warn("No se pudo ajustar la altura del iframe:", e);
+    }
+  }
   /////////////////////////////////////////////////////////////////////////////////////////////
 });

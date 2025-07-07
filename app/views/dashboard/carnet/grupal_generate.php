@@ -52,7 +52,7 @@
 
 
 
-              <div class="col-4">
+              <div class="col-md-4 col-lg-6 col-xl-4">
                 <div class="card">
                   <div class="card-body p-1">
                     <div class="w-100">
@@ -81,7 +81,7 @@
               </div>
 
 
-              <div class="col-4">
+              <div class="col-md-4 col-lg-6 col-xl-4">
                 <div class="card">
                   <div class="card-body p-1">
                     <div class="w-100" data-toggle="modal" data-target="#previewModal">
@@ -106,7 +106,7 @@
                 </div>
               </div>
 
-              <div class="col-4">
+              <div class="col-md-4 col-lg-6 col-xl-4">
                 <div class="card">
                   <div class="card-body p-1">
 

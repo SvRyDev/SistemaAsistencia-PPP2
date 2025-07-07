@@ -119,10 +119,10 @@
 
 <body>
   <div class="carnet-card">
-    
+
     <img id="plantilla" src="<?= assets() ?>/img/static/plantilla-carnet.jpg" alt="">
 
-<!--
+    <!--
     <img id="plantilla" src="C:\xampp\htdocs\SistemaAsistencia-PPP2\public\assets\img\static\plantilla-carnet.jpg"
       alt="" />
    -->
@@ -132,7 +132,7 @@
     <div class="content-nombres">
       <p id="nombres_ape"><?= $data['name'] ?></p>
     </div>
-    <p id="anio"><?= $data['anio']?></p>
+    <p id="anio"><?= $data['anio'] ?></p>
 
     <div class="detalle">
       <div class="content-d">
@@ -142,17 +142,17 @@
       <div class="d-row">
         <div class="content-d">
           <p class="titulo-d">Grado:</p>
-          <p class="dato-d"><?= $data['grado']?></p>
+          <p class="dato-d"><?= $data['grado'] ?></p>
         </div>
         <div class="content-d">
           <p class="titulo-d">Sección:</p>
-          <p class="dato-d"><?= $data['seccion']?></p>
+          <p class="dato-d"><?= $data['seccion'] ?></p>
         </div>
       </div>
 
       <div class="content-d">
         <p class="titulo-d">Emisión:</p>
-        <p class="dato-d"><?= $data['emision']?></p>
+        <p class="dato-d"><?= $data['emision'] ?></p>
       </div>
     </div>
   </div>
