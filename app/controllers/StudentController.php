@@ -58,6 +58,64 @@ class StudentController extends Controller
     }
 
 
+
+    public function get_data_student()
+    {
+        if (!isAjax()) {
+            http_response_code(403);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Acceso no autorizado.'
+            ]);
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        // Validar POST
+        if (
+            $_SERVER['REQUEST_METHOD'] !== 'POST' ||
+            !isset($_POST['estudiante_id'])  // ← este debe coincidir con el nombre del parámetro que envías
+        ) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Faltan parámetros requeridos.'
+            ]);
+            return;
+        }
+
+        // Extraer datos
+        $estudianteId = (int) $_POST['estudiante_id'];
+
+        try {
+            $StudentModel = $this->model('StudentModel');
+            $student = $StudentModel->getStudentById($estudianteId);
+
+
+            if (!$student) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Estudiante no encontrado.'
+                ]);
+                return;
+            }
+
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Estudiante cargado exitosamente.',
+                'student' => $student
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error inesperado al cargar estudiante.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
     public function get_detail_student()
     {
         if (!isAjax()) {
@@ -89,7 +147,7 @@ class StudentController extends Controller
         $AttendanceModel = $this->model('AttendanceModel');
 
         // Buscar estudiante
-        $estudiante = $StudentModel->getStudentById($estudianteId);
+        $estudiante = $StudentModel->getViewStudentById($estudianteId);
 
         if (!$estudiante) {
             echo json_encode([
@@ -158,7 +216,7 @@ class StudentController extends Controller
                 $worksheet = $spreadsheet->getActiveSheet();
                 $rows = $worksheet->toArray(null, true, true, true);
 
-                $expectedHeaders = ['dni', 'nombres', 'apellidos', 'grado', 'sección'];
+                $expectedHeaders = ['nombres', 'apellidos', 'dni', 'grado', 'sección'];
                 $headers = array_map('strtolower', array_values($rows[1]));
                 $missing = array_diff($expectedHeaders, $headers);
 
@@ -192,7 +250,7 @@ class StudentController extends Controller
         if (isset($data['alumnos']) && is_array($data['alumnos']) && count($data['alumnos']) > 0) {
 
             // Validar columnas requeridas para cada alumno
-            $requiredColumns = ['dni', 'nombres', 'apellidos', 'grado', 'seccion'];
+            $requiredColumns = ['nombres', 'apellidos', 'dni', 'grado', 'seccion'];
             foreach ($data['alumnos'] as $index => $alumno) {
                 foreach ($requiredColumns as $col) {
                     if (!isset($alumno[$col]) || empty($alumno[$col])) {
@@ -206,12 +264,25 @@ class StudentController extends Controller
                 }
             }
 
-            $studentModel = $this->model('StudentModel');
-            $result = $studentModel->addMultipleStudents($data['alumnos']);
 
-            if (!$result) {
+
+            $SettingModel = $this->model('SettingModel');
+            $config = $SettingModel->getConfig();
+
+            $academic_year = $config['academic_year'];
+
+
+            $studentModel = $this->model('StudentModel');
+            $result = $studentModel->addMultipleStudents($data['alumnos'], $academic_year);
+
+
+            if (!$result['success']) {
                 http_response_code(500);
-                echo json_encode(["status" => "error", "message" => "Error al insertar los estudiantes"]);
+                echo json_encode([
+                    "status" => "error",
+          
+                    "message" => $result['error'] // 👈 Aquí aparece el mensaje real
+                ]);
                 return;
             }
 
@@ -265,4 +336,268 @@ class StudentController extends Controller
             'estudiantes' => $resultados
         ]);
     }
+
+    public function create_student()
+    {
+        if (!isAjax()) {
+            http_response_code(403);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Acceso no autorizado.'
+            ]);
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Método no permitido.'
+            ]);
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        // Validación básica
+        $required = ['dni_est', 'nombre_est', 'apellidos_est', 'grado_est', 'seccion_est'];
+        foreach ($required as $field) {
+            if (empty($_POST[$field])) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Todos los campos son obligatorios.'
+                ]);
+                return;
+            }
+        }
+
+
+        $dni = trim($_POST['dni_est']);
+        $nombres = mb_strtoupper(trim($_POST['nombre_est']), 'UTF-8');
+        $apellidos = mb_strtoupper(trim($_POST['apellidos_est']), 'UTF-8');
+
+        $grado_id = (int) $_POST['grado_est'];
+        $seccion_id = (int) $_POST['seccion_est'];
+
+
+        //Validacion de DNI
+        if (!preg_match('/^\d{8}$/', $dni)) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'El DNI debe tener 8 dígitos numéricos.'
+            ]);
+            return;
+        }
+
+
+        try {
+
+            $SettingModel = $this->model('SettingModel');
+            $config = $SettingModel->getConfig();
+
+            $academic_year = $config['academic_year'];
+
+            $StudentModel = $this->model('StudentModel');
+
+
+            // Validación de DNI duplicado
+            if ($StudentModel->dniExists($dni)) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'El DNI ingresado ya está registrado.'
+                ]);
+                return;
+            }
+
+
+            $inserted = $StudentModel->createStudent(
+                $nombres,
+                $apellidos,
+                $dni,
+                $grado_id,
+                $seccion_id,
+                $academic_year
+            );
+
+            if ($inserted) {
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Estudiante registrado correctamente.'
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'No se pudo registrar al estudiante.'
+                ]);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error al registrar.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function update_student()
+    {
+        if (!isAjax()) {
+            http_response_code(403);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Acceso no autorizado.'
+            ]);
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Método no permitido.'
+            ]);
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        // Validación básica
+        $required = ['estudiante_id', 'dni_est', 'nombre_est', 'apellidos_est', 'grado_est', 'seccion_est'];
+        foreach ($required as $field) {
+            if (empty($_POST[$field])) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Todos los campos son obligatorios.'
+                ]);
+                return;
+            }
+        }
+
+        $estudiante_id = (int) $_POST['estudiante_id'];
+        $dni = trim($_POST['dni_est']);
+        $nombres = mb_strtoupper(trim($_POST['nombre_est']), 'UTF-8');
+        $apellidos = mb_strtoupper(trim($_POST['apellidos_est']), 'UTF-8');
+        $grado_id = (int) $_POST['grado_est'];
+        $seccion_id = (int) $_POST['seccion_est'];
+
+        // Validación de DNI
+        if (!preg_match('/^\d{8}$/', $dni)) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'El DNI debe tener 8 dígitos numéricos.'
+            ]);
+            return;
+        }
+
+        try {
+            $StudentModel = $this->model('StudentModel');
+
+            // Validación de DNI duplicado
+            if ($StudentModel->dniExists($dni, $estudiante_id)) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'El DNI ingresado ya está registrado.'
+                ]);
+                return;
+            }
+
+
+            $updated = $StudentModel->updateStudent(
+                $estudiante_id,
+                $dni,
+                $nombres,
+                $apellidos,
+                $grado_id,
+                $seccion_id
+            );
+
+            if ($updated) {
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Estudiante actualizado correctamente.'
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'No se pudo actualizar al estudiante.'
+                ]);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error al actualizar.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function delete_student()
+    {
+        if (!isAjax()) {
+            http_response_code(403);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Acceso no autorizado.'
+            ]);
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['estudiante_id'])) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Faltan parámetros requeridos.'
+            ]);
+            return;
+        }
+
+        $estudianteId = (int) $_POST['estudiante_id'];
+
+        try {
+            $StudentModel = $this->model('StudentModel');
+            $student = $StudentModel->getStudentById($estudianteId);
+
+            if (!$student) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Estudiante no encontrado.'
+                ]);
+                return;
+            }
+
+            // Aquí haces la eliminación real
+
+            $AttendanceModel = $this->model('AttendanceModel');
+            $AttendanceModel->deleteByEstudianteId($estudianteId);
+
+
+            $deleted = $StudentModel->deleteById($estudianteId);
+
+            if ($deleted) {
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Estudiante eliminado correctamente.'
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'No se pudo eliminar al estudiante.'
+                ]);
+            }
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error inesperado al eliminar estudiante.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
 }

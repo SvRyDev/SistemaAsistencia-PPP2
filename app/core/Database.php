@@ -89,4 +89,11 @@ class Database
     {
         return $this->dbh->rollBack();
     }
+
+    // Verifica si hay una transacción activa
+    public function inTransaction()
+    {
+        return $this->dbh->inTransaction();
+    }
+
 }

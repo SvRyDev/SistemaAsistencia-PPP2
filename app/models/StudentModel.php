@@ -8,12 +8,22 @@ class StudentModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getStudentById($id){
+    public function getStudentById($id)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM estudiante WHERE estudiante_id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getViewStudentById($id)
+    {
         $stmt = $this->db->prepare("SELECT * FROM vista_estudiantes WHERE estudiante_id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
     public function searchByDniOrName($query)
     {
         $sql = "SELECT estudiante_id AS id, codigo, nombres, apellidos, dni, grado_nombre, seccion
@@ -45,9 +55,6 @@ class StudentModel extends Model
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
-
-
     public function getTotalStudents()
     {
         $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM estudiante");
@@ -55,31 +62,61 @@ class StudentModel extends Model
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function addMultipleStudents($alumnos)
+    public function addMultipleStudents($alumnos, $academicYear)
     {
         try {
             $this->db->beginTransaction();
 
-            $stmt = $this->db->prepare("INSERT INTO estudiante (dni, nombres, apellidos, grado, seccion) VALUES (?, ?, ?, ?, ?)");
+            $insertStmt = $this->db->prepare("
+                INSERT INTO estudiante (
+                    nombres, apellidos, dni, grado_id, seccion_id, date_created
+                ) VALUES (?, ?, ?, ?, ?, NOW())
+            ");
+
+            $updateStmt = $this->db->prepare("
+                UPDATE estudiante SET codigo = ? WHERE estudiante_id = ?
+            ");
 
             foreach ($alumnos as $alumno) {
-                $stmt->execute([
-                    $alumno['dni'],
+                $gradoNombre = strtoupper(strtolower(trim($alumno['grado'])));
+                $seccionNombre = strtoupper(trim($alumno['seccion']));
+
+                $gradoId = $this->getGradoIdByNombre($gradoNombre);
+                $seccionId = $this->getSeccionIdByNombre($seccionNombre);
+
+                if (!$gradoId || !$seccionId) {
+                    throw new Exception("Grado o sección no válidos para: {$alumno['nombres']} {$alumno['apellidos']}");
+                }
+
+                // ✅ Verificar si el DNI ya existe
+                if ($this->dniExists($alumno['dni'])) {
+                    throw new Exception("El DNI '{$alumno['dni']}' ya existe para el alumno: {$alumno['nombres']} {$alumno['apellidos']}");
+                }
+
+                $insertStmt->execute([
                     $alumno['nombres'],
                     $alumno['apellidos'],
-                    $alumno['grado'],
-                    $alumno['seccion']
+                    $alumno['dni'],
+                    $gradoId,
+                    $seccionId
                 ]);
+
+                $estudianteId = $this->db->lastInsertId();
+                $codigo = $this->generarCodigoEstudiante($estudianteId, $academicYear);
+                $updateStmt->execute([$codigo, $estudianteId]);
             }
 
             $this->db->commit();
-            return true;
+            return ["success" => true];
         } catch (Exception $e) {
             $this->db->rollBack();
-            return false;
+            error_log($e->getMessage());
+            return [
+                "success" => false,
+                "error" => $e->getMessage()
+            ];
         }
     }
-
 
     public function getStudentsByGradeAndSection($gradoId, $seccionId)
     {
@@ -112,4 +149,117 @@ class StudentModel extends Model
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-};
+    
+    public function createStudent($nombres, $apellidos, $dni, $grado_id, $seccion_id, $academic_year)
+    {
+        // Paso 1: Insertar sin código
+        $stmt = $this->db->prepare("
+            INSERT INTO estudiante (
+                nombres, apellidos, dni, grado_id, seccion_id, date_created
+            ) VALUES (
+                :nombres, :apellidos, :dni, :grado_id, :seccion_id, NOW()
+            )
+        ");
+
+        $stmt->bindParam(':nombres', $nombres);
+        $stmt->bindParam(':apellidos', $apellidos);
+        $stmt->bindParam(':dni', $dni);
+        $stmt->bindParam(':grado_id', $grado_id);
+        $stmt->bindParam(':seccion_id', $seccion_id);
+
+        if ($stmt->execute()) {
+            $estudiante_id = $this->db->lastInsertId();
+
+            // Usar la función de generación
+            $codigo = $this->generarCodigoEstudiante($estudiante_id, $academic_year);
+
+            $update = $this->db->prepare("UPDATE estudiante SET codigo = :codigo WHERE estudiante_id = :id");
+            $update->bindParam(':codigo', $codigo);
+            $update->bindParam(':id', $estudiante_id);
+            $update->execute();
+
+            return $estudiante_id;
+        }
+
+        return false;
+    }
+
+    public function updateStudent($id, $dni, $nombres, $apellidos, $grado_id, $seccion_id)
+    {
+        $stmt = $this->db->prepare("
+        UPDATE estudiante SET
+            dni = :dni,
+            nombres = :nombres,
+            apellidos = :apellidos,
+            grado_id = :grado_id,
+            seccion_id = :seccion_id,
+            date_update = NOW()
+        WHERE estudiante_id = :id
+    ");
+
+        $stmt->bindParam(':dni', $dni);
+        $stmt->bindParam(':nombres', $nombres);
+        $stmt->bindParam(':apellidos', $apellidos);
+        $stmt->bindParam(':grado_id', $grado_id);
+        $stmt->bindParam(':seccion_id', $seccion_id);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+
+
+    public function deleteById($id)
+    {
+        $stmt = $this->db->prepare("DELETE FROM estudiante WHERE estudiante_id = :id");
+        return $stmt->execute([':id' => $id]);
+    }
+
+
+    // Validación de DNI duplicado
+    public function dniExists($dni, $excludeId = null)
+    {
+        $sql = "SELECT COUNT(*) FROM estudiante WHERE dni = :dni";
+        if ($excludeId !== null) {
+            $sql .= " AND estudiante_id != :excludeId";
+        }
+    
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':dni', $dni);
+        if ($excludeId !== null) {
+            $stmt->bindParam(':excludeId', $excludeId, PDO::PARAM_INT);
+        }
+    
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    }
+    
+
+
+    //---------------------------------------------------
+    //FUNCIONES COMPLEMENTARIA PARA PROCESOS DEl MODELO -
+    //---------------------------------------------------
+
+    private function getGradoIdByNombre($nombre)
+    {
+        $stmt = $this->db->prepare("SELECT id_grado FROM grados WHERE nombre_completo = ?");
+        $stmt->execute([$nombre]);
+        $id = $stmt->fetchColumn();
+        return $id ?: null;
+    }
+
+    private function getSeccionIdByNombre($nombre)
+    {
+        $stmt = $this->db->prepare("SELECT id_seccion FROM secciones WHERE nombre_seccion = ?");
+        $stmt->execute([$nombre]);
+        $id = $stmt->fetchColumn();
+        return $id ?: null;
+    }
+    private function generarCodigoEstudiante($estudianteId, $academicYear)
+    {
+        $anio = substr($academicYear, -2); // "2025" → "25"
+        return sprintf("STU-%s-%04d", $anio, $estudianteId);
+    }
+
+}
+;

@@ -17,7 +17,9 @@ $router->addRoute('GET', '/home', 'HomeController@index');
 $router->addRoute('GET', '/student', 'StudentController@view_list_students');
 $router->addRoute('GET', '/student/manage', 'StudentController@view_manage_students');
 $router->addRoute('GET', '/student/import', 'StudentController@view_import_data');
-$router->addRoute('GET', '/carnet', 'CarnetController@index');
+
+$router->addRoute('GET', '/carnet/individual', 'CarnetController@view_individual_generate_carnet');
+$router->addRoute('GET', '/carnet/grupal', 'CarnetController@view_grupal_generate_carnet');
 $router->addRoute('GET', '/attendance', 'AttendanceController@index');
 $router->addRoute('GET', '/attendance/openAttendance', 'AttendanceController@open_attendance');
 $router->addRoute('GET', '/attendance/searchStudentByCode', 'AttendanceController@open_attendance');
@@ -38,14 +40,24 @@ $router->addRoute('GET', '/user/{tipo}/buscar/{nivel}/{id}', 'HomeController@det
 
 //Api Endpoints
 $router->addRoute('GET', '/student/getAll', 'StudentController@show');
-$router->addRoute('POST', '/student/getDetail', 'StudentController@get_detail_student');
+$router->addRoute('POST', '/student/getOne', 'StudentController@get_data_student');
+$router->addRoute('POST', '/student/getOneForDetail', 'StudentController@get_detail_student');
+$router->addRoute('POST', '/student/store', 'StudentController@create_student');
+$router->addRoute('POST', '/student/update', 'StudentController@update_student');
+$router->addRoute('POST', '/student/delete', 'StudentController@delete_student');
 $router->addRoute('POST', '/student/readExcel', 'StudentController@read_from_Excel');
 $router->addRoute('POST', '/student/importData', 'StudentController@import_data_file');
 $router->addRoute('POST', '/student/searchByDniOrName', 'StudentController@search_by_dni_or_name');
 $router->addRoute('GET', '/student/getTotalStudents', 'StudentController@get_total_students');
 
+$router->addRoute('GET', '/grade/getAll', 'GradeController@get_total_grades');
+$router->addRoute('GET', '/section/getAll', 'SectionController@get_total_sections');
 
-$router->addRoute('GET', '/carnet/generateCarnet', 'CarnetController@generate_carnet_pdf');
+
+
+$router->addRoute('POST', '/carnet/generateCarnetIndividual', 'CarnetController@generate_carnet_individual');
+$router->addRoute('POST', '/carnet/previewCarnetIndividual', 'CarnetController@preview_carnet_individual');
+$router->addRoute('POST', '/carnet/generateCarnetGrupal', 'CarnetController@generate_carnet_grupal');
 $router->addRoute('GET', '/carnet/previewCarnet', 'CarnetController@preview_single_carnet_pdf');
 
 $router->addRoute('POST', '/attendance/registerAttendance', 'AttendanceController@register_attendance');

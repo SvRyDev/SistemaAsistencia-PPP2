@@ -166,7 +166,7 @@
 
             <li class="nav-header">CARNET DE ASISTENCIA</li>
             <li class="nav-item">
-              <a href="<?= base_url() ?>/carnet" class="nav-link">
+              <a href="<?= base_url() ?>/carnet/individual" class="nav-link">
                 <i class="nav-icon fas fa-id-card"></i>
                 <p>
                   Generar Carnet
@@ -174,7 +174,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="<?= base_url() ?>/" class="nav-link">
+              <a href="<?= base_url() ?>/carnet/grupal" class="nav-link">
                 <i class="nav-icon fas fa-layer-group"></i>
                 <p>
                   Generación por Lote
@@ -253,11 +253,13 @@
           <div class="row mb-2">
             <div class="col-sm-6">
               <h1 class="m-0"><?= $data['title'] ?></h1>
+           <!--      <span class="text-muted">Seleccione los filtros y genere carnets para los estudiantes</span> -->
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="<?= base_url() ?>">Home</a></li>
                 <li class="breadcrumb-item active"><?= $data['title'] ?></li>
+                
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->

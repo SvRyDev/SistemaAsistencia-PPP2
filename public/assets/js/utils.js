@@ -169,3 +169,30 @@ function formatearHoraAmPm(horaStr) {
 
   return `${horas}:${minutos} ${ampm}`;
 }
+
+
+
+
+
+function aplicarValidacionesPersonalizadas() {
+  $(document).on('input', 'input[data-validate]', function () {
+    const tipo = $(this).data('validate');
+
+    switch (tipo) {
+      case 'numeric':
+        this.value = this.value.replace(/[^0-9]/g, '');
+        break;
+      case 'alpha':
+        this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+        break;
+      case 'alphanumeric':
+        this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+        break;
+      // puedes agregar más casos aquí si necesitas
+    }
+  });
+}
+
+$(document).ready(function () {
+  aplicarValidacionesPersonalizadas();
+});

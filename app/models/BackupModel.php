@@ -56,14 +56,16 @@ class BackupModel extends Model
     public function resetSystem()
     {
         try {
+            // Inicia transacción para eliminar datos y restaurar configuración
             $this->db->beginTransaction();
-
-            // Eliminación en orden lógico
+    
+            // Eliminar en orden de dependencia (por claves foráneas)
             $this->db->query("DELETE FROM asistencia_estudiante");
             $this->db->query("DELETE FROM dia_asistencia");
             $this->db->query("DELETE FROM carnet_estudiante");
             $this->db->query("DELETE FROM estudiante");
-            // Restablecer valores predeterminados en system_config
+    
+            // Restaurar configuración
             $this->db->query("
                 UPDATE system_config SET
                     name_school = 'Nombre del Colegio',
@@ -76,16 +78,30 @@ class BackupModel extends Model
                     time_zone = 'America/Lima',
                     updated_at = NOW()
                 WHERE id = 1
-                ");
-
-
+            ");
+    
+            // Confirmar cambios (commit antes de ejecutar ALTER TABLE)
             $this->db->commit();
+    
+            // ⚠️ Fuera de la transacción: reiniciar AUTO_INCREMENT
+            $this->db->query("ALTER TABLE asistencia_estudiante AUTO_INCREMENT = 1");
+            $this->db->query("ALTER TABLE dia_asistencia AUTO_INCREMENT = 1");
+            $this->db->query("ALTER TABLE carnet_estudiante AUTO_INCREMENT = 1");
+            $this->db->query("ALTER TABLE estudiante AUTO_INCREMENT = 1");
+    
             return true;
+    
         } catch (Exception $e) {
-            $this->db->rollBack();
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
             throw new Exception("Error al reiniciar el sistema: " . $e->getMessage());
         }
     }
+    
+    
+    
+
 
 
 }

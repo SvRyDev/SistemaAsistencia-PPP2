@@ -67,9 +67,6 @@ class AttendanceModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-
-
-
     public function registerAttendance($estudiante_id, $dia_fecha_id, $hora_entrada, $estado_asistencia_id, $observacion = null)
     {
         $stmt = $this->db->prepare("
@@ -87,7 +84,6 @@ class AttendanceModel extends Model
 
         return $stmt->execute();
     }
-
     public function getRegisteredByStudentAndDate($estudianteId, $diaFechaId)
     {
         $sql = "SELECT *
@@ -158,4 +154,12 @@ class AttendanceModel extends Model
 
         return $stmt->execute();
     }
+
+
+    public function deleteByEstudianteId($id)
+{
+    $stmt = $this->db->prepare("DELETE FROM asistencia_estudiante WHERE estudiante_id = :id");
+    return $stmt->execute([':id' => $id]);
+}
+
 }

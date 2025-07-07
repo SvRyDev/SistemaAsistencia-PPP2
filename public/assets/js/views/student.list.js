@@ -111,7 +111,7 @@ $(function () {
 
     // Petición AJAX para obtener los datos del estudiante
     $.ajax({
-      url: base_url + "/student/getDetail",
+      url: base_url + "/student/getOneForDetail",
       method: "POST",
       data: { id: estudianteId },
       dataType: "json",

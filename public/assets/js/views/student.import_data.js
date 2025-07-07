@@ -226,9 +226,9 @@ $('#importButton').on('click', function () {
 
         // Opcional: transformar cada fila si es necesario
         const datosProcesados = data.map(row => ({
-          dni: row[1],
-          nombres: row[2],
-          apellidos: row[3],
+          nombres: row[1],
+          apellidos: row[2],
+          dni: row[3],
           grado: row[4],
           seccion: row[5]
         }));

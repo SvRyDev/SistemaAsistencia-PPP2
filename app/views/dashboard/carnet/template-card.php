@@ -132,7 +132,7 @@
     <div class="content-nombres">
       <p id="nombres_ape"><?= $data['name'] ?></p>
     </div>
-    <p id="anio">2025</p>
+    <p id="anio"><?= $data['anio']?></p>
 
     <div class="detalle">
       <div class="content-d">
@@ -142,17 +142,17 @@
       <div class="d-row">
         <div class="content-d">
           <p class="titulo-d">Grado:</p>
-          <p class="dato-d">primero</p>
+          <p class="dato-d"><?= $data['grado']?></p>
         </div>
         <div class="content-d">
           <p class="titulo-d">Sección:</p>
-          <p class="dato-d">A</p>
+          <p class="dato-d"><?= $data['seccion']?></p>
         </div>
       </div>
 
       <div class="content-d">
         <p class="titulo-d">Emisión:</p>
-        <p class="dato-d">15/03/2025</p>
+        <p class="dato-d"><?= $data['emision']?></p>
       </div>
     </div>
   </div>

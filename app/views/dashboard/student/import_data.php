@@ -31,7 +31,7 @@
                   </div>
                 </form>
 
-                <div id="previewTable"></div>
+    
               </div>
               <!-- /.card-body -->
             </div>
@@ -164,9 +164,9 @@
                       <tr>
 
                         <th>#</th>
-                        <th>Dni</th>
                         <th>Nombres</th>
                         <th>Apellidos</th>
+                        <th>Dni</th>
                         <th>Grado</th>
                         <th>Seccion</th>
                       </tr>
