@@ -150,7 +150,6 @@ function refreshListAttendance() {
   contadorEstados[4] = 0;
 
 
-  $('#listaAsistencia').empty();
   // -------------------------------
   // Cargar registro del dia
   // -------------------------------
@@ -162,6 +161,8 @@ function refreshListAttendance() {
       "X-Requested-With": "XMLHttpRequest",
     },
     success: function (response) {
+      
+  $('#listaAsistencia').empty();
       if (response.status === "success" && Array.isArray(response.list_attendance)) {
         const lista = document.getElementById("listaAsistencia");
         lista.innerHTML = ""; // Limpiar lista anterior
@@ -172,7 +173,7 @@ function refreshListAttendance() {
 
           const nuevoItem = document.createElement("div");
           nuevoItem.className =
-            "list-group-item list-group-item-action pt-2 pb-2 animate__animated animate__fadeInUp";
+            "list-group-item list-group-item-action pt-2 pb-2";
 
           nuevoItem.innerHTML = `
             <div class="container-fluid">
@@ -193,7 +194,7 @@ function refreshListAttendance() {
                   <span class="text-dark">${student.seccion || "--"}</span>
                 </div>
                 <div class="col-md-1 text-muted">
-                  <span class="text-dark">${getHoraMinuto(student.hora_actual) || "--"}</span>
+                  <span class="text-dark">${getHoraMinuto(student.hora_actual) || "--:--"}</span>
                 </div>
                 <div class="col-md-1 text-left">
                   <span data-id="${student.id_estado}" class="badge badge-${student.clase_boostrap}">
@@ -232,6 +233,17 @@ function refreshListAttendance() {
   });
 }
 
+// --- AUTO REFRESH DE ASISTENCIA ---
+let intervalRefreshAttendance = null;
+
+function startAutoRefreshAttendance() {
+  if (intervalRefreshAttendance) clearInterval(intervalRefreshAttendance);
+  intervalRefreshAttendance = setInterval(refreshListAttendance, 3000); // cada 3 segundos
+}
+function stopAutoRefreshAttendance() {
+  if (intervalRefreshAttendance) clearInterval(intervalRefreshAttendance);
+}
+
 
 
 const ctx = document.getElementById("pieAsistencia").getContext("2d");
@@ -256,6 +268,7 @@ const pieAsistencia = new Chart(ctx, {
     legend: {
       display: true,
       position: "right", // ✅ Leyenda a la derecha en Chart.js v2
+      onClick: null, // 👈 Esto desactiva el clic en la leyenda
     },
     tooltips: {
       callbacks: {
@@ -272,6 +285,8 @@ const pieAsistencia = new Chart(ctx, {
 });
 
 $(document).ready(function () {
+
+  startAutoRefreshAttendance();
   iniciarReloj("hora-actual", "fecha-actual");
 
   // -------------------------------

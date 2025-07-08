@@ -34,7 +34,7 @@ class AttendanceModel extends Model
             JOIN estados_asistencia e ON a.estado_asistencia_id = e.id_estado
             JOIN vista_estudiantes ve ON a.estudiante_id = ve.estudiante_id
             WHERE d.dia_fecha_id = :dia_id
-            ORDER BY d.hora_entrada DESC
+            ORDER BY a.asistencia_estudiante_id ASC
         ";
     
         // Agregar filtros dinámicos
@@ -80,7 +80,7 @@ class AttendanceModel extends Model
             JOIN dia_asistencia d ON a.dia_fecha_id = d.dia_fecha_id
             JOIN estados_asistencia e ON a.estado_asistencia_id = e.id_estado
             WHERE a.estudiante_id = :estudiante_id
-            ORDER BY d.fecha DESC
+            ORDER BY a.asistencia_estudiante_id ASC
             LIMIT :limit
         ");
 
@@ -113,7 +113,7 @@ class AttendanceModel extends Model
             LEFT JOIN secciones s ON e.seccion_id = s.id_seccion
             LEFT JOIN estados_asistencia ea ON ae.estado_asistencia_id = ea.id_estado
             WHERE ae.dia_fecha_id = :dia_fecha_id
-            ORDER BY ae.hora_entrada DESC
+            ORDER BY ae.hora_entrada ASC
         ";
 
         $stmt = $this->db->prepare($sql);

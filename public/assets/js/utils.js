@@ -107,7 +107,7 @@ function getHoraMinuto(fecha = null) {
   let date;
 
   if (!fecha) {
-    date = new Date();
+    return null;
   } else if (
     typeof fecha === "string" &&
     /^\d{2}:\d{2}(:\d{2})?$/.test(fecha)
@@ -197,6 +197,9 @@ function aplicarValidacionesPersonalizadas() {
         break;
       case 'alphanumeric':
         this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+        break;
+      case 'uppercase':
+        this.value = this.value.toUpperCase();
         break;
       // puedes agregar más casos aquí si necesitas
     }

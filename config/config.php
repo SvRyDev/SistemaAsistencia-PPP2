@@ -10,7 +10,8 @@ define('DB_PASS', '');
 define('DB_NAME', 'db_asistencia_estudiantes');
 
 // Application URL
-define('APP_URL', 'http://localhost/SistemaAsistencia-PPP2');
+$host = $_SERVER['HTTP_HOST'];
+define('APP_URL', "http://$host/SistemaAsistencia-PPP2");
 define('BASE_PATH', 'SistemaAsistencia-PPP2');
 
 // Ruta de PATH Mysql

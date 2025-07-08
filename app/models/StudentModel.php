@@ -258,7 +258,7 @@ class StudentModel extends Model
     private function generarCodigoEstudiante($estudianteId, $academicYear)
     {
         $anio = substr($academicYear, -2); // "2025" → "25"
-        return sprintf("STU-%s-%04d", $anio, $estudianteId);
+        return sprintf("STU%s%04dSL", $anio, $estudianteId);
     }
 
 }

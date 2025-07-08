@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Escaneo de Asistencia</title>
   <link rel="stylesheet" href="<?= dist() ?>/css/adminlte.min.css">
+  <link rel="stylesheet" href="<?= plugins() ?>/flipclock/css/flipclock.css">
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" />
   <style>
     * {
@@ -18,6 +20,11 @@
       height: 100%;
       margin: 0;
       background: linear-gradient(135deg, rgb(255, 255, 255), rgb(28, 34, 44));
+      background-image: url('<?= assets() ?>/img/static/fondo-ie-san-luis.jpg');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      color: #fff;
       color: #fff;
     }
 
@@ -96,6 +103,15 @@
       border-radius: 8px;
 
     }
+
+    #clock{
+     position: absolute; 
+     width: auto;
+     top:  50%;
+     transform: translateY(-50%);
+     left: 10%;
+     margin: 2rem;
+    }
   </style>
 </head>
 
@@ -106,27 +122,25 @@
     <h2 class="animate__animated animate__infinite animate__headShake animate__slow">📷 Escaneo de Asistencia</h2>
 
     <form id="formulario">
-      <input type="text" id="codigoEstudiante" placeholder="Escanea tu código aquí" required autofocus maxlength="11">
+      <input type="text" id="codigoEstudiante" placeholder="Escanea tu código aquí" required autofocus maxlength="11" autocomplete='off' data-validate="uppercase">
       <br />
       <button type="submit">Registrar</button>
     </form>
 
     <div id="resultadoBusqueda">
-
-
       <span id="mensajeRespuesta"></span>
       <span id="nombre"></span><span id="apellido"></span>
       <span id="codigo"></span>
     </div>
 
 
-
+    <div id="clock" class="clock"></div>
 
     <div class="mb-3">
-  <span id="horaEntrada" class="badge badge-info p-2"></span>
-  <span id="horaSalida" class="badge badge-info p-2 ml-2"></span>
-  <span id="tolerancia" class="badge badge-warning p-2 ml-2"></span>
-</div>
+      <span id="horaEntrada" class="badge badge-info p-2"></span>
+      <span id="horaSalida" class="badge badge-info p-2 ml-2"></span>
+      <span id="tolerancia" class="badge badge-warning p-2 ml-2"></span>
+    </div>
 
   </div>
 
@@ -141,6 +155,19 @@
   </script>
 
   <script src="<?= assets() ?>/js/views/<?= $data['view_js'] ?>.js"></script>
+  <script src="<?= assets() ?>/js/utils.js"></script>
+
+  <script src="<?= plugins() ?>/flipclock/js/flipclock.js"></script>
+
+  <script>
+    var clock;
+
+    $(document).ready(function() {
+      clock = $('.clock').FlipClock({
+        clockFace: 'TwentyFourHourClock'
+      });
+    });
+  </script>
 </body>
 
 </html>
