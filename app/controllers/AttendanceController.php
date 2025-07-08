@@ -233,8 +233,6 @@ class AttendanceController extends Controller
         }
     }
 
-
-
     public function get_list_status_attendance()
     {
         if (!isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -412,7 +410,7 @@ class AttendanceController extends Controller
             }
 
 
-            $AttendanceModel->registerAttendance(
+            $AttendanceModel->createAttendance(
                 $student['estudiante_id'],
                 $dayActive['dia_fecha_id'],
                 $currentTime,
@@ -580,5 +578,59 @@ class AttendanceController extends Controller
                 'message' => 'No hay asistencia registrada. Puedes crearla.',
             ]);
         }
+    }
+
+    public function close_day_register_abstents()
+    {
+        $currentDate = date('Y-m-d');
+
+        // Validar si el día está activo
+        $DayModel = $this->model('DayModel');
+        $dayActive = $DayModel->validDayActive($currentDate);
+
+        if (!$dayActive) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'El día actual no está habilitado para registrar asistencia.'
+            ]);
+            return;
+        }
+
+        // Modelos necesarios
+        $StudentModel = $this->model('StudentModel');
+        $AttendanceModel = $this->model('AttendanceModel');
+
+        // Obtener todos los estudiantes activos
+        $allStudents = $StudentModel->getAllStudents();
+
+        // Obtener IDs de estudiantes con asistencia registrada hoy
+        $presentStudentIds = $AttendanceModel->getIDStudentByDate($dayActive['dia_fecha_id']);
+
+        $absentStudents = [];
+
+        // Filtrar los estudiantes que no están en la lista de asistencias registradas
+        foreach ($allStudents as $student) {
+            if (!in_array($student['estudiante_id'], $presentStudentIds)) {
+                $absentStudents[] = $student['estudiante_id'];
+            }
+        }
+
+        // Registrar faltas
+        foreach ($absentStudents as $studentId) {
+            $AttendanceModel->createAttendance(
+                $studentId,
+                $dayActive['dia_fecha_id'],
+                null,
+                3
+            );
+        }
+
+        // Cambiar estado del día a cerrado o inactivo
+        $DayModel->closeDay($currentDate);
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'El día ha sido cerrado. Se registraron ' . count($absentStudents) . ' faltas automáticamente.'
+        ]);
     }
 }

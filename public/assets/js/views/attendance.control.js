@@ -10,7 +10,8 @@ let hora_cierre;
 const contadorEstados = {
   1: 0, // id_estado == 1 , Temprano
   2: 0, // id_estado == 2 , Tarde
-  3: 0  // id_estado == 3 , Justificado
+  3: 0, // id_estado == 3 , Falta
+  4: 0  // id_estado == 4 , Justificado
 };
 let totalEstudiantes = 0;
 let total_restantes = 0;
@@ -19,7 +20,7 @@ function actualizarGrafica(elemento) {
   elemento.data.datasets[0].data = [
     contadorEstados[1],
     contadorEstados[2],
-    contadorEstados[3],
+    contadorEstados[4],
     total_restantes
   ];
   elemento.update();
@@ -29,7 +30,7 @@ function actualizarContadores() {
   $('#total_estudiantes').html(totalEstudiantes);
   $('#contadorTemprano').html(contadorEstados[1]);
   $('#contadorTardios').html(contadorEstados[2]);
-  $('#contadorJustificados').html(contadorEstados[3]);
+  $('#contadorJustificados').html(contadorEstados[4]);
   $('#contadorRestantes').html(total_restantes);
 };
 //actualizar mensaje de estado de hora 
@@ -137,6 +138,7 @@ function refreshListAttendance() {
   contadorEstados[1] = 0;
   contadorEstados[2] = 0;
   contadorEstados[3] = 0;
+  contadorEstados[4] = 0;
 
 
   $('#listaAsistencia').empty();
@@ -203,7 +205,7 @@ function refreshListAttendance() {
         });
 
         // Actualizar gráficos y contadores
-        const total_registrados = contadorEstados[1] + contadorEstados[2] + contadorEstados[3];
+        const total_registrados = contadorEstados[1] + contadorEstados[2] + contadorEstados[4];
         total_restantes = totalEstudiantes - total_registrados;
 
         console.log(total_registrados);
@@ -228,9 +230,8 @@ const pieAsistencia = new Chart(ctx, {
   type: "pie",
   data: {
     labels: ["Temprano", "Tardíos", "Justificados", "Restantes"],
-    datasets: [
+    datasets: [ 
       {
-        data: [95, 10, 15, 0], // datos ficticios
         backgroundColor: [
           "#28a745", // Temprano
           "#17a2b8", // Tardíos
@@ -274,8 +275,12 @@ $(document).ready(function () {
     headers: {
       "X-Requested-With": "XMLHttpRequest",
     },
+    beforeSend: function(){
+
+    },
     success: function (response) {
       if (response.status === "success") {
+        $("#botonesAsistenciaLoading").hide();
         const s = response.setting;
         const d = response.day_active;
         const t = response.total_students;
@@ -308,6 +313,7 @@ $(document).ready(function () {
           $("#btnOpenManualRegister").prop("disabled", false);
           $("#btnOpenEditor").prop("disabled", false);
           $("#btnOpenJustify").prop("disabled", false);
+      
         } else {
           actualizarEstadoDia(0);
           $("#btnOpenDay").prop("disabled", false);
@@ -790,8 +796,10 @@ $("#estadoVentana").addClass("badge-secondary").html("No Abierta");
 
 
 function actualizarEstadoDia(estado) {
+  
   const badge = $("#dia-activo");
   const btnOpenDay = $("#btnOpenDay");
+  const btnCloseDay = $("#btnCloseDay");
   const botonesRegistro = [
     "#btnOpenRegister",
     "#btnOpenManualRegister",
@@ -813,6 +821,10 @@ function actualizarEstadoDia(estado) {
     return;
   }
 
+  // Siempre ocultar ambos antes de mostrar el correcto
+  btnOpenDay.addClass('d-none');
+  btnCloseDay.addClass('d-none');
+
   switch (estadoTexto) {
     case "activo":
       badge.html("Activo")
@@ -820,6 +832,9 @@ function actualizarEstadoDia(estado) {
         .addClass("badge-success");
 
       btnOpenDay.prop("disabled", true);
+      btnOpenDay.addClass('d-none');
+      btnCloseDay.prop("disabled", false);
+      btnCloseDay.removeClass('d-none');
       botonesRegistro.forEach(id => $(id).prop("disabled", false));
       break;
 
@@ -829,6 +844,9 @@ function actualizarEstadoDia(estado) {
         .addClass("badge-danger");
 
       btnOpenDay.prop("disabled", false);
+      btnOpenDay.removeClass('d-none');
+      btnCloseDay.prop("disabled", true);
+      btnCloseDay.addClass('d-none');
       botonesRegistro.forEach(id => $(id).prop("disabled", true));
       break;
 
@@ -838,10 +856,75 @@ function actualizarEstadoDia(estado) {
         .addClass("badge-secondary");
 
       btnOpenDay.prop("disabled", true);
+      btnOpenDay.addClass('d-none');
+      btnCloseDay.prop("disabled", true);
+      btnCloseDay.addClass('d-none');
       botonesRegistro.forEach(id => $(id).prop("disabled", true));
       break;
   }
 }
+// Mostrar/ocultar botones correctamente al cargar la página
+$(document).ready(function () {
+  // Siempre ocultar ambos al inicio (por si acaso)
+ $("#btnOpenDay").addClass('d-none');
+  $("#btnCloseDay").addClass('d-none');
+
+
+});
+// Evento para concluir el día y registrar faltas
+$(document).ready(function () {
+
+
+
+  $("#btnCloseDay").click(function (e) {
+    e.preventDefault();
+    Swal.fire({
+      title: "¿Concluir el día de asistencia?",
+      text: "Esto finalizará el día y registrará como FALTA a los estudiantes restantes.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, concluir",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: base_url + "/attendance/closeDayAndRegisterAbsents",
+          type: "POST",
+          dataType: "json",
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
+          success: function (response) {
+            if (response.status === "success") {
+              actualizarEstadoDia(2); // Finalizado
+              Swal.fire({
+                icon: "success",
+                title: "Día concluido",
+                text: "El día se ha finalizado y las faltas han sido registradas.",
+              });
+              refreshListAttendance();
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: response.message || "No se pudo concluir el día.",
+              });
+            }
+          },
+          error: function (xhr, status, error) {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "No se pudo procesar la solicitud.",
+            });
+          },
+        });
+      }
+    });
+  });
+});
 
 
 

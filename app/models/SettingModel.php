@@ -14,6 +14,7 @@ class SettingModel extends Model
         $start_date,
         $end_date,
         $entry_time,
+        $exit_time,
         $name_school,
         $time_zone,
         $time_tolerance
@@ -23,6 +24,7 @@ class SettingModel extends Model
             start_date      = :start_date,
             end_date        = :end_date,
             entry_time      = :entry_time,
+            exit_time      = :exit_time,
             updated_at      = NOW(),
             name_school     = :name_school,
             time_zone       = :time_zone,
@@ -35,6 +37,7 @@ class SettingModel extends Model
         $stmt->bindParam(':start_date', $start_date);
         $stmt->bindParam(':end_date', $end_date);
         $stmt->bindParam(':entry_time', $entry_time);
+        $stmt->bindParam(':exit_time', $exit_time);
         $stmt->bindParam(':name_school', $name_school);
         $stmt->bindParam(':time_zone', $time_zone);
         $stmt->bindParam(':time_tolerance', $time_tolerance);

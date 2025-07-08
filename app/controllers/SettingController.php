@@ -86,6 +86,7 @@ class SettingController extends Controller
                 empty($data['start_date']) ||
                 empty($data['end_date']) ||
                 empty($data['entry_time']) ||
+                empty($data['exit_time']) ||
                 empty($data['name_school']) ||
                 empty($data['time_zone']) ||
                 !isset($data['time_tolerance']) // puede ser 0
@@ -104,6 +105,7 @@ class SettingController extends Controller
                 $data['start_date'],
                 $data['end_date'],
                 $data['entry_time'],
+                $data['exit_time'],
                 $data['name_school'],
                 $data['time_zone'],
                 $data['time_tolerance']

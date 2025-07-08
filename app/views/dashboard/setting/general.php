@@ -86,21 +86,47 @@
                         <i class="fas fa-user-check"></i> Parámetros de Asistencia
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
-                            <label>Hora de entrada</label>
-                            <input id="entry-time" type="time" class="form-control">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="mb-0 font-weight-bold">
+                                Edición de horas
+                            </span>
+                            <div>
+                                <input class="form-check-input" type="checkbox" id="edit-time-check">
+                                <label class="form-check-label small" for="edit-time-check">Habilitar edición</label>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Tolerancia (minutos)</label>
-                            <input id="time-tolerance" type="number" class="form-control" inputmode="numeric"
-                                pattern="[0-9]*">
-                        </div>
-                        <div class="form-group">
-                            <label>Días de clases</label>
-                            <select id="school-days" class="form-control" disabled>
-                                <option>Lunes a Viernes</option>
-                                <option>Lunes a Sábado</option>
-                            </select>
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label class="text-secondary">Hora de entrada</label>
+                                    <input id="entry-time" type="time" class="form-control" disabled>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label class="text-secondary">Hora de salida</label>
+                                    <input id="exit-time" type="time" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label class="text-secondary">Tolerancia (minutos)</label>
+                                    <input id="time-tolerance" type="number" class="form-control" inputmode="numeric"
+                                        pattern="[0-9]*" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <label>Días de clases</label>
+                                <select id="school-days" class="form-control" disabled>
+                                    <option>Lunes a Viernes</option>
+                                    <option>Lunes a Sábado</option>
+                                </select>
+                            </div>
+                            </div>
                         </div>
                     </div>
                 </div>

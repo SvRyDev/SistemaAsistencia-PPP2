@@ -137,6 +137,14 @@
             <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
 
+            <li class="nav-header">PRINCIPAL</li>
+            <li class="nav-item">
+              <a href="<?= base_url() ?>/home" class="nav-link">
+                <i class="nav-icon fas fa-home"></i>
+                <p>Inicio</p>
+              </a>
+            </li>
+
             <li class="nav-header">ESTUDIANTES</li>
             <li class="nav-item">
               <a href="<?= base_url() ?>/student" class="nav-link">
@@ -154,7 +162,7 @@
                 </p>
               </a>
             </li>
-            
+
             <li class="nav-item">
               <a href="<?= base_url() ?>/student/import" class="nav-link">
                 <i class="nav-icon fas fa-file-import"></i>
@@ -192,9 +200,9 @@
             </li>
             <li class="nav-item">
               <a href="<?= base_url() ?>/attendance/query" class="nav-link">
-                <i class="nav-icon far fa-image"></i>
+                    <i class="nav-icon fas fa-calendar-alt"></i>
                 <p>
-                  Consulta del dia
+                  Consulta del Dia
                 </p>
               </a>
             </li>
@@ -215,7 +223,7 @@
                 </p>
               </a>
             </li>
-            
+
             <li class="nav-item">
               <a href="<?= base_url() ?>/report/resume/daily" class="nav-link">
                 <i class="nav-icon fas fa-chart-bar"></i>
@@ -261,13 +269,13 @@
           <div class="row mb-2">
             <div class="col-sm-6">
               <h1 class="m-0"><?= $data['title'] ?></h1>
-           <!--      <span class="text-muted">Seleccione los filtros y genere carnets para los estudiantes</span> -->
+              <!--      <span class="text-muted">Seleccione los filtros y genere carnets para los estudiantes</span> -->
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="<?= base_url() ?>">Home</a></li>
                 <li class="breadcrumb-item active"><?= $data['title'] ?></li>
-                
+
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->

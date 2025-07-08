@@ -63,6 +63,7 @@ $router->addRoute('GET', '/carnet/previewCarnet', 'CarnetController@preview_sing
 
 $router->addRoute('POST', '/attendance/registerAttendance', 'AttendanceController@register_attendance');
 $router->addRoute('POST', '/attendance/openNewDay', 'AttendanceController@register_new_day');
+$router->addRoute('POST', '/attendance/closeDayAndRegisterAbsents', 'AttendanceController@close_day_register_abstents');
 $router->addRoute('POST', '/attendance/getConfig', 'AttendanceController@get_config_attendance');
 $router->addRoute('POST', '/attendance/getListRegisteredLastDay', 'AttendanceController@get_list_attendance_last_day');
 $router->addRoute('POST', '/attendance/getListByFilter', 'AttendanceController@fetch_by_filters');

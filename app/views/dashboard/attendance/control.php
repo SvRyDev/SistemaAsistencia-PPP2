@@ -146,32 +146,38 @@
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-7 mt-2">
                 <div class="card shadow border-left-primary">
                     <div class="card-body">
-                        <div class="row justify-content-center text-center">
-                            <!-- Habilitar Periodo -->
-                            <div class="col-auto mb-2">
-                                <button id="btnOpenDay" class="btn btn-success">
-                                    <i class="fas fa-toggle-on mr-1"></i> Aperturar Dia
-                                </button>
-                            </div>
+                      <div id="botonesAsistenciaWrapper" class="d-flex justify-content-center align-items-center flex-wrap">
+    
+    <!-- Habilitar Periodo -->
+    <div class="mx-2 my-1">
+        <button id="btnOpenDay" class="btn btn-success d-none">
+            <i class="fas fa-toggle-on mr-1"></i> Aperturar Día
+        </button>
+    </div>
 
-                            <!-- Abrir Ventana -->
-                            <div class="col-auto mb-2">
-                                <button id="btnOpenAttendance" class="btn btn-info" id="btnOpenAttendance">
-                                    <i class="fas fa-door-open mr-1"></i> Abrir Ventana
-                                </button>
-                            </div>
+    <!-- Concluir Día -->
+    <div class="mx-2 my-1">
+        <button id="btnCloseDay" class="btn btn-danger d-none" disabled>
+            <i class="fas fa-flag-checkered mr-1"></i> Concluir Día
+        </button>
+    </div>
 
-                            <!-- Entrada Asistencia Manual -->
-                            <div class="col-auto mb-2">
-                                <button type="button" class="btn btn-warning" id="btnAbrirModal">
-                                    <i class="fas fa-edit mr-1"></i> Entrada Manual
-                                </button>
-                            </div>
+    <!-- Abrir Ventana -->
+    <div class="mx-2 my-1">
+        <button id="btnOpenAttendance" class="btn btn-info">
+            <i class="fas fa-door-open mr-1"></i> Abrir Ventana
+        </button>
+    </div>
 
-                            <!-- Botón para abrir el modal -->
+    <!-- Entrada Asistencia Manual -->
+    <div class="mx-2 my-1">
+        <button type="button" class="btn btn-warning" id="btnAbrirModal">
+            <i class="fas fa-edit mr-1"></i> Entrada Manual
+        </button>
+    </div>
 
+</div>
 
-                        </div>
                     </div>
                 </div>
             </div>
@@ -322,7 +328,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="list-group" id="listaAsistencia">
+                        <div class="list-group" id="listaAsistencia" style="max-height: 400px; overflow-y: auto">
                             <!-- Aquí se mostrarán los estudiantes registrados -->
                         </div>
                     </div>

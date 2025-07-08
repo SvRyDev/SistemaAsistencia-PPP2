@@ -2,12 +2,46 @@ let initialAcademicYear = "";
 let initialStartDate = "";
 let initialEndDate = "";
 
+//horas 
+let initialEntryTime = "";
+let initialExitTime = "";
+
+
 $(document).ready(function () {
   // Selección de elementos
   const $yearInput = $("#year-academic");
   const $startDate = $("#start-date-academic");
   const $endDate = $("#end-date-academic");
   const $editCheck = $("#edit-dates-check");
+
+
+  // ------------------------------
+  // Funcion para validar horas 
+  // ------------------------------
+  function validarHoras() {
+    const entryVal = $("#entry-time").val();
+    const exitVal = $("#exit-time").val();
+
+    if (!entryVal || !exitVal) return;
+
+    const entry = parseTime(entryVal);
+    const exit = parseTime(exitVal);
+
+    if (exit <= entry) {
+      mostrarError(
+        "Horario inválido",
+        "La hora de salida debe ser posterior a la hora de entrada."
+      );
+      $("#exit-time").val("");
+    }
+  }
+
+  function parseTime(timeStr) {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    return hours * 60 + minutes; // Convierte a minutos totales
+  }
+
+
 
   // -------------------------------
   // Función para validar fechas
@@ -88,6 +122,33 @@ $(document).ready(function () {
     }
   });
 
+  $("#edit-time-check").on("change", function () {
+    if (this.checked) {
+      Swal.fire({
+        title: "¿Estás seguro?",
+        text: "Cambiar las horas de entrada y salida puede alterar la lógica de asistencia.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, continuar",
+        cancelButtonText: "Cancelar",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $("#entry-time, #exit-time, #time-tolerance").prop("disabled", false);
+        } else {
+          this.checked = false;
+        }
+      });
+    } else {
+      $("#entry-time, #exit-time, #time-tolerance").prop("disabled", true);
+      $("#entry-time").val(initialEntryTime);
+      $("#exit-time").val(initialExitTime);
+      $("#exit-time").val(initialExitTime);
+    }
+  });
+
+  $("#entry-time, #exit-time").on("change", validarHoras);
+
   // -------------------------------
   // Validación dinámica de fechas
   // -------------------------------
@@ -119,6 +180,10 @@ $(document).ready(function () {
         $("#last-updated").html(formatearFechaLegible(s.updated_at));
 
         initialAcademicYear = s.academic_year;
+        initialEntryTime = s.entry_time;
+        initialExitTime = s.exit_time;
+        $("#exit-time").val(initialExitTime);
+
       } else {
         mostrarError("Error", response.message);
       }
@@ -142,6 +207,7 @@ $(document).ready(function () {
       id: 1, // ⚠️ Asegúrate de que sea dinámico si es necesario
       name_school: $("#name-school").val().trim(),
       entry_time: $("#entry-time").val(),
+      exit_time: $("#exit-time").val(),
       time_tolerance: $("#time-tolerance").val(),
       start_date: $startDate.val(),
       end_date: $endDate.val(),
@@ -160,7 +226,7 @@ $(document).ready(function () {
       beforeSend: function () {
         // Cierra cualquier modal anterior si aún está abierto
         if (Swal.isVisible()) Swal.close();
-      
+
         Swal.fire({
           title: "Guardando configuración...",
           text: "Por favor, espera.",
@@ -171,10 +237,10 @@ $(document).ready(function () {
           }
         });
       }
-      
-      
+
+
       ,
-      
+
       success: function (response) {
         Swal.fire({
           title: response.status === "success" ? "Éxito" : "Error",

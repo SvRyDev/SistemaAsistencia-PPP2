@@ -63,10 +63,6 @@ class AttendanceModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-
-
-
-
     public function getLastAttendanceByStudent($studentId, $limit = 15)
     {
         $stmt = $this->db->prepare("
@@ -125,23 +121,21 @@ class AttendanceModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function registerAttendance($estudiante_id, $dia_fecha_id, $hora_entrada, $estado_asistencia_id, $observacion = null)
-    {
-        $stmt = $this->db->prepare("
-        INSERT INTO asistencia_estudiante 
-        (estudiante_id, dia_fecha_id, hora_entrada, estado_asistencia_id, observacion)
-        VALUES 
-        (:estudiante_id, :dia_fecha_id, :hora_entrada, :estado_asistencia_id, :observacion)
+    public function getIDStudentByDate($dia_fecha_id)
+{
+    $stmt = $this->db->prepare("
+        SELECT estudiante_id 
+        FROM asistencia_estudiante 
+        WHERE dia_fecha_id = :dia_fecha_id
     ");
+    $stmt->bindParam(':dia_fecha_id', $dia_fecha_id, PDO::PARAM_INT);
+    $stmt->execute();
 
-        $stmt->bindParam(':estudiante_id', $estudiante_id);
-        $stmt->bindParam(':dia_fecha_id', $dia_fecha_id);
-        $stmt->bindParam(':hora_entrada', $hora_entrada); // Debe ser formato 'Y-m-d H:i:s'
-        $stmt->bindParam(':estado_asistencia_id', $estado_asistencia_id);
-        $stmt->bindParam(':observacion', $observacion);
+    // Retorna solo los IDs en un array plano
+    return array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'estudiante_id');
+}
 
-        return $stmt->execute();
-    }
+
     public function getRegisteredByStudentAndDate($estudianteId, $diaFechaId)
     {
         $sql = "SELECT *
@@ -167,7 +161,7 @@ class AttendanceModel extends Model
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':estudiante_id', $estudiante_id, PDO::PARAM_INT);
         $stmt->bindParam(':dia_fecha_id', $dia_fecha_id, PDO::PARAM_INT);
-        $stmt->bindParam(':hora_entrada', $hora_entrada); // formato 'H:i:s'
+        $stmt->bindParam(':hora_entrada', $hora_entrada);
         $stmt->bindParam(':estado_asistencia_id', $estado_asistencia_id, PDO::PARAM_INT);
         $stmt->bindParam(':observacion', $observacion);
 
