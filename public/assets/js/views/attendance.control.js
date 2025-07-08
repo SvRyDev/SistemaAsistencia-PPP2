@@ -32,6 +32,15 @@ function actualizarContadores() {
   $('#contadorTardios').html(contadorEstados[2]);
   $('#contadorJustificados').html(contadorEstados[4]);
   $('#contadorRestantes').html(total_restantes);
+
+  $('#porcentajeTemprano').html(((contadorEstados[1] * 100) / totalEstudiantes).toFixed(2) + "%");
+  $('#porcentajeTardios').html(((contadorEstados[2] * 100) / totalEstudiantes).toFixed(2) + "%");
+  $('#porcentajeJustificados').html(((contadorEstados[4] * 100) / totalEstudiantes).toFixed(2) + "%");
+  $('#porcentajeRestantes').html(((total_restantes * 100) / totalEstudiantes).toFixed(2) + "%");
+
+
+
+
 };
 //actualizar mensaje de estado de hora 
 function actualizarEstadoVisual(estado, destinoId) {

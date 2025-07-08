@@ -128,7 +128,7 @@ $("#searchGroupButton").on("click", function () {
         ${diasMes
           .map(
             (d) =>
-              `<th class="small">${d.diaNumero}/${("0" + mesId).slice(-2)}</th>`
+              `<th class="small">${d.diaNumero}</th>`
           )
           .join("")}
       </tr>
@@ -150,14 +150,14 @@ $("#searchGroupButton").on("click", function () {
         let fila = `
           <tr>
             <td class="small text-center">${index + 1}</td>
-            <td class="small text-center">${s.codigo}</td>
+            <td class="small text-center text-nowrap">${s.codigo}</td>
             <td class="small" style="white-space: nowrap;">${s.nombres} ${s.apellidos
           }</td>
             <td class="small text-center">${s.grado_nombre}</td>
             <td class="small text-center">${s.seccion}</td>
             ${diasMes.map((d) => {
             const key = `${s.estudiante_id}_${d.fecha}`;
-            const abrev = asistenciaMap[key] || "-";
+            const abrev = asistenciaMap[key] || "";
             const isWeekend = d.diaAbrev === "S" || d.diaAbrev === "D";
             const clase = isWeekend ? "table-warning text-dark" : "";
             return `<td class="small text-center ${clase}">${abrev}</td>`;
