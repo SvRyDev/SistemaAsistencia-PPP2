@@ -107,28 +107,8 @@
                             <!-- /.card-header -->
                             <div class="card-body bg-light">
 
-
-                                <div class="card shadow border-0 rounded-lg">
-                                    <div class="card-body">
-
-                                        <!-- Tabla de resultados -->
-                                        <div class="table-responsive mb-4">
-                                            <table id="table-resultado" class="table table-bordered">
-                                                <thead class="thead-light">
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th>Mes</th>
-                                                        <th>Día</th>
-                                                        <th>Estado</th>
-                                                        <th>Observación</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody></tbody>
-                                            </table>
-                                        </div>
-
-                                        <!-- Totales de asistencia -->
-                                        <div class="row text-center">
+                       <!-- Totales de asistencia -->
+                       <div class="row text-center">
                                             <div class="col-sm-6 col-md-3 mb-3">
                                                 <div class="bg-light border-left border-success p-3 rounded shadow-sm">
                                                     <h6 class="text-success mb-1">Asistencias</h6>
@@ -161,6 +141,27 @@
                                                 </div>
                                             </div>
                                         </div>
+                                <div class="card shadow border-0 rounded-lg">
+                                    <div class="card-body">
+
+                                        <!-- Tabla de resultados -->
+                                        <div class="table-responsive mb-4">
+                                            <table id="table-resultado" class="table table-sm compact table-bordered">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Fecha</th>
+                                                        <th>Día</th>
+                                                        <th>Estado</th>
+                                                        <th>Hora Registro</th>
+                                                        <th>Observación</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+
+
 
 
                                     </div>

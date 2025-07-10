@@ -263,8 +263,11 @@ class AttendanceController extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $currentDate = date('Y-m-d');
-            $nameDay = date('l', strtotime($currentDate));
 
+
+            $nameDay = ['Sunday'=>'Domingo','Monday'=>'Lunes','Tuesday'=>'Martes','Wednesday'=>'Miércoles','Thursday'=>'Jueves','Friday'=>'Viernes','Saturday'=>'Sábado'][date('l', strtotime($currentDate))];
+
+ 
             $SettingModel = $this->model('SettingModel');
             $config = $SettingModel->getConfig();
 

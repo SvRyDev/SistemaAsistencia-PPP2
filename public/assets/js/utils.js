@@ -21,6 +21,12 @@ function formatearFechaCompleta(fechaStr) {
   return `${dia} de ${mes}`;
 }
 
+function formatearFechaDMY(fechaISO) {
+  if (!fechaISO) return "";
+  const [año, mes, dia] = fechaISO.split("-");
+  return `${dia}/${mes}/${año}`;
+}
+
 // Función para formatear fecha
 function formatFechaCorta(fechaStr) {
   const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
@@ -166,14 +172,14 @@ function iniciarReloj(idHora, idFecha = null) {
 }
 
 function formatearHoraAmPm(horaStr) {
-  if (!horaStr || typeof horaStr !== "string") return "Hora inválida";
+  if (!horaStr || typeof horaStr !== "string") return null;
 
   const partes = horaStr.split(":");
   if (partes.length < 2) return "Hora inválida";
 
   let horas = parseInt(partes[0], 10);
   const minutos = partes[1];
-  const ampm = horas >= 12 ? "pm" : "am";
+  const ampm = horas >= 12 ? "p.m." : "a.m.";
 
   horas = horas % 12 || 12;
 

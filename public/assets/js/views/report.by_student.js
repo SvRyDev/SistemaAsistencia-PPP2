@@ -1,5 +1,15 @@
 let table;
 
+let OBJ_REP_ESTUDIANTE = {
+  nombres: "",
+  apellidos: "",
+  grado: "",
+  grado_corto: "",
+  seccion: "",
+  mes_consulta: "",
+  codigo: "",
+};
+
 $(document).ready(function () {
   let logoBase64 = "";
 
@@ -58,45 +68,103 @@ $(document).ready(function () {
         extend: "excel",
         text: '<i class="fas fa-file-excel"></i> Exportar a Excel',
         className: "btn btn-success mr-2 mb-1 rounded",
-        title: "Reporte de Asistencia",
+        title: function () {
+          return `REPORTE_${OBJ_REP_ESTUDIANTE.apellidos || ""}_${
+            OBJ_REP_ESTUDIANTE.grado_corto || ""
+          }${OBJ_REP_ESTUDIANTE.seccion || ""}_${
+            OBJ_REP_ESTUDIANTE.mes_consulta || ""
+          }`;
+        },
         messageTop: function () {
-          return `Generado el ${new Date().toLocaleDateString()} - Estudiante: ${$(
-            "#studentCodeInput"
-          ).val()}`;
+          const fecha = new Date().toLocaleDateString();
+          const estudiante =
+            OBJ_REP_ESTUDIANTE.nombres + " " + OBJ_REP_ESTUDIANTE.apellidos;
+          const mes = OBJ_REP_ESTUDIANTE.mes_consulta; // Captura el texto del mes
+          const grado =
+            OBJ_REP_ESTUDIANTE.grado + " " + OBJ_REP_ESTUDIANTE.seccion; // Asumiendo que hay un label visible con el grado
+
+          return `Mes de Consulta: ${mes}  | Generado el: ${fecha}`;
         },
       },
+
       {
         extend: "pdf",
         text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
         className: "btn btn-danger mr-2 mb-1 rounded",
-        title: "", // evita duplicación de título
+        title: function () {
+          return `REPORTE_${OBJ_REP_ESTUDIANTE.apellidos || ""}_${
+            OBJ_REP_ESTUDIANTE.grado_corto || ""
+          }${OBJ_REP_ESTUDIANTE.seccion || ""}_${
+            OBJ_REP_ESTUDIANTE.mes_consulta || ""
+          }`;
+        },
         customize: function (doc) {
-          const estudiante = $("#studentCodeInput").val();
+          // Elimina cualquier título automático generado por DataTables/pdfMake
+          if (
+            doc.content[0]?.text ===
+            `REPORTE_${OBJ_REP_ESTUDIANTE.apellidos || ""}_${
+              OBJ_REP_ESTUDIANTE.grado_corto || ""
+            }${OBJ_REP_ESTUDIANTE.seccion || ""}_${
+              OBJ_REP_ESTUDIANTE.mes_consulta || ""
+            }`
+          ) {
+            doc.content.shift(); // Quita el primer elemento si es el título
+          }
+
           const fecha = new Date().toLocaleDateString();
+          const estudiante_nombre =
+            OBJ_REP_ESTUDIANTE.nombres + " " + OBJ_REP_ESTUDIANTE.apellidos;
+          const estudiante_grado_seccion =
+            OBJ_REP_ESTUDIANTE.grado + " " + OBJ_REP_ESTUDIANTE.seccion;
+          const mes_consulta = OBJ_REP_ESTUDIANTE.mes_consulta; // Captura el texto del mes
 
           // Cabecera con logo y texto
           doc.content.splice(0, 0, {
             table: {
-              widths: ["20%", "80%"], // Distribución proporcional del ancho
+              widths: ["80%", "20%"], // Distribución proporcional del ancho
               body: [
                 [
                   {
-                    image: logoBase64, // Asegúrate de que logoBase64 contiene el string base64 del logo
-                    width: 45,
-                    alignment: "right",
-                    margin: [0, 0, 0, 0],
-                  },
-                  {
                     stack: [
                       {
-                        text: "INSTITUCIÓN EDUCATIVA Mx. SAN LUIS",
+                        text: "INSTITUCION EDUCATIVA MX. SAN LUIS",
                         style: "header",
                       },
-                      { text: "Reporte de Asistencia", style: "subheader" },
                       {
-                        text: `Estudiante: ${estudiante}    Generado el: ${fecha}`,
+                        text: `REPORTE DE ASISTENCIA`,
+                        style: "subheader",
+                        bold: true,
+                      },
+                      {
+                        text: `Mes: ${mes_consulta
+                          .toLowerCase()
+                          .replace(/\b\w/g, (c) => c.toUpperCase())}`,
+                        style: "info",
+                      },
+                      {
+                        text: `Estudiante: ${estudiante_nombre
+                          .toLowerCase()
+                          .replace(/\b\w/g, (c) => c.toUpperCase())}`,
+                        style: "info",
+                      },
+                      {
+                        text: `Grado: ${estudiante_grado_seccion
+                          .toLowerCase()
+                          .replace(/\b\w/g, (c) => c.toUpperCase())}`,
+                        style: "info",
+                      },
+
+                      {
+                        text: `Generado el: ${fecha}`,
+                        style: "info",
                       },
                     ],
+                    alignment: "left",
+                    margin: [10, 10, 10, 10],
+                  },
+                  {
+                    image: logoBase64, // Asegúrate de que logoBase64 contiene el string base64 del logo
+                    width: 55,
                     alignment: "right",
                     margin: [10, 10, 10, 10],
                   },
@@ -162,21 +230,27 @@ $(document).ready(function () {
           };
 
           doc.content[doc.content.length - 1].table.widths = [
-            "5%",
+            "6%",
             "15%",
-            "20%",
-            "15%",
-            "45%",
+            "12%",
+            "14%",
+            "14%",
+            "39%",
           ]; // Para 5 columnas
 
           // Estilos
           doc.styles.header = {
             fontSize: 14,
+            margin: [0, 2, 0, 2],
             bold: true,
           };
           doc.styles.subheader = {
-            fontSize: 11,
+            fontSize: 10,
             margin: [0, 2, 0, 2],
+          };
+          doc.styles.info = {
+            fontSize: 9,
+            margin: [0, 1, 0, 1],
           };
         },
       },
@@ -186,68 +260,78 @@ $(document).ready(function () {
         text: '<i class="fas fa-print"></i> Imprimir',
         className: "btn btn-secondary mr-2 mb-1 rounded",
         customize: function (win) {
-          const estudiante = $("#studentCodeInput").val();
           const fecha = new Date().toLocaleDateString();
+          const estudiante_nombre = $("#result-nombre-est").text();
+
+          const estudiante_grado_seccion = $("#result-grado-est").text();
+          const mes_consulta = $("#mes-buscado").text();
 
           // Cabecera personalizada con logo
           $(win.document.body).prepend(`
-  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-    <div style="flex: 1;">
-      <img src="${base_url}/public/assets/img/static/logo_.png" style="height: 60px;">
-    </div>
-    <div style="flex: 2; text-align: center;">
-      <h2 style="margin: 0;">INSTITUCIÓN EDUCATIVA</h2>
-      <p style="margin: 0;">Reporte de Asistencia</p>
-    </div>
-    <div style="flex: 1;"></div> <!-- Espacio vacío para balancear -->
-  </div>
+           <div style="position: relative; margin-bottom: 7px;">
 
-  <div style="text-align: center; margin-bottom: 10px;">
-    <p style="margin: 0;">Estudiante: <strong>${estudiante}</strong></p>
-    <p style="margin: 0;">Generado el: ${fecha}</p>
-  </div>
-`);
+              <!-- Logo en posición absoluta -->
+              <img src="${base_url}/public/assets/img/static/logo_.png"
+                  style="position: absolute; top: 5px; left: 40px; height: 100px; padding: 10px;">
+
+              <!-- Título centrado -->
+              <div style="text-align: center;">
+                <h4 style="margin: 0; font-weight:bold;">${nombre_institucion}</h4>
+                <h5 style="margin: 0;">REPORTE DE ASISTENCIA</h5>
+              </div>
+
+            </div>
+
+            <!-- Datos adicionales -->
+            <div style="text-align: center; margin-bottom: 14px;">
+              <p style="margin: 0;">Mes: <strong>${mes_consulta}</strong></p>
+              <p style="margin: 0;">Grado: <strong>${estudiante_grado_seccion}</strong></p>
+              <p style="margin: 0;">Estudiante: <strong>${estudiante_nombre}</strong></p>
+              <p style="margin: 0;">Generado el: ${fecha}</p>
+            </div>
+
+          `);
 
           // Pie de página
           $(win.document.body).append(`
-  <div style="position:fixed; bottom:10px; left:0; right:0; text-align:center; font-size:10px;">
-    <hr style="width:90%; margin-bottom:4px;">
-    <p style="margin:0;">Fin del reporte - Generado por el sistema</p>
-  </div>
-`);
+            <div style="position:fixed; bottom:10px; left:0; right:0; text-align:center; font-size:10px;">
+              <hr style="width:90%; margin-bottom:4px;">
+              <p style="margin:0;">Fin del reporte - Generado por el sistema</p>
+            </div>
+          `);
 
           // Estilos CSS
           const css = `
-  @page {
-    size: portrait;
-    margin: 0 12mm;
-  }
-  body {
-    font-size: 12px;
-  }
-  table {
-    width: 600px !important;
-    font-size: 12px;
-    border-collapse: collapse !important;
-  }
-  table th{
-    background-color:rgb(162, 222, 134) !important;
-    text-align: center;
-    font-weight: bold;
-  }
-  table thead th, table tbody td {
-    padding: 4px !important;
-  }
-  @media print {
- 
-    body {
-      padding: 12mm 6mm !important;
-    }
-    header, footer {
-      display: none !important;
-    }
-  }
-`;
+            @page {
+              size: portrait;
+              margin: 0 12mm;
+            }
+            body {
+              font-size: 12px;
+            }
+            table {
+              width: 100% !important;
+              font-size: 12px;
+              border-collapse: collapse !important;
+            }
+            table th{
+              background-color:rgb(162, 222, 134) !important;
+              text-align: center;
+              font-weight: bold;
+            }
+            table thead th, table tbody td {
+              padding: 4px !important;
+            }
+            @media print {
+          
+              body {
+                padding: 12mm 6mm !important;
+              }
+              header, footer {
+                display: none !important;
+              }
+            }
+          `;
 
           $(win.document.body)
             .find("h1, .page-title, .dashboard-title")
@@ -273,7 +357,7 @@ $(document).ready(function () {
       url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json",
     },
   });
-  
+
   $(".left-text").html('<h5 class="mb-0">Mes de Agosto</h5>');
 
   // Cargar meses en el select
@@ -289,12 +373,22 @@ $("#searchStudentButton").on("click", function () {
   const nombreMes = $("#select-mes").val().trim();
 
   if (studentDNI === "") {
-    alert("Por favor, ingrese el código del estudiante.");
+    Swal.fire({
+      icon: "warning",
+      title: "Código requerido",
+      text: "Por favor, ingrese el código del estudiante.",
+      confirmButtonColor: "#3085d6",
+    });
     return;
   }
 
   if (nombreMes === "") {
-    alert("Por favor, ingrese el mes a consultar.");
+    Swal.fire({
+      icon: "warning",
+      title: "Mes requerido",
+      text: "Por favor, seleccione el mes a consultar.",
+      confirmButtonColor: "#3085d6",
+    });
     return;
   }
 
@@ -303,7 +397,7 @@ $("#searchStudentButton").on("click", function () {
     type: "POST",
     data: { dni_est: studentDNI, mes: nombreMes.toUpperCase() },
     beforeSend: function () {
-      table.clear().draw(); // Limpia resultados anteriores
+      table.clear().draw();
       table.buttons().disable();
       $("#searchStudentButton").prop("disabled", true);
       $("#table-resultado tbody").html(`
@@ -313,21 +407,18 @@ $("#searchStudentButton").on("click", function () {
         </div>
       </td></tr>`);
 
-      $('#student-info-loader').show();
-      $('#info-student-contain').hide();
-  
+      $("#student-info-loader").show();
+      $("#info-student-contain").hide();
+
       $(".left-text").html("");
-      $("#result-nombre-est").html('-');
-      $("#result-codigo-est").html('-');
-      $("#result-grado-est").html('-');
+      $("#result-nombre-est").html("-");
+      $("#result-codigo-est").html("-");
+      $("#result-grado-est").html("-");
 
-
-
-
-      $(".total-asistencias").html('0');
-      $(".total-inasistencias").html('0');
-      $(".total-justificados").html('0');
-      $(".total-tardanzas").html('0');
+      $(".total-asistencias").html("0");
+      $(".total-inasistencias").html("0");
+      $(".total-justificados").html("0");
+      $(".total-tardanzas").html("0");
     },
     success: function (response) {
       if (response.status !== "success") {
@@ -339,34 +430,54 @@ $("#searchStudentButton").on("click", function () {
         return;
       }
 
+      Object.keys(OBJ_REP_ESTUDIANTE).forEach(
+        (key) => (OBJ_REP_ESTUDIANTE[key] = "")
+      );
+
+      if (response.student) {
+        OBJ_REP_ESTUDIANTE.nombres = response.student.nombres || "";
+        OBJ_REP_ESTUDIANTE.apellidos = response.student.apellidos || "";
+        OBJ_REP_ESTUDIANTE.codigo = response.student.codigo || "";
+        OBJ_REP_ESTUDIANTE.grado = response.student.grado_nombre || "";
+        OBJ_REP_ESTUDIANTE.grado_corto = response.student.grado || "";
+        OBJ_REP_ESTUDIANTE.seccion = response.student.seccion || "";
+        OBJ_REP_ESTUDIANTE.mes_consulta =
+          $("#select-mes :selected").text() || "";
+      }
+
+      console.log(OBJ_REP_ESTUDIANTE);
+
       $("#result-nombre-est").html(
         (
-          response.student.nombres +
+          OBJ_REP_ESTUDIANTE.nombres +
           " " +
-          response.student.apellidos
+          OBJ_REP_ESTUDIANTE.apellidos
         ).toUpperCase()
       );
-      $("#result-codigo-est").html(response.student.codigo.toUpperCase());
+      $("#result-codigo-est").html(OBJ_REP_ESTUDIANTE.codigo.toUpperCase());
 
       $("#result-grado-est").html(
-        response.student.grado_nombre + " - " + response.student.seccion
+        OBJ_REP_ESTUDIANTE.grado + " - " + OBJ_REP_ESTUDIANTE.seccion
       );
 
       $(".left-text").html(
-        (
-          response.student.nombres +
-          " " +
-          response.student.apellidos +
-          " - " +
-          response.student.codigo
-        ).toUpperCase()
+        `
+         <span class="text-secondary" style="font-style: italic; font-size: 0.95rem;">
+           ${OBJ_REP_ESTUDIANTE.nombres} ${
+          OBJ_REP_ESTUDIANTE.apellidos
+        } - MES DE <span id="mes-buscado">${$(
+          "#select-mes option:selected"
+        ).text()}</span> 
+         </span>`
       );
 
       const attendance = response.attendance_records;
+      console.log(attendance);
+      
 
       if (!attendance.length) {
         $("#table-resultado tbody").html(`
-          <tr><td colspan="5" class="text-center text-muted">No se encontraron registros de asistencia.</td></tr>
+          <tr><td colspan="6" class="text-center text-muted">No se encontraron registros de asistencia.</td></tr>
         `);
         return;
       }
@@ -374,11 +485,10 @@ $("#searchStudentButton").on("click", function () {
       attendance.forEach((record, index) => {
         table.row.add([
           index + 1,
-          `${getNombreMes(record.fecha_asistencia).toUpperCase()}`,
-          `${getDia(
-            record.fecha_asistencia
-          )} - ${record.nombre_dia.toUpperCase()}`,
-          record.estado_asistencia,
+          formatearFechaDMY(record.fecha_asistencia),
+          `${record.nombre_dia} `,
+          `<span class="badge badge-${record.clase_boostrap}"><i class="${record.icon} mr-1"></i>${record.estado_asistencia}</span>`,
+          formatearHoraAmPm(record.hora_entrada) || "",
           record.observacion || "",
         ]);
       });
@@ -392,29 +502,30 @@ $("#searchStudentButton").on("click", function () {
       let totalTardanzas = 0;
 
       attendance.forEach((registro) => {
-        const abrev = registro.abreviatura;
+        const abrev = registro.id_estado;
 
-        if (abrev === "P") totalAsistencias++;
-        else if (abrev === "F") totalFaltas++;
-        else if (abrev === "J") totalJustificados++;
-        else if (abrev === "T") totalTardanzas++;
+        if (abrev === 1) totalAsistencias++;
+        else if (abrev === 2) totalTardanzas++;
+        else if (abrev === 3) totalFaltas++;
+        else if (abrev === 4) totalJustificados++;
       });
 
-      // Actualiza en el DOM
       $(".total-asistencias").html(totalAsistencias);
       $(".total-inasistencias").html(totalFaltas);
       $(".total-justificados").html(totalJustificados);
       $(".total-tardanzas").html(totalTardanzas);
     },
     error: function () {
-      alert("Error del servidor");
+      Swal.fire({
+        icon: "error",
+        title: "Error del servidor",
+        text: "No se pudo obtener la información.",
+      });
     },
     complete: function () {
       $("#searchStudentButton").prop("disabled", false);
-      $('#student-info-loader').hide();
-      $('#info-student-contain').show();
-
-
+      $("#student-info-loader").hide();
+      $("#info-student-contain").show();
     },
   });
 });

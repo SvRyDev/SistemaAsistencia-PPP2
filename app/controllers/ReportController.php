@@ -120,6 +120,7 @@ class ReportController extends Controller
             'student' => $student,
             'attendance_records' => $attendanceRecords,
             'days_active' => $daysActive,
+            
         ]);
     }
 

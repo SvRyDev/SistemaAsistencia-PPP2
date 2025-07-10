@@ -18,7 +18,9 @@ class ReportModel extends Model
                 ea.id_estado,
                 ea.nombre_estado AS estado_asistencia,
                 ea.abreviatura,
-                ea.color_hex
+                ea.color_hex,
+                ea.clase_boostrap,
+                ea.icon
                 
             FROM asistencia_estudiante a
             INNER JOIN dia_asistencia f ON a.dia_fecha_id = f.dia_fecha_id
@@ -57,6 +59,7 @@ class ReportModel extends Model
                 ea.id_estado,
                 ea.nombre_estado AS estado_asistencia,
                 ea.abreviatura,
+                ea.clase_boostrap,
                 ea.color_hex
     
             FROM asistencia_estudiante a
