@@ -29,3 +29,5 @@ function iniciarRelojEnTiempoReal(selector, ubicacion = "San Luis") {
     iniciarRelojEnTiempoReal("#reloj-dinamico", "San Luis");
   });
   
+
+  const url_plugins_datable_esp = base_url + "/public/assets/libs/data-table-js/languaje/Spanish.json"; 

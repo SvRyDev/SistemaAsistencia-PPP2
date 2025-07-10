@@ -38,17 +38,18 @@
           </div>
           <!-- /.card -->
 
+<!--
           <div class="col-xl-4 col-lg-5 col-md-6 col-sm-6 col-xs-12">
             <div class="card">
-              <!-- /.card-header -->
+             
               <div class="card-body p-1">
                 
                 <form id="uploadCSVForm" enctype="multipart/form-data" class="w-100">
                   <div class="form-group m-0">
-                    <!-- Label como botón de ancho completo -->
+              
                     <label for="csvFile" class="btn btn-light shadow d-flex align-items-center w-100 m-0"
                       style="cursor: pointer; border-radius: 0;">
-                      <!-- Ícono blanco con fondo verde -->
+                 
                       <span
                         class="bg-secondary text-white d-flex align-items-center justify-content-center mr-2 flex-shrink-0"
                         style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; border-radius: 4px;">
@@ -57,7 +58,7 @@
                       <span>Importar desde CSV</span>
                     </label>
 
-                    <!-- Input oculto -->
+          
                     <input type="file" name="csvFile" id="csvFile" accept=".csv" required class="d-none">
                   </div>
                 </form>
@@ -65,9 +66,10 @@
                 <div id="previewTableCSV"></div>
               </div>
 
-              <!-- /.card-body -->
+        
             </div>
           </div>
+          -->
           <!-- /.card -->
 
           <div class="col-12">

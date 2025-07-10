@@ -186,25 +186,34 @@ function formatearHoraAmPm(horaStr) {
 
 function aplicarValidacionesPersonalizadas() {
   $(document).on('input', 'input[data-validate]', function () {
-    const tipo = $(this).data('validate');
+    const tipos = $(this).data('validate').toString().split(/\s+/);
+    let value = this.value;
 
-    switch (tipo) {
-      case 'numeric':
-        this.value = this.value.replace(/[^0-9]/g, '');
-        break;
-      case 'alpha':
-        this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-        break;
-      case 'alphanumeric':
-        this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
-        break;
-      case 'uppercase':
-        this.value = this.value.toUpperCase();
-        break;
-      // puedes agregar más casos aquí si necesitas
-    }
+    tipos.forEach(tipo => {
+      switch (tipo) {
+        case 'numeric':
+          value = value.replace(/[^0-9]/g, '');
+          break;
+        case 'alpha':
+          value = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+          break;
+        case 'alphanumeric':
+          value = value.replace(/[^a-zA-Z0-9]/g, '');
+          break;
+        case 'uppercase':
+          value = value.toUpperCase();
+          break;
+        case 'no-space':
+          value = value.replace(/\s+/g, '');
+          break;
+        // puedes seguir agregando más validaciones aquí
+      }
+    });
+
+    this.value = value;
   });
 }
+
 
 $(document).ready(function () {
   aplicarValidacionesPersonalizadas();

@@ -30,6 +30,7 @@ $router->addRoute('GET', '/report/resume/month', 'ReportController@view_resume_m
 $router->addRoute('GET', '/report/resume/daily', 'ReportController@view_resume_day_report');
 $router->addRoute('GET', '/setting', 'SettingController@index');
 $router->addRoute('GET', '/backup', 'BackupController@index');
+$router->addRoute('GET', '/user/manage', 'UserController@view_manage_users');
 
 
 
@@ -82,6 +83,18 @@ $router->addRoute('POST', '/setting/saveConfig', 'SettingController@save_setting
 $router->addRoute('GET', '/backup/export', 'BackupController@export');
 $router->addRoute('POST', '/backup/import', 'BackupController@import');
 $router->addRoute('POST', '/backup/reset', 'BackupController@reset');
+
+$router->addRoute('GET', '/user/getAll', 'UserController@get_all_users');
+$router->addRoute('POST', '/user/get', 'UserController@get_user');
+$router->addRoute('POST', '/user/store', 'UserController@create_user');
+$router->addRoute('POST', '/user/update', 'UserController@update_user');
+$router->addRoute('POST', '/user/delete', 'UserController@delete_user');
+$router->addRoute('GET', '/role/getAll', 'RoleController@get_all_roles');
+$router->addRoute('POST', '/role/get', 'RoleController@get_role');
+$router->addRoute('POST', '/role/store', 'RoleController@create_role');
+$router->addRoute('POST', '/role/update', 'RoleController@update_role');
+$router->addRoute('POST', '/role/delete', 'RoleController@delete_role');
+$router->addRoute('GET', '/permission/getAll', 'PermissionController@get_all_permissions');
 
 $router->run()
 

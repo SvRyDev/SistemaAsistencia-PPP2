@@ -137,11 +137,11 @@
             <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
 
-            <li class="nav-header">PRINCIPAL</li>
+            <li class="nav-header">INCICIO</li>
             <li class="nav-item">
               <a href="<?= base_url() ?>/home" class="nav-link">
                 <i class="nav-icon fas fa-home"></i>
-                <p>Inicio</p>
+                <p>Dashboard</p>
               </a>
             </li>
 
@@ -150,7 +150,7 @@
               <a href="<?= base_url() ?>/student" class="nav-link">
                 <i class="nav-icon fas fa-users"></i>
                 <p>
-                  Lista Estudiantes
+                  Listado de Estudiantes
                 </p>
               </a>
             </li>
@@ -172,7 +172,7 @@
               </a>
             </li>
 
-            <li class="nav-header">CARNET DE ASISTENCIA</li>
+            <li class="nav-header">CARNETS</li>
             <li class="nav-item">
               <a href="<?= base_url() ?>/carnet/individual" class="nav-link">
                 <i class="nav-icon fas fa-id-card"></i>
@@ -233,24 +233,35 @@
               </a>
             </li>
 
-            <li class="nav-header">CNOFIGURACIÓN</li>
+            <li class="nav-header">CONFIGURACIÓN</li>
 
             <li class="nav-item">
               <a href="<?= base_url() ?>/setting" class="nav-link">
                 <i class="nav-icon fas fa-cog"></i>
                 <p>
-                  Configuración
+                  Parámetros del sistema
                 </p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="<?= base_url() ?>/backup" class="nav-link">
-                <i class="nav-icon fas fa-database"></i>
-                <p>Backup</p>
+              <a href="<?= base_url() ?>/user/manage" class="nav-link">
+              <i class="nav-icon fas fa-user-cog"></i>
+                <p>Usuarios y Roles</p>
               </a>
             </li>
 
+            <li class="nav-item">
+              <a href="<?= base_url() ?>/backup" class="nav-link">
+                <i class="nav-icon fas fa-database"></i>
+                <p>Copia de Seguridad</p>
+              </a>
+            </li>
+
+
           </ul>
+          <br>
+          <br>
+          
         </nav>
         <!-- /.sidebar-menu -->
       </div>
