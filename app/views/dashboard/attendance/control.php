@@ -151,28 +151,28 @@
 
                             <!-- Habilitar Periodo -->
                             <div class="mx-2 my-1">
-                                <button id="btnOpenDay" class="btn btn-success d-none">
+                                <button id="btnNewDay" class="btn btn-success">
                                     <i class="fas fa-toggle-on mr-1"></i> Aperturar Día
                                 </button>
                             </div>
 
                             <!-- Concluir Día -->
                             <div class="mx-2 my-1">
-                                <button id="btnCloseDay" class="btn btn-danger d-none" disabled>
+                                <button id="btnCloseDay" class="btn btn-danger" >
                                     <i class="fas fa-flag-checkered mr-1"></i> Concluir Día
                                 </button>
                             </div>
 
                             <!-- Abrir Ventana -->
                             <div class="mx-2 my-1">
-                                <button id="btnOpenAttendance" class="btn btn-info">
+                                <button id="btnOpenAttendanceView" class="btn btn-info">
                                     <i class="fas fa-door-open mr-1"></i> Abrir Ventana
                                 </button>
                             </div>
 
                             <!-- Entrada Asistencia Manual -->
                             <div class="mx-2 my-1">
-                                <button type="button" class="btn btn-warning" id="btnAbrirModal">
+                                <button type="button" class="btn btn-warning" id="btnRegisterManual">
                                     <i class="fas fa-edit mr-1"></i> Entrada Manual
                                 </button>
                             </div>

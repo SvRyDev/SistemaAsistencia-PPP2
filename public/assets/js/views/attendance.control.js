@@ -8,6 +8,8 @@ let estadosYaCargados = false;
 let hora_entrada;
 let min_tolerancia;
 let hora_cierre;
+
+let contadorAsistencias = 0;
 // Contadores en memoria
 const contadorEstados = {
   1: 0, // id_estado == 1 , Temprano
@@ -15,6 +17,8 @@ const contadorEstados = {
   3: 0, // id_estado == 3 , Falta
   4: 0  // id_estado == 4 , Justificado
 };
+
+
 let totalEstudiantes = 0;
 let total_restantes = 0;
 //Funcion para Actualizar los datos de la Grafica de Torta
@@ -27,6 +31,367 @@ function actualizarGrafica(elemento) {
   ];
   elemento.update();
 }
+
+
+// -------------------------------
+// Cargar Estados de Asistencia
+// -------------------------------
+$(document).ready(function () {
+  
+  startAutoRefreshAttendance();
+  iniciarReloj("hora-actual", "fecha-actual");
+
+  // Cargar los estados UNA SOLA VEZ
+  $.ajax({
+    url: base_url + "/attendance/getListStatusAttendance",
+    type: "POST",
+    dataType: "json",
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    success: function (response) {
+      if (response.status === "success") {
+        estadosCargados = response.estados;
+        estadosYaCargados = true;
+      } else {
+        console.error("Error al cargar estados:", response.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error AJAX:", error);
+    }
+  });
+
+  // Evento al abrir el modal
+  $('#btnRegisterManual').on('click', function () {
+    const hora = getHoraMinuto();
+    $('#mdlHoraEntrada').val(hora);
+
+    const $estadoSelect = $('#estadoAsistencia');
+
+    // Limpiar las opciones anteriores excepto la primera
+    $estadoSelect.find('option:not(:first)').remove();
+
+    // Solo si los estados ya fueron cargados
+    if (estadosYaCargados) {
+      estadosCargados.forEach(function (estado) {
+        $estadoSelect.append(
+          `<option value="${estado.id_estado}">${estado.nombre_estado}</option>`
+        );
+      });
+    }
+
+    // Seleccionar la primera opción (la que no tiene value)
+    $estadoSelect.prop('selectedIndex', 0);
+
+    // Mostrar el modal
+    $('#modalAuxiliar').modal('show');
+  });
+
+  $(document).on('click', '#btnCloseDay', function (e) {
+  e.preventDefault();
+  Swal.fire({
+    title: "¿Concluir el día de asistencia?",
+    text: "Esto finalizará el día y registrará como FALTA a los estudiantes restantes.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, concluir",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: base_url + "/attendance/closeDayAndRegisterAbsents",
+        type: "POST",
+        dataType: "json",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        success: function (response) {
+          if (response.status === "success") {
+            actualizarEstadoDia(2); // Finalizado
+            Swal.fire({
+              icon: "success",
+              title: "Día concluido",
+              text: "El día se ha finalizado y las faltas han sido registradas.",
+            });
+            refreshListAttendance();
+            actualizarBotones(true, true, true, true, true); // Desactiva todos los botones
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: response.message || "No se pudo concluir el día.",
+            });
+          }
+        },
+        error: function (xhr, status, error) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No se pudo procesar la solicitud.",
+          });
+        },
+      });
+    }
+  });
+});
+
+
+
+  $("#btnNewDay").click(function (e) {
+    e.preventDefault();
+
+    Swal.fire({
+      title: "¿Aperturar el día de asistencia?",
+      text: "Esto habilitará el día para registrar asistencias.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, aperturar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#28a745", // Verde
+      cancelButtonColor: "#d33",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: base_url + "/attendance/openNewDay",
+          type: "POST",
+          data: {},
+          success: function (response) {
+            console.log(response);
+            if (response.status === "success") {
+              actualizarEstadoDia(1);
+              Swal.fire({
+                icon: "success",
+                title: "Éxito",
+                text: "Día habilitado correctamente.",
+              });
+
+              actualizarBotones(true, false, false, false, true);
+
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: response.message,
+              });
+              console.log(response);
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Error al habilitar el día:", error);
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "No se pudo habilitar el día.",
+            });
+          },
+        });
+      }
+    });
+  });
+
+  /* ------------------------------------------------ */
+  // Evento para busqueda de asistencia de estudiante
+  /* ------------------------------------------------ */
+  $('#buscarEstudiante').on('input', function () {
+    const query = $(this).val().trim();
+
+    if (query.length < 2) {
+      $('#resultadoBusqueda').empty().hide();
+      return;
+    }
+
+    $.ajax({
+      url: base_url + "/student/searchByDniOrName", // AJUSTA TU RUTA
+      type: "POST",
+      data: { query: query },
+      dataType: "json",
+      success: function (response) {
+        const results = response.estudiantes;
+        const $resultados = $('#resultadoBusqueda');
+        $resultados.empty();
+
+        if (results.length === 0) {
+          $resultados.append('<div class="list-group-item disabled">No encontrado</div>');
+        } else {
+          results.forEach(est => {
+            const item = `
+                        <a href="#" class="list-group-item list-group-item-action"
+                            data-id="${est.id}" data-nombre="${est.nombres} ${est.apellidos}">
+                            ${est.nombres} ${est.apellidos} - <small>${est.dni}</small>
+                        </a>`;
+            $resultados.append(item);
+          });
+        }
+
+        $resultados.show();
+      },
+      error: function () {
+        $('#resultadoBusqueda').html('<div class="list-group-item text-danger">Error al buscar</div>').show();
+      }
+    });
+  });
+
+  // Seleccionar estudiante del autocompletado
+  $('#resultadoBusqueda').on('click', 'a', function (e) {
+    e.preventDefault();
+    const estudianteId = $(this).data('id');
+    const nombreCompleto = $(this).data('nombre');
+
+    $('#estudianteId').val(estudianteId);
+    $('#estudianteNombre').val(nombreCompleto);
+    $('#resultadoBusqueda').hide();
+
+    $.ajax({
+      url: base_url + "/attendance/EditIfRegistered",
+      type: "POST",
+      dataType: "json",
+      data: {
+        estudiante_id: estudianteId,
+      },
+      beforeSend: function () {
+        $('#estadoAsistenciaMensaje')
+          .removeClass('text-muted text-success text-danger text-warning')
+          .addClass('text-muted') // o text-danger según el caso
+          .text('Cargando...');
+
+      },
+      success: function (res) {
+        if (res.status === 'found') {
+          // Modo edición
+          actualizarFormularioSegunEstado(true, res);
+        } else {
+          // Modo nuevo
+          actualizarFormularioSegunEstado(false, res);
+        }
+      }
+    });
+
+  });
+
+  function actualizarFormularioSegunEstado(asistenciaExiste, res) {
+    const $btn = $('#btnGuardarAsistencia');
+    const $mensaje = $('#estadoAsistenciaMensaje');
+    const $header = $('#modalAsistenciaHeader');
+    const $input_entrada = $('');
+
+    if (asistenciaExiste) {
+      $('#mdlHoraEntrada').val(res.data.hora_entrada);
+      $('#estadoAsistencia').val(res.data.estado_asistencia_id);
+      $('#observacion').val(res.data.observacion || '');
+      $('#formEditarAsistencia').attr('data-modo', 'editar');
+
+      // Cambiar a modo editar
+      $btn.text('Actualizar')
+        .removeClass('btn-primary')
+        .addClass('btn-warning');
+
+      $mensaje
+        .removeClass()
+        .addClass('form-text mt-1 font-weight-bold text-warning')
+        .html('<i class="fas fa-check-circle mr-1"></i> Ya hay una asistencia registrada.');
+
+      // Cambiar color del encabezado
+      $header
+        .removeClass('bg-primary bg-light')
+        .addClass('bg-warning text-white');
+
+    } else {
+      const ahora = getHoraMinuto();
+      $('#mdlHoraEntrada').val(ahora);
+      $('#estadoAsistencia').val('');
+      $('#observacion').val('');
+      $('#formEditarAsistencia').attr('data-modo', 'nuevo');
+
+      // Cambiar a modo registrar
+      $btn.text('Guardar')
+        .removeClass('btn-warning')
+        .addClass('btn-primary');
+
+      $mensaje
+        .removeClass()
+        .addClass('form-text mt-1 font-weight-bold text-primary')
+        .html('<i class="fas fa-exclamation-circle mr-1"></i> Sin registro previo.');
+
+      // Cambiar color del encabezado
+      $header
+        .removeClass('bg-warning bg-light')
+        .addClass('bg-primary text-white');
+    }
+  }
+
+  $('#btnGuardarAsistencia').on('click', function (e) {
+    e.preventDefault(); // Evita que el formulario se envíe automáticamente
+
+    // Obtener el formulario y serializar los datos
+    const form = $('#formEditarAsistencia');
+    const formData = form.serialize();
+
+    // Enviar por AJAX al backend
+    $.ajax({
+      url: base_url + '/attendance/saveAttendance', // Cambia esta URL según tu ruta real
+      method: 'POST',
+      data: formData,
+      dataType: 'json',
+      success: function (res) {
+        if (res.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: res.message
+          });
+          refreshListAttendance();
+          $('#modalAuxiliar').modal('hide'); // Cierra modal si deseas
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: res.message
+          });
+        }
+      },
+      error: function () {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de servidor',
+          text: 'No se pudo procesar la solicitud.'
+        });
+        console.log(formData);
+
+      }
+    });
+
+
+  });
+
+  $('#modalAuxiliar').on('hidden.bs.modal', function () {
+    // Ejemplo: Limpiar todos los campos del formulario dentro del modal
+    $(this).find('form')[0].reset();
+
+    // Opcional: también puedes limpiar mensajes de error, alertas, etc.
+    $(this).find('#buscarEstudiante').val('');
+    $(this).find('#estadoAsistenciaMensaje').html('');
+
+    // Cambiar a modo editar
+    $('#btnGuadarAsistencia').html('Guardar')
+      .removeClass('btn-primary btn-success btn-warning')
+      .addClass('btn-primary');
+
+    // Cambiar color del encabezado
+    $('#modalAsistenciaHeader')
+      .removeClass('bg-primary bg-success bg-warning')
+      .addClass('bg-light text-dark');
+
+    $('#resultadoBusqueda').empty();
+
+  });
+
+});
+
+
+
 //Funcion para actualizar los contadores (Presente, Tardanza, Justificados, Restantes)
 function actualizarContadores() {
   $('#total_estudiantes').html(totalEstudiantes);
@@ -39,12 +404,16 @@ function actualizarContadores() {
   $('#porcentajeTardios').html(((contadorEstados[2] * 100) / totalEstudiantes).toFixed(2) + "%");
   $('#porcentajeJustificados').html(((contadorEstados[4] * 100) / totalEstudiantes).toFixed(2) + "%");
   $('#porcentajeRestantes').html(((total_restantes * 100) / totalEstudiantes).toFixed(2) + "%");
-
-
-
-
 };
 //actualizar mensaje de estado de hora 
+
+function actualizarBotones(btn1, btn2, btn3, btn4, btn5) {
+  $('#btnNewDay').prop('disabled', btn1); //Aperturar Dia
+  $('#btnCloseDay').prop('disabled', btn2); //Cerrar Dia
+  $('#btnOpenAttendanceView').prop('disabled', btn3); //Abrir Venta de Registro
+  $('#btnRegisterManual').prop('disabled', btn4); //Registro Manual
+  $('#').prop('disabled', btn5); //Reaperturar Dia
+}
 function actualizarEstadoVisual(estado, destinoId) {
   const $texto = $(`#${destinoId}`);
   const $iconBox = $("#iconEstado");
@@ -151,59 +520,74 @@ function refreshListAttendance() {
   contadorEstados[3] = 0;
   contadorEstados[4] = 0;
 
-
   // -------------------------------
-  // Cargar Estados de Asistencia
+  // Cargar configuración inicial
   // -------------------------------
-  
-$(document).ready(function () {
-  // Cargar los estados UNA SOLA VEZ
   $.ajax({
-    url: base_url + "/attendance/getListStatusAttendance",
+    url: base_url + "/attendance/getConfig",
     type: "POST",
     dataType: "json",
     headers: {
       "X-Requested-With": "XMLHttpRequest",
     },
+    beforeSend: function () {
+
+    },
     success: function (response) {
       if (response.status === "success") {
-        estadosCargados = response.estados;
-        estadosYaCargados = true;
+        console.log('PASANDO PR EL CONFIG');
+
+        $("#botonesAsistenciaLoading").hide();
+        const s = response.setting;
+        const d = response.day_active;
+        const t = response.total_students;
+        totalEstudiantes = t.total;
+        total_restantes = totalEstudiantes;
+
+        hora_entrada = s.entry_time;
+        hora_cierre = s.exit_time;
+        min_tolerancia = s.time_tolerance;
+
+        const hora_actual = getHoraMinuto();
+        actualizarGrafica(pieAsistencia);
+
+        $("#time-entry").html(formatearHoraAmPm(hora_entrada));
+        $("#time-tolerance").html(min_tolerancia + " min");
+        $("#time-finish").html(formatearHoraAmPm(hora_cierre));
+
+        // Iniciar evaluación automática del estado
+        iniciarEvaluacionEstado(hora_entrada, min_tolerancia, hora_cierre, "estadoDiaRegistro");
+        console.log('PASANDO PR EL CONFIG, EL D ES ' + d.estado);
+        if (d) {
+          const estado = d.estado;
+          if (parseInt(estado) == 1) {
+            console.log('espot pasando por qusoy 1');
+            actualizarEstadoDia(1);
+            actualizarBotones(true, false, false, false, true);
+          } else if (parseInt(estado) == 0) {
+            console.log('esta finalizado');
+            console.log('espot pasando por qusoy 0');
+            actualizarEstadoDia(2);
+            actualizarBotones(true, true, true, false, false);
+          }
+
+        } else {
+          actualizarEstadoDia(0);
+          actualizarBotones(false, true, true, true, true);
+        }
+
       } else {
-        console.error("Error al cargar estados:", response.message);
-      }
+        mostrarError("Error", response.message);
+      };
     },
     error: function (xhr, status, error) {
-      console.error("Error AJAX:", error);
-    }
+      console.error("AJAX Error:", error);
+      mostrarError(
+        "Error",
+        "No se pudieron cargar los datos de configuración."
+      );
+    },
   });
-
-  // Evento al abrir el modal
-  $('#btnAbrirModal').on('click', function () {
-    const hora = getHoraMinuto();
-    $('#mdlHoraEntrada').val(hora);
-
-    const $estadoSelect = $('#estadoAsistencia');
-
-    // Limpiar las opciones anteriores excepto la primera
-    $estadoSelect.find('option:not(:first)').remove();
-
-    // Solo si los estados ya fueron cargados
-    if (estadosYaCargados) {
-      estadosCargados.forEach(function (estado) {
-        $estadoSelect.append(
-          `<option value="${estado.id_estado}">${estado.nombre_estado}</option>`
-        );
-      });
-    }
-
-    // Seleccionar la primera opción (la que no tiene value)
-    $estadoSelect.prop('selectedIndex', 0);
-
-    // Mostrar el modal
-    $('#modalAuxiliar').modal('show');
-  });
-});
 
 
   // -------------------------------
@@ -217,8 +601,8 @@ $(document).ready(function () {
       "X-Requested-With": "XMLHttpRequest",
     },
     success: function (response) {
-      
-  $('#listaAsistencia').empty();
+
+      $('#listaAsistencia').empty();
       if (response.status === "success" && Array.isArray(response.list_attendance)) {
         const lista = document.getElementById("listaAsistencia");
         lista.innerHTML = ""; // Limpiar lista anterior
@@ -291,7 +675,7 @@ $(document).ready(function () {
 
 // --- AUTO REFRESH DE ASISTENCIA ---
 let intervalRefreshAttendance = null;
-
+refreshListAttendance();
 function startAutoRefreshAttendance() {
   if (intervalRefreshAttendance) clearInterval(intervalRefreshAttendance);
   intervalRefreshAttendance = setInterval(refreshListAttendance, 3000); // cada 3 segundos
@@ -307,7 +691,7 @@ const pieAsistencia = new Chart(ctx, {
   type: "pie",
   data: {
     labels: ["Temprano", "Tardíos", "Justificados", "Restantes"],
-    datasets: [ 
+    datasets: [
       {
         backgroundColor: [
           "#28a745", // Temprano
@@ -340,370 +724,10 @@ const pieAsistencia = new Chart(ctx, {
   },
 });
 
-$(document).ready(function () {
 
-  startAutoRefreshAttendance();
-  iniciarReloj("hora-actual", "fecha-actual");
 
-  // -------------------------------
-  // Cargar configuración inicial
-  // -------------------------------
-  $.ajax({
-    url: base_url + "/attendance/getConfig",
-    type: "POST",
-    dataType: "json",
-    headers: {
-      "X-Requested-With": "XMLHttpRequest",
-    },
-    beforeSend: function(){
 
-    },
-    success: function (response) {
-      if (response.status === "success") {
-        $("#botonesAsistenciaLoading").hide();
-        const s = response.setting;
-        const d = response.day_active;
-        const t = response.total_students;
-        totalEstudiantes = t.total;
-        total_restantes = totalEstudiantes;
-
-        hora_entrada = s.entry_time;
-        hora_cierre = s.exit_time;
-        min_tolerancia = s.time_tolerance;
-
-        const hora_actual = getHoraMinuto();
-        actualizarGrafica(pieAsistencia);
-
-        $("#time-entry").html(formatearHoraAmPm(hora_entrada));
-        $("#time-tolerance").html(min_tolerancia + " min");
-        $("#time-finish").html(formatearHoraAmPm(hora_cierre));
-
-
-
-        console.log('la hora actual es ' + hora_actual);
-        // Iniciar evaluación automática del estado
-        iniciarEvaluacionEstado(hora_entrada, min_tolerancia, hora_cierre, "estadoDiaRegistro");
-
-        ;
-
-        if (d) {
-          actualizarEstadoDia(1);
-          $("#btnOpenDay").prop("disabled", true);
-          $("#btnOpenRegister").prop("disabled", false);
-          $("#btnOpenManualRegister").prop("disabled", false);
-          $("#btnOpenEditor").prop("disabled", false);
-          $("#btnOpenJustify").prop("disabled", false);
-      
-        } else {
-          actualizarEstadoDia(0);
-          $("#btnOpenDay").prop("disabled", false);
-          $("#btnOpenAttendance").prop("disabled", true);
-          $("#btnOpenRegister").prop("disabled", true);
-          $("#btnOpenManualRegister").prop("disabled", true);
-          $("#btnOpenEditor").prop("disabled", true);
-          $("#btnOpenJustify").prop("disabled", true);
-        }
-      } else {
-        mostrarError("Error", response.message);
-      };
-
-
-      refreshListAttendance();
-
-
-
-
-
-
-
-    },
-    error: function (xhr, status, error) {
-      console.error("AJAX Error:", error);
-      mostrarError(
-        "Error",
-        "No se pudieron cargar los datos de configuración."
-      );
-    },
-  });
-
-
-
-
-
-
-
-  $("#btnOpenDay").click(function (e) {
-    e.preventDefault();
-
-    Swal.fire({
-      title: "¿Aperturar el día de asistencia?",
-      text: "Esto habilitará el día para registrar asistencias.",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Sí, aperturar",
-      cancelButtonText: "Cancelar",
-      confirmButtonColor: "#28a745", // Verde
-      cancelButtonColor: "#d33",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        $.ajax({
-          url: base_url + "/attendance/openNewDay",
-          type: "POST",
-          data: {},
-          success: function (response) {
-            console.log(response);
-            if (response.status === "success") {
-              actualizarEstadoDia(1);
-              Swal.fire({
-                icon: "success",
-                title: "Éxito",
-                text: "Día habilitado correctamente.",
-              });
-
-              $("#btnOpenDay").prop("disabled", true);
-              $("#btnOpenAttendance").prop("disabled", false);
-              $("#btnOpenRegister").prop("disabled", false);
-              $("#btnOpenManualRegister").prop("disabled", false);
-              $("#btnOpenEditor").prop("disabled", false);
-              $("#btnOpenJustify").prop("disabled", false);
-
-
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: response.message,
-              });
-              console.log(response);
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("Error al habilitar el día:", error);
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "No se pudo habilitar el día.",
-            });
-          },
-        });
-      }
-    });
-  });
-
-
-
-
-
-  /* ------------------------------------------------ */
-  // Evento para busqueda de asistencia de estudiante
-  /* ------------------------------------------------ */
-  $('#buscarEstudiante').on('input', function () {
-    const query = $(this).val().trim();
-
-    if (query.length < 2) {
-      $('#resultadoBusqueda').empty().hide();
-      return;
-    }
-
-    $.ajax({
-      url: base_url + "/student/searchByDniOrName", // AJUSTA TU RUTA
-      type: "POST",
-      data: { query: query },
-      dataType: "json",
-      success: function (response) {
-        const results = response.estudiantes;
-        const $resultados = $('#resultadoBusqueda');
-        $resultados.empty();
-
-        if (results.length === 0) {
-          $resultados.append('<div class="list-group-item disabled">No encontrado</div>');
-        } else {
-          results.forEach(est => {
-            const item = `
-                        <a href="#" class="list-group-item list-group-item-action"
-                            data-id="${est.id}" data-nombre="${est.nombres} ${est.apellidos}">
-                            ${est.nombres} ${est.apellidos} - <small>${est.dni}</small>
-                        </a>`;
-            $resultados.append(item);
-          });
-        }
-
-        $resultados.show();
-      },
-      error: function () {
-        $('#resultadoBusqueda').html('<div class="list-group-item text-danger">Error al buscar</div>').show();
-      }
-    });
-  });
-
-
-
-
-  // Seleccionar estudiante del autocompletado
-  $('#resultadoBusqueda').on('click', 'a', function (e) {
-    e.preventDefault();
-    const estudianteId = $(this).data('id');
-    const nombreCompleto = $(this).data('nombre');
-
-    $('#estudianteId').val(estudianteId);
-    $('#estudianteNombre').val(nombreCompleto);
-    $('#resultadoBusqueda').hide();
-
-    $.ajax({
-      url: base_url + "/attendance/EditIfRegistered",
-      type: "POST",
-      dataType: "json",
-      data: {
-        estudiante_id: estudianteId,
-      },
-      beforeSend: function () {
-        $('#estadoAsistenciaMensaje')
-          .removeClass('text-muted text-success text-danger text-warning')
-          .addClass('text-muted') // o text-danger según el caso
-          .text('Cargando...');
-
-      },
-      success: function (res) {
-        if (res.status === 'found') {
-          // Modo edición
-          actualizarFormularioSegunEstado(true, res);
-        } else {
-          // Modo nuevo
-          actualizarFormularioSegunEstado(false, res);
-        }
-      }
-    });
-
-  });
-
-  function actualizarFormularioSegunEstado(asistenciaExiste, res) {
-    const $btn = $('#btnGuardarAsistencia');
-    const $mensaje = $('#estadoAsistenciaMensaje');
-    const $header = $('#modalAsistenciaHeader');
-    const $input_entrada = $('');
-
-    if (asistenciaExiste) {
-      $('#mdlHoraEntrada').val(res.data.hora_entrada);
-      $('#estadoAsistencia').val(res.data.estado_asistencia_id);
-      $('#observacion').val(res.data.observacion || '');
-      $('#formEditarAsistencia').attr('data-modo', 'editar');
-
-      // Cambiar a modo editar
-      $btn.text('Actualizar')
-        .removeClass('btn-primary')
-        .addClass('btn-warning');
-
-      $mensaje
-        .removeClass()
-        .addClass('form-text mt-1 font-weight-bold text-warning')
-        .html('<i class="fas fa-check-circle mr-1"></i> Ya hay una asistencia registrada.');
-
-      // Cambiar color del encabezado
-      $header
-        .removeClass('bg-primary bg-light')
-        .addClass('bg-warning text-white');
-
-    } else {
-      const ahora = getHoraMinuto();
-      $('#mdlHoraEntrada').val(ahora);
-      $('#estadoAsistencia').val('');
-      $('#observacion').val('');
-      $('#formEditarAsistencia').attr('data-modo', 'nuevo');
-
-      // Cambiar a modo registrar
-      $btn.text('Guardar')
-        .removeClass('btn-warning')
-        .addClass('btn-primary');
-
-      $mensaje
-        .removeClass()
-        .addClass('form-text mt-1 font-weight-bold text-primary')
-        .html('<i class="fas fa-exclamation-circle mr-1"></i> Sin registro previo.');
-
-      // Cambiar color del encabezado
-      $header
-        .removeClass('bg-warning bg-light')
-        .addClass('bg-primary text-white');
-    }
-  }
-
-
-
-
-  $('#btnGuardarAsistencia').on('click', function (e) {
-    e.preventDefault(); // Evita que el formulario se envíe automáticamente
-
-    // Obtener el formulario y serializar los datos
-    const form = $('#formEditarAsistencia');
-    const formData = form.serialize();
-
-    // Enviar por AJAX al backend
-    $.ajax({
-      url: base_url + '/attendance/saveAttendance', // Cambia esta URL según tu ruta real
-      method: 'POST',
-      data: formData,
-      dataType: 'json',
-      success: function (res) {
-        if (res.status === 'success') {
-          Swal.fire({
-            icon: 'success',
-            title: 'Éxito',
-            text: res.message
-          });
-          refreshListAttendance();
-          $('#modalAuxiliar').modal('hide'); // Cierra modal si deseas
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: res.message
-          });
-        }
-      },
-      error: function () {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error de servidor',
-          text: 'No se pudo procesar la solicitud.'
-        });
-        console.log(formData);
-
-      }
-    });
-
-
-  });
-
-  $('#modalAuxiliar').on('hidden.bs.modal', function () {
-    // Ejemplo: Limpiar todos los campos del formulario dentro del modal
-    $(this).find('form')[0].reset();
-
-    // Opcional: también puedes limpiar mensajes de error, alertas, etc.
-    $(this).find('#buscarEstudiante').val('');
-    $(this).find('#estadoAsistenciaMensaje').html('');
-
-    // Cambiar a modo editar
-    $('#btnGuadarAsistencia').html('Guardar')
-      .removeClass('btn-primary btn-success btn-warning')
-      .addClass('btn-primary');
-
-    // Cambiar color del encabezado
-    $('#modalAsistenciaHeader')
-      .removeClass('bg-primary bg-success bg-warning')
-      .addClass('bg-light text-dark');
-
-    $('#resultadoBusqueda').empty();
-
-  });
-
-
-
-});
-
-
-
-
-$("#btnOpenAttendance").click(function (e) {
+$("#btnOpenAttendanceView").click(function (e) {
   e.preventDefault();
 
   if (ventana && !ventana.closed) {
@@ -759,7 +783,7 @@ function abrirVentana() {
 }
 
 
-let contadorAsistencias = 0;
+
 window.addEventListener("message", function (event) {
   // Asegurarse de que sea un objeto y tenga las propiedades requeridas
   if (typeof event.data === "object") {
@@ -842,16 +866,8 @@ $("#estadoVentana").addClass("badge-secondary").html("No Abierta");
 
 
 function actualizarEstadoDia(estado) {
-  
+
   const badge = $("#dia-activo");
-  const btnOpenDay = $("#btnOpenDay");
-  const btnCloseDay = $("#btnCloseDay");
-  const botonesRegistro = [
-    "#btnOpenRegister",
-    "#btnOpenManualRegister",
-    "#btnOpenEditor",
-    "#btnOpenJustify",
-  ];
 
   // Mapear valores numéricos a texto
   const estados = {
@@ -867,21 +883,13 @@ function actualizarEstadoDia(estado) {
     return;
   }
 
-  // Siempre ocultar ambos antes de mostrar el correcto
-  btnOpenDay.addClass('d-none');
-  btnCloseDay.addClass('d-none');
+
 
   switch (estadoTexto) {
     case "activo":
       badge.html("Activo")
         .removeClass("badge-danger badge-secondary")
         .addClass("badge-success");
-
-      btnOpenDay.prop("disabled", true);
-      btnOpenDay.addClass('d-none');
-      btnCloseDay.prop("disabled", false);
-      btnCloseDay.removeClass('d-none');
-      botonesRegistro.forEach(id => $(id).prop("disabled", false));
       break;
 
     case "desactivado":
@@ -889,88 +897,20 @@ function actualizarEstadoDia(estado) {
         .removeClass("badge-success badge-secondary")
         .addClass("badge-danger");
 
-      btnOpenDay.prop("disabled", false);
-      btnOpenDay.removeClass('d-none');
-      btnCloseDay.prop("disabled", true);
-      btnCloseDay.addClass('d-none');
-      botonesRegistro.forEach(id => $(id).prop("disabled", true));
       break;
 
     case "finalizado":
       badge.html("Finalizado")
         .removeClass("badge-success badge-danger")
-        .addClass("badge-secondary");
-
-      btnOpenDay.prop("disabled", true);
-      btnOpenDay.addClass('d-none');
-      btnCloseDay.prop("disabled", true);
-      btnCloseDay.addClass('d-none');
-      botonesRegistro.forEach(id => $(id).prop("disabled", true));
+        .addClass("badge-info");
       break;
   }
 }
-// Mostrar/ocultar botones correctamente al cargar la página
-$(document).ready(function () {
-  // Siempre ocultar ambos al inicio (por si acaso)
- $("#btnOpenDay").addClass('d-none');
-  $("#btnCloseDay").addClass('d-none');
 
-
-});
 // Evento para concluir el día y registrar faltas
-$(document).ready(function () {
 
 
 
-  $("#btnCloseDay").click(function (e) {
-    e.preventDefault();
-    Swal.fire({
-      title: "¿Concluir el día de asistencia?",
-      text: "Esto finalizará el día y registrará como FALTA a los estudiantes restantes.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí, concluir",
-      cancelButtonText: "Cancelar",
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        $.ajax({
-          url: base_url + "/attendance/closeDayAndRegisterAbsents",
-          type: "POST",
-          dataType: "json",
-          headers: {
-            "X-Requested-With": "XMLHttpRequest",
-          },
-          success: function (response) {
-            if (response.status === "success") {
-              actualizarEstadoDia(2); // Finalizado
-              Swal.fire({
-                icon: "success",
-                title: "Día concluido",
-                text: "El día se ha finalizado y las faltas han sido registradas.",
-              });
-              refreshListAttendance();
-            } else {
-              Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: response.message || "No se pudo concluir el día.",
-              });
-            }
-          },
-          error: function (xhr, status, error) {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "No se pudo procesar la solicitud.",
-            });
-          },
-        });
-      }
-    });
-  });
-});
 
 
 

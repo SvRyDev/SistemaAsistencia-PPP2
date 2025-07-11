@@ -224,16 +224,17 @@ class AttendanceModel extends Model
         return $stmt->execute();
     }
 
-    public function registerNewDay($fecha, $name_day, $entry_time, $exit_time, $tolerance)
+    public function registerNewDay($fecha, $name_day, $entry_time, $exit_time, $tolerance, $status = 1)
     {
-        $stmt = $this->db->prepare("INSERT INTO dia_asistencia (fecha, nombre_dia, hora_entrada, hora_salida, min_tolerancia)
+        $stmt = $this->db->prepare("INSERT INTO dia_asistencia (fecha, nombre_dia, hora_entrada, hora_salida, min_tolerancia, estado)
         VALUES
         (
         :fecha,
         :nombre_dia,
         :hora_entrada,
         :hora_salida,
-        :min_tolerancia
+        :min_tolerancia,
+        :estado
         )");
 
         $stmt->bindParam(':fecha', $fecha);
@@ -241,6 +242,7 @@ class AttendanceModel extends Model
         $stmt->bindParam(':hora_entrada', $entry_time);
         $stmt->bindParam(':hora_salida', $exit_time);
         $stmt->bindParam(':min_tolerancia', $tolerance);
+        $stmt->bindParam(':estado', $status);
 
         return $stmt->execute();
     }

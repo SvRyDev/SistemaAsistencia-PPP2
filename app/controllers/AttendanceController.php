@@ -270,7 +270,7 @@ class AttendanceController extends Controller
  
             $SettingModel = $this->model('SettingModel');
             $config = $SettingModel->getConfig();
-
+            $status = 1;
 
             if (!$config || !isset($config['entry_time'], $config['exit_time'], $config['time_tolerance'])) {
                 echo json_encode([
@@ -287,7 +287,8 @@ class AttendanceController extends Controller
                 $nameDay,
                 $config['entry_time'],
                 $config['exit_time'],
-                $config['time_tolerance']
+                $config['time_tolerance'],
+                $status
             );
 
             if ($result) {

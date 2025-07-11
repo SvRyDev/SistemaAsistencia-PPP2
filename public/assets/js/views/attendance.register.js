@@ -15,8 +15,6 @@ $(document).ready(function () {
   });
 
 
-
-
   const $input = $("#codigoEstudiante");
   const $warning = $("#focusWarning");
 
