@@ -256,6 +256,12 @@
                 <p>Copia de Seguridad</p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="<?= base_url() ?>/login" class="nav-link">
+                <i class="nav-icon fas fa-database"></i>
+                <p>login</p>
+              </a>
+            </li>
 
 
           </ul>

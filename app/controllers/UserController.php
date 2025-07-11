@@ -144,7 +144,7 @@ class UserController extends Controller
             }
     
             // Hashear la contraseña de forma segura
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            $hashedPassword = hash(ENCRYPT, $password);;
     
             // Crear el usuario
             $created = $UserModel->createUser($nombre, $hashedPassword, $role_id, $estatus);
@@ -242,7 +242,7 @@ class UserController extends Controller
                     ]);
                     return;
                 }
-                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                $hashedPassword = hash(ENCRYPT, $password);;
             }
     
             // Actualizar
@@ -270,7 +270,9 @@ class UserController extends Controller
     }
     
 
-    public function delete_role()
+
+
+    public function delete_user()
     {
         if (!isAjax()) {
             http_response_code(403);
@@ -292,48 +294,48 @@ class UserController extends Controller
     
         header('Content-Type: application/json');
     
-        $role_id = isset($_POST['role_id']) ? (int) $_POST['role_id'] : 0;
+        $user_id = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
     
-        if ($role_id <= 0) {
+        if ($user_id <= 0) {
             echo json_encode([
                 'status' => 'error',
-                'message' => 'ID de rol inválido.'
+                'message' => 'ID de usuario inválido.'
             ]);
             return;
         }
     
         try {
-            $RoleModel = $this->model('RoleModel');
+            $UserModel = $this->model('UserModel');
     
             // ⚠️ Si quieres proteger algunos roles (como admin), verifica aquí:
-            $role = $RoleModel->getRoleById($role_id);
-            if (!$role) {
+            $user = $UserModel->getUserById($user_id);
+            if (!$user) {
                 echo json_encode([
                     'status' => 'error',
-                    'message' => 'El rol no existe.'
+                    'message' => 'El usuario no existe.'
                 ]);
                 return;
             }
     
-            if ((int)$role['protegido'] === 1) {
+            if ($user['protegido'] == 1) {
                 echo json_encode([
                     'status' => 'error',
-                    'message' => 'Este rol está protegido y no puede eliminarse.'
+                    'message' => 'Este usuario está protegido y no puede eliminarse.'
                 ]);
                 return;
             }
     
-            $deleted = $RoleModel->deleteRoleById($role_id);
+            $deleted = $UserModel->deleteUserById($user_id);
     
             if ($deleted) {
                 echo json_encode([
                     'status' => 'success',
-                    'message' => 'Rol eliminado correctamente.'
+                    'message' => 'Usuario eliminado correctamente.'
                 ]);
             } else {
                 echo json_encode([
                     'status' => 'error',
-                    'message' => 'No se pudo eliminar el rol.'
+                    'message' => 'No se pudo eliminar el usuario.'
                 ]);
             }
         } catch (Exception $e) {
@@ -345,7 +347,6 @@ class UserController extends Controller
             ]);
         }
     }
-    
     
 
 

@@ -1,3 +1,0 @@
-<p>
-    SOY EL HEADER DASHBOARD DE AUTH_D
-</p>

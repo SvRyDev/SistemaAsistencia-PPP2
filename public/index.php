@@ -12,6 +12,7 @@ require_once '../app/core/Router.php';
 // Run the router
 // Webs Routes
 $router = new Router();
+$router->addRoute('GET', '/login', 'AuthController@view_login');
 $router->addRoute('GET', '/', 'HomeController@index');
 $router->addRoute('GET', '/home', 'HomeController@index');
 $router->addRoute('GET', '/student', 'StudentController@view_list_students');
@@ -41,6 +42,8 @@ $router->addRoute('GET', '/user/{tipo}/buscar/{nivel}/{id}', 'HomeController@det
 
 
 //Api Endpoints
+$router->addRoute('POST', '/login/auth', 'AuthController@auth');
+
 $router->addRoute('GET', '/student/getAll', 'StudentController@show');
 $router->addRoute('POST', '/student/getOne', 'StudentController@get_data_student');
 $router->addRoute('POST', '/student/getOneForDetail', 'StudentController@get_detail_student');

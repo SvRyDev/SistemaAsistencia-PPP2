@@ -15,11 +15,35 @@ function getDia(fechaStr) {
 
 // Retorna "13 de mayo", por ejemplo
 function formatearFechaCompleta(fechaStr) {
-  const fecha = new Date(fechaStr);
+  // Fuerza la hora local al convertir
+  const fecha = new Date(fechaStr + "T00:00:00"); // ← importante: sin la "Z"
+
   const dia = fecha.getDate();
-  const mes = fecha.toLocaleDateString("es-ES", { month: "long" });
+  const mes = fecha.toLocaleDateString("es-ES", {
+    month: "long",
+    timeZone: "America/Lima", // ← asegura el formato correcto en Lima
+  });
+
   return `${dia} de ${mes}`;
 }
+
+function formatearFechaCorta(fechaStr) {
+  const fecha = new Date(fechaStr + "T00:00:00"); // evitar error por zona horaria
+
+  const dia = fecha.getDate();
+  const mes = fecha.toLocaleDateString("es-ES", {
+    month: "short",
+    timeZone: "America/Lima",
+  });
+
+  // Capitalizar la primera letra del mes
+  const mesCapitalizado = mes.charAt(0).toUpperCase() + mes.slice(1);
+
+  return `${dia} ${mesCapitalizado}`;
+}
+
+
+
 
 function formatearFechaDMY(fechaISO) {
   if (!fechaISO) return "";
@@ -66,9 +90,7 @@ function obtenerMeses() {
 
 function getFechaActual() {
   // Obtener la fecha y hora actual en Lima
-  const fechaLima = new Date().toLocaleString("en-US", {
-    timeZone: "America/Lima",
-  });
+  const fechaLima = new Date().toLocaleString("en-US", {timeZone: "America/Lima",});
   const date = new Date(fechaLima); // Convierte a objeto Date para extraer componentes
 
   const year = date.getFullYear();

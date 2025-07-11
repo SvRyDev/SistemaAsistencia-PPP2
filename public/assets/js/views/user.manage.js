@@ -237,7 +237,7 @@ $(document).ready(function () {
             if (response.status === "success") {
               Swal.fire("Eliminado", response.message, "success");
               // Actualiza la tabla o recarga los datos
-              loadUsers(); // Asegúrate de tener esta función para recargar usuarios
+              $("#table_users").DataTable().ajax.reload(); // Recargar tabla si usas DataTables
             } else {
               Swal.fire(
                 "Error",
@@ -529,7 +529,10 @@ $(document).ready(function () {
             if (response.status === "success") {
               Swal.fire("Eliminado", response.message, "success");
               // Recarga los roles (asegúrate de tener esta función)
-              loadRoles();
+              cargarRoles();
+              if ($("#table_roles").length) {
+                $("#table_roles").DataTable().ajax.reload();
+              }
             } else {
               Swal.fire(
                 "Error",

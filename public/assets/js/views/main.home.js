@@ -30,7 +30,7 @@ $(document).ready(function () {
         renderPieChart(response);
         renderMonthlyBarChart(response); // en vez de renderMonthlyPieChart
         renderJustificacionesDiarias(response); // ← aquí
-        console.log(response);
+        renderCards(response);
       },
       error: function (xhr, status, error) {
         console.error("Error al cargar datos:", error);
@@ -56,33 +56,35 @@ $(document).ready(function () {
 
         response.list_attendance.forEach((student) => {
           contadorAsistencias++;
-
+        
           const nuevoItem = document.createElement("div");
           nuevoItem.className =
             "list-group-item list-group-item-action pt-2 pb-2";
-
+        
           nuevoItem.innerHTML = `
             <div class="container-fluid">
-              <div class="row">
-                <div class="col-md-1 font-weight-bold text-truncate">
+              <div class="row text-truncate">
+                <div class="col-1 text-muted d-none d-sm-block">
                   <small>${contadorAsistencias}</small>
                 </div>
-                <div class="col-md-2 text-muted">
+        
+                <div class="col-2 text-muted d-none d-sm-block">
                   <span class="text-dark">${student.codigo}</span>
                 </div>
-                <div class="col-md-5" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        
+                <div class="col-6" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                   <span>${student.nombres} ${student.apellidos}</span>
                 </div>
-                <div class="col-md-1 text-muted">
-                  <span class="text-dark">${student.grado_orden || "--"}</span>
+        
+                <div class="col-1 text-muted d-none d-sm-block">
+                  <span class="text-dark">${student.grado_orden || "--"} ${student.seccion || "--"}</span>
                 </div>
-                <div class="col-md-1 text-muted">
-                  <span class="text-dark">${student.seccion || "--"}</span>
-                </div>
-                <div class="col-md-1 text-muted">
+        
+                <div class="col-1 text-muted d-none d-sm-block">
                   <span class="text-dark">${getHoraMinuto(student.hora_actual) || "--:--"}</span>
                 </div>
-                <div class="col-md-1 text-left">
+        
+                <div class="col-1 text-right">
                   <span data-id="${student.id_estado}" class="badge badge-${student.clase_boostrap}">
                     ${student.nombre_estado}
                   </span>
@@ -90,12 +92,10 @@ $(document).ready(function () {
               </div>
             </div>
           `;
-
+        
           lista.appendChild(nuevoItem);
-
-    
-         
         });
+        
 
       
       } else {
@@ -107,6 +107,43 @@ $(document).ready(function () {
     },
   });
   }
+
+  function renderCards(data) {
+    const summary = data.attendance_summary || [];
+    if (summary.length === 0) return;
+  
+    const last = summary[summary.length - 1];
+    const hoy = getFechaActual(); // "YYYY-MM-DD"
+  
+    const esHoy = last.fecha === hoy;
+  
+    if (esHoy) {
+      $('#total-estudiantes').text(last.total_estudiantes);
+      $('#asistencias-dia').text(last.total_puntual);
+      $('#tardanzas-dia').text(last.total_tarde);
+      $('#justificados-count').text(last.total_justificados);
+  
+      $('#asistencias-porcentaje').text(last.porcentaje_puntual);
+      $('#tardanzas-porcentaje').text(last.porcentaje_tarde);
+      $('#justificados-percent').text(last.porcentaje_justificado);
+    } else {
+      $('#total-estudiantes').text('0');
+      $('#asistencias-dia').text('0');
+      $('#tardanzas-dia').text('0');
+      $('#justificados-count').text('0');
+  
+      $('#asistencias-porcentaje').text('0');
+      $('#tardanzas-porcentaje').text('0');
+      $('#justificados-percent').text('0');
+    }
+  
+    const fechaFormateada = formatearFechaCorta(last.fecha);
+    $('#asistencias-fecha').text(fechaFormateada);
+    $('#tardanzas-fecha').text(fechaFormateada);
+    $('#justificaciones-fecha').text(fechaFormateada);
+  }
+  
+
 
   function renderBarChart(data) {
     const summary = data.attendance_summary || [];
@@ -200,19 +237,26 @@ $(document).ready(function () {
   function renderPieChart(data) {
     const summary = data.attendance_summary;
     if (!summary || summary.length === 0) return;
-
+  
     const last = summary[summary.length - 1];
-    const puntual = parseInt(last.total_puntual) || 0;
-    const tarde = parseInt(last.total_tarde) || 0;
-    const justificado = parseInt(last.total_justificados) || 0;
-    const totalEstudiantes = parseInt(last.total_estudiantes) || 0;
-
+    const hoy = getFechaActual(); // "YYYY-MM-DD"
+    const esHoy = last.fecha === hoy;
+  
+    let puntual = 0, tarde = 0, justificado = 0, totalEstudiantes = 0;
+  
+    if (esHoy) {
+      puntual = parseInt(last.total_puntual) || 0;
+      tarde = parseInt(last.total_tarde) || 0;
+      justificado = parseInt(last.total_justificados) || 0;
+      totalEstudiantes = parseInt(last.total_estudiantes) || 0;
+    }
+  
     const asistido = puntual + tarde;
     const registrados = asistido + justificado;
     const restantes = totalEstudiantes - registrados;
-
+  
     const dataPie = [asistido, tarde, justificado, restantes];
-
+  
     const labels = ["Temprano", "Tarde", "Justificado", "Restantes"];
     const backgroundColors = [
       chartColors.puntual,
@@ -220,7 +264,7 @@ $(document).ready(function () {
       chartColors.justificado,
       chartColors.restantes || "#dee2e6",
     ];
-
+  
     if (pieChart) {
       pieChart.data.datasets[0].data = dataPie;
       pieChart.update();
@@ -247,7 +291,7 @@ $(document).ready(function () {
                 label: function (context) {
                   const value = context.parsed;
                   const total = dataPie.reduce((a, b) => a + b, 0);
-                  const percent = ((value / total) * 100).toFixed(1);
+                  const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
                   return `${context.label}: ${value} (${percent}%)`;
                 },
               },
@@ -257,6 +301,7 @@ $(document).ready(function () {
       });
     }
   }
+  
 
   function renderMonthlyBarChart(data) {
     const summary = data.attendance_summary || [];
