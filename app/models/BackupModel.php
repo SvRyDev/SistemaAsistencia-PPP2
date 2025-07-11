@@ -64,6 +64,10 @@ class BackupModel extends Model
             $this->db->query("DELETE FROM dia_asistencia");
             $this->db->query("DELETE FROM carnet_estudiante");
             $this->db->query("DELETE FROM estudiante");
+            $this->db->query("DELETE FROM role_permisos WHERE role_id != 1");
+            $this->db->query("DELETE FROM usuarios WHERE user_id != 1");
+            $this->db->query("DELETE FROM roles WHERE role_id != 1");
+            
     
             // Restaurar configuración
             $this->db->query("
@@ -88,6 +92,10 @@ class BackupModel extends Model
             $this->db->query("ALTER TABLE dia_asistencia AUTO_INCREMENT = 1");
             $this->db->query("ALTER TABLE carnet_estudiante AUTO_INCREMENT = 1");
             $this->db->query("ALTER TABLE estudiante AUTO_INCREMENT = 1");
+            $this->db->query("ALTER TABLE role_permisos AUTO_INCREMENT = 2");
+            $this->db->query("ALTER TABLE usuarios AUTO_INCREMENT = 2");
+            $this->db->query("ALTER TABLE roles AUTO_INCREMENT = 2");
+            
     
             return true;
     

@@ -71,6 +71,7 @@ $router->addRoute('POST', '/attendance/getListByFilter', 'AttendanceController@f
 $router->addRoute('POST', '/attendance/getListStatusAttendance', 'AttendanceController@get_list_status_attendance');
 $router->addRoute('POST', '/attendance/EditIfRegistered', 'AttendanceController@edit_attendance_registered');
 $router->addRoute('POST', '/attendance/saveAttendance', 'AttendanceController@save_attendance');
+$router->addRoute('POST', '/dashboard/getAttendancePercentDaily', 'DashboardController@get_data_attendance_percent');
 
 $router->addRoute('POST', '/report/RecordByStudent', 'ReportController@record_by_student');
 $router->addRoute('POST', '/report/RecordByGroup', 'ReportController@record_by_group');

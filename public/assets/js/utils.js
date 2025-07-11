@@ -29,11 +29,23 @@ function formatearFechaDMY(fechaISO) {
 
 // Función para formatear fecha
 function formatFechaCorta(fechaStr) {
-  const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+  const meses = [
+    "Ene",
+    "Feb",
+    "Mar",
+    "Abr",
+    "May",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dic",
+  ];
   const [anio, mes, dia] = fechaStr.split("-");
   return `${parseInt(dia)} ${meses[parseInt(mes) - 1]}`;
 }
-
 
 function obtenerMeses() {
   return [
@@ -53,14 +65,18 @@ function obtenerMeses() {
 }
 
 function getFechaActual() {
-  const hoy = new Date();
-  const anio = hoy.getFullYear();
-  const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-  const dia = String(hoy.getDate()).padStart(2, '0');
-  return `${anio}-${mes}-${dia}`;
+  // Obtener la fecha y hora actual en Lima
+  const fechaLima = new Date().toLocaleString("en-US", {
+    timeZone: "America/Lima",
+  });
+  const date = new Date(fechaLima); // Convierte a objeto Date para extraer componentes
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`; // Ej: "2025-07-09"
 }
-
-
 
 function obtenerDiasDelMes(mes, anio = new Date().getFullYear()) {
   const diasSemana = {
@@ -186,31 +202,27 @@ function formatearHoraAmPm(horaStr) {
   return `${horas}:${minutos} ${ampm}`;
 }
 
-
-
-
-
 function aplicarValidacionesPersonalizadas() {
-  $(document).on('input', 'input[data-validate]', function () {
-    const tipos = $(this).data('validate').toString().split(/\s+/);
+  $(document).on("input", "input[data-validate]", function () {
+    const tipos = $(this).data("validate").toString().split(/\s+/);
     let value = this.value;
 
-    tipos.forEach(tipo => {
+    tipos.forEach((tipo) => {
       switch (tipo) {
-        case 'numeric':
-          value = value.replace(/[^0-9]/g, '');
+        case "numeric":
+          value = value.replace(/[^0-9]/g, "");
           break;
-        case 'alpha':
-          value = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+        case "alpha":
+          value = value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "");
           break;
-        case 'alphanumeric':
-          value = value.replace(/[^a-zA-Z0-9]/g, '');
+        case "alphanumeric":
+          value = value.replace(/[^a-zA-Z0-9]/g, "");
           break;
-        case 'uppercase':
+        case "uppercase":
           value = value.toUpperCase();
           break;
-        case 'no-space':
-          value = value.replace(/\s+/g, '');
+        case "no-space":
+          value = value.replace(/\s+/g, "");
           break;
         // puedes seguir agregando más validaciones aquí
       }
@@ -219,7 +231,6 @@ function aplicarValidacionesPersonalizadas() {
     this.value = value;
   });
 }
-
 
 $(document).ready(function () {
   aplicarValidacionesPersonalizadas();

@@ -481,7 +481,7 @@ $(document).ready(function () {
                 timer: 2000,
                 showConfirmButton: false,
               });
-
+              cargarRoles();
               // Si usas DataTables para listar roles
               if ($("#table_roles").length) {
                 $("#table_roles").DataTable().ajax.reload();

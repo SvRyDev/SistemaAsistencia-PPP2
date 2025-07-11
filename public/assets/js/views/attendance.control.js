@@ -1,6 +1,8 @@
 let ventana = null;
 let verificador = null;
 
+let estadosCargados = []; // Aquí se almacenarán los estados una sola vez
+let estadosYaCargados = false;
 
 // Variables de hora
 let hora_entrada;
@@ -148,6 +150,60 @@ function refreshListAttendance() {
   contadorEstados[2] = 0;
   contadorEstados[3] = 0;
   contadorEstados[4] = 0;
+
+
+  // -------------------------------
+  // Cargar Estados de Asistencia
+  // -------------------------------
+  
+$(document).ready(function () {
+  // Cargar los estados UNA SOLA VEZ
+  $.ajax({
+    url: base_url + "/attendance/getListStatusAttendance",
+    type: "POST",
+    dataType: "json",
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    success: function (response) {
+      if (response.status === "success") {
+        estadosCargados = response.estados;
+        estadosYaCargados = true;
+      } else {
+        console.error("Error al cargar estados:", response.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error AJAX:", error);
+    }
+  });
+
+  // Evento al abrir el modal
+  $('#btnAbrirModal').on('click', function () {
+    const hora = getHoraMinuto();
+    $('#mdlHoraEntrada').val(hora);
+
+    const $estadoSelect = $('#estadoAsistencia');
+
+    // Limpiar las opciones anteriores excepto la primera
+    $estadoSelect.find('option:not(:first)').remove();
+
+    // Solo si los estados ya fueron cargados
+    if (estadosYaCargados) {
+      estadosCargados.forEach(function (estado) {
+        $estadoSelect.append(
+          `<option value="${estado.id_estado}">${estado.nombre_estado}</option>`
+        );
+      });
+    }
+
+    // Seleccionar la primera opción (la que no tiene value)
+    $estadoSelect.prop('selectedIndex', 0);
+
+    // Mostrar el modal
+    $('#modalAuxiliar').modal('show');
+  });
+});
 
 
   // -------------------------------
@@ -435,41 +491,7 @@ $(document).ready(function () {
   });
 
 
-  $('#btnAbrirModal').on('click', function () {
-    const hora = getHoraMinuto();
-    $('#mdlHoraEntrada').val(hora);
 
-    // Limpiar opciones anteriores excepto la primera
-    $('#estadoAsistencia').find('option:not(:first)').remove();
-
-    $.ajax({
-      url: base_url + "/attendance/getListStatusAttendance",
-      type: "POST",
-      dataType: "json",
-      headers: {
-        "X-Requested-With": "XMLHttpRequest",
-      },
-      success: function (response) {
-        if (response.status === "success") {
-          const estados = response.estados;
-          estados.forEach(function (estado) {
-            $('#estadoAsistencia').append(
-              `<option value="${estado.id_estado}">${estado.nombre_estado}</option>`
-            );
-          });
-        } else {
-          console.error("Error al cargar estados:", response.message);
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error("Error AJAX:", error);
-      },
-      complete: function () {
-        // Mostrar el modal solo después de haber cargado todo
-        $('#modalAuxiliar').modal('show');
-      }
-    });
-  });
 
 
   /* ------------------------------------------------ */

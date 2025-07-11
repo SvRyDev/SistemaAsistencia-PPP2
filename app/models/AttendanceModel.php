@@ -36,34 +36,34 @@ class AttendanceModel extends Model
             WHERE d.dia_fecha_id = :dia_id
             ORDER BY a.asistencia_estudiante_id ASC
         ";
-    
+
         // Agregar filtros dinámicos
         if (!is_null($grado)) {
             $sql .= " AND ve.id_grado = :grado";
         }
-    
+
         if (!is_null($seccion)) {
             $sql .= " AND ve.id_seccion = :seccion";
         }
-    
+
         // Ahora preparar el SQL ya construido
         $stmt = $this->db->prepare($sql);
-    
+
         // Asignar valores
         $stmt->bindValue(':dia_id', $dia_id, PDO::PARAM_INT);
-    
+
         if (!is_null($grado)) {
             $stmt->bindValue(':grado', $grado, PDO::PARAM_INT);
         }
-    
+
         if (!is_null($seccion)) {
             $stmt->bindValue(':seccion', $seccion, PDO::PARAM_INT);
         }
-    
+
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+
     public function getLastAttendanceByStudent($studentId, $limit = 15)
     {
         $stmt = $this->db->prepare("
@@ -80,7 +80,7 @@ class AttendanceModel extends Model
             JOIN dia_asistencia d ON a.dia_fecha_id = d.dia_fecha_id
             JOIN estados_asistencia e ON a.estado_asistencia_id = e.id_estado
             WHERE a.estudiante_id = :estudiante_id
-            ORDER BY a.asistencia_estudiante_id ASC
+            ORDER BY a.asistencia_estudiante_id DESC
             LIMIT :limit
         ");
 
@@ -123,19 +123,55 @@ class AttendanceModel extends Model
     }
 
     public function getIDStudentByDate($dia_fecha_id)
-{
-    $stmt = $this->db->prepare("
+    {
+        $stmt = $this->db->prepare("
         SELECT estudiante_id 
         FROM asistencia_estudiante 
         WHERE dia_fecha_id = :dia_fecha_id
     ");
-    $stmt->bindParam(':dia_fecha_id', $dia_fecha_id, PDO::PARAM_INT);
-    $stmt->execute();
+        $stmt->bindParam(':dia_fecha_id', $dia_fecha_id, PDO::PARAM_INT);
+        $stmt->execute();
 
-    // Retorna solo los IDs en un array plano
-    return array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'estudiante_id');
-}
+        // Retorna solo los IDs en un array plano
+        return array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'estudiante_id');
+    }
 
+
+    public function getDailyAttendanceSummary()
+    {
+        $stmt = $this->db->prepare('SELECT 
+                    da.dia_fecha_id,
+                    da.fecha,
+                    da.nombre_dia,
+
+                    (SELECT COUNT(*) FROM estudiante) AS total_estudiantes,
+
+                    SUM(CASE WHEN ae.estado_asistencia_id = 1 THEN 1 ELSE 0 END) AS total_puntual,
+                    SUM(CASE WHEN ae.estado_asistencia_id = 2 THEN 1 ELSE 0 END) AS total_tarde,
+                    SUM(CASE WHEN ae.estado_asistencia_id = 4 THEN 1 ELSE 0 END) AS total_justificados,
+                    SUM(CASE WHEN ae.estado_asistencia_id = 3 THEN 1 ELSE 0 END) AS total_faltas,
+
+                    ROUND(SUM(CASE WHEN ae.estado_asistencia_id = 1 THEN 1 ELSE 0 END) / 
+                            (SELECT COUNT(*) FROM estudiante) * 100, 2) AS porcentaje_puntual,
+
+                    ROUND(SUM(CASE WHEN ae.estado_asistencia_id = 2 THEN 1 ELSE 0 END) / 
+                            (SELECT COUNT(*) FROM estudiante) * 100, 2) AS porcentaje_tarde,
+
+                    ROUND(SUM(CASE WHEN ae.estado_asistencia_id = 3 THEN 1 ELSE 0 END) / 
+                            (SELECT COUNT(*) FROM estudiante) * 100, 2) AS porcentaje_falta,
+
+                    ROUND(SUM(CASE WHEN ae.estado_asistencia_id = 4 THEN 1 ELSE 0 END) / 
+                            (SELECT COUNT(*) FROM estudiante) * 100, 2) AS porcentaje_justificado
+
+                    FROM dia_asistencia da
+                    LEFT JOIN asistencia_estudiante ae ON ae.dia_fecha_id = da.dia_fecha_id
+                    LEFT JOIN estudiante e ON e.estudiante_id = ae.estudiante_id
+
+                    GROUP BY da.dia_fecha_id, da.fecha, da.nombre_dia
+                    ORDER BY da.fecha ASC');
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function getRegisteredByStudentAndDate($estudianteId, $diaFechaId)
     {

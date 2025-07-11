@@ -69,7 +69,7 @@
                                                         style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; border-radius: 4px;">
                                                         <i class="fas fa-id-card-alt fa-2x"></i>
                                                     </span>
-                                                    <span>Buscar Carnet</span>
+                                                    <span>Generar Carnet</span>
                                                 </label>
 
                                                 <!-- Input oculto -->
