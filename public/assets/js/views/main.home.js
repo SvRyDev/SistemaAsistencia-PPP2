@@ -64,27 +64,27 @@ $(document).ready(function () {
           nuevoItem.innerHTML = `
             <div class="container-fluid">
               <div class="row text-truncate">
-                <div class="col-1 text-muted d-none d-sm-block">
+                <div class="col-1 col-sm-1 text-muted d-none d-sm-block">
                   <small>${contadorAsistencias}</small>
                 </div>
         
-                <div class="col-2 text-muted d-none d-sm-block">
-                  <span class="text-dark">${student.codigo}</span>
+                <div class="col-2 col-sm-2 text-muted d-none d-sm-block">
+                  <span class="text-dark small">${student.codigo}</span>
                 </div>
         
-                <div class="col-6" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                  <span>${student.nombres} ${student.apellidos}</span>
+                <div class="col-8  col-sm-5" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  <span class="small">${student.nombres} ${student.apellidos}</span>
                 </div>
         
-                <div class="col-1 text-muted d-none d-sm-block">
-                  <span class="text-dark">${student.grado_orden || "--"} ${student.seccion || "--"}</span>
+                <div class="col-1 col-sm-1 text-muted d-none d-sm-block">
+                  <span class="text-dark small">${student.grado_orden || "--"} ${student.seccion || "--"}</span>
                 </div>
         
-                <div class="col-1 text-muted d-none d-sm-block">
-                  <span class="text-dark">${getHoraMinuto(student.hora_actual) || "--:--"}</span>
+                <div class="col-1 col-sm-1 text-muted d-none d-sm-block">
+                  <span class="text-dark small">${getHoraMinuto(student.hora_actual) || "--:--"}</span>
                 </div>
         
-                <div class="col-1 text-right">
+                <div class="col-3 col-sm-2 text-right">
                   <span data-id="${student.id_estado}" class="badge badge-${student.clase_boostrap}">
                     ${student.nombre_estado}
                   </span>

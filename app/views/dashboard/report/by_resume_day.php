@@ -11,7 +11,7 @@
                     <div class="card-body">
                         <div class="alert alert-light small d-flex align-items-center" role="alert">
                             <i class="fas fa-info-circle mr-2 text-info"></i>
-                            Selecciona el mes que deseas consultar para ver el resumen de asistencia por grado y sección.
+                            Selecciona el mes y el dia que deseas consultar para ver el resumen de asistencia por grado y sección.
                         </div>
 
 
@@ -56,56 +56,56 @@
                         </div>
                     </div>
                 </div>
-<!-- RESUMEN GENERAL -->
-<div class="row text-center mb-4">
-  <!-- Total Estudiantes -->
-  <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
-    <div class="bg-light border-left border-dark p-3 rounded shadow-sm h-100">
-      <h6 class="text-muted mb-1">Total Estudiantes</h6>
-      <div id="total-estudiantes" class="h2 font-weight-bold text-dark">0</div>
-    </div>
-  </div>
+                <!-- RESUMEN GENERAL -->
+                <div class="row text-center mb-4">
+                    <!-- Total Estudiantes -->
+                    <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
+                        <div class="bg-light border-left border-dark p-3 rounded shadow-sm h-100">
+                            <h6 class="text-muted mb-1">Total Estudiantes</h6>
+                            <div id="total-estudiantes" class="h2 font-weight-bold text-dark">0</div>
+                        </div>
+                    </div>
 
-  <!-- Presentes  -->
-  <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
-    <div class="bg-light border-left border-success p-3 rounded shadow-sm h-100">
-      <h6 class="text-success mb-1">Asistencias</h6>
-      <div id="total-asistencias" class="h2 font-weight-bold text-success">0</div>
-    </div>
-  </div>
+                    <!-- Presentes  -->
+                    <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
+                        <div class="bg-light border-left border-success p-3 rounded shadow-sm h-100">
+                            <h6 class="text-success mb-1">Asistencias</h6>
+                            <div id="total-asistencias" class="h2 font-weight-bold text-success">0</div>
+                        </div>
+                    </div>
 
-  <!-- Tardanzas -->
-  <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
-    <div class="bg-light border-left border-warning p-3 rounded shadow-sm h-100">
-      <h6 class="text-warning mb-1">Tardanzas</h6>
-      <div id="total-tardanzas" class="h2 font-weight-bold text-warning">0</div>
-    </div>
-  </div>
+                    <!-- Tardanzas -->
+                    <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
+                        <div class="bg-light border-left border-warning p-3 rounded shadow-sm h-100">
+                            <h6 class="text-warning mb-1">Tardanzas</h6>
+                            <div id="total-tardanzas" class="h2 font-weight-bold text-warning">0</div>
+                        </div>
+                    </div>
 
-  <!-- Ausentes -->
-  <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
-    <div class="bg-light border-left border-danger p-3 rounded shadow-sm h-100">
-      <h6 class="text-danger mb-1">Ausentes</h6>
-      <div id="total-ausentes" class="h2 font-weight-bold text-danger">0</div>
-    </div>
-  </div>
+                    <!-- Ausentes -->
+                    <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
+                        <div class="bg-light border-left border-danger p-3 rounded shadow-sm h-100">
+                            <h6 class="text-danger mb-1">Ausentes</h6>
+                            <div id="total-ausentes" class="h2 font-weight-bold text-danger">0</div>
+                        </div>
+                    </div>
 
-  <!-- Justificados -->
-  <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
-    <div class="bg-light border-left border-info p-3 rounded shadow-sm h-100">
-      <h6 class="text-info mb-1">Justificados</h6>
-      <div id="total-justificados" class="h2 font-weight-bold text-info">0</div>
-    </div>
-  </div>
+                    <!-- Justificados -->
+                    <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
+                        <div class="bg-light border-left border-info p-3 rounded shadow-sm h-100">
+                            <h6 class="text-info mb-1">Justificados</h6>
+                            <div id="total-justificados" class="h2 font-weight-bold text-info">0</div>
+                        </div>
+                    </div>
 
-  <!-- % Asistencia -->
-  <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
-    <div class="bg-light border-left border-primary p-3 rounded shadow-sm h-100">
-      <h6 class="text-primary mb-1">% Asistencia</h6>
-      <div id="total-porcentaje" class="h2 font-weight-bold text-primary">0%</div>
-    </div>
-  </div>
-</div>
+                    <!-- % Asistencia -->
+                    <div class="col-sm-6 col-md-4 col-lg-4 col-xl-2 mb-3">
+                        <div class="bg-light border-left border-primary p-3 rounded shadow-sm h-100">
+                            <h6 class="text-primary mb-1">% Asistencia</h6>
+                            <div id="total-porcentaje" class="h2 font-weight-bold text-primary">0%</div>
+                        </div>
+                    </div>
+                </div>
 
 
                 <!-- TABLA DETALLE -->
@@ -114,7 +114,10 @@
                         <i class="fas fa-table mr-2"></i> Detalle por Grado y Sección
                     </div>
                     <div class="card-body bg-light">
-                        <div class="table-responsive">
+
+                
+                        <!-- Tabla dentro de scroll -->
+                        <div class="table-responsive" style="overflow-x: auto;">
                             <table id="table-result" class="table table-bordered table-hover table-sm text-center mb-0">
                                 <thead class="thead-light">
                                     <tr>
@@ -130,25 +133,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                  
+
                                 </tbody>
                             </table>
                         </div>
+                       
                     </div>
                 </div>
 
                 <!-- BOTONES DE EXPORTACIÓN -->
-                <div class="d-flex justify-content-end mb-5">
-                    <button class="btn btn-outline-success btn-sm mr-2">
-                        <i class="fas fa-file-excel"></i> Excel
-                    </button>
-                    <button class="btn btn-outline-danger btn-sm mr-2">
-                        <i class="fas fa-file-pdf"></i> PDF
-                    </button>
-                    <button class="btn btn-outline-secondary btn-sm">
-                        <i class="fas fa-print"></i> Imprimir
-                    </button>
-                </div>
+
 
             </div>
         </div>

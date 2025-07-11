@@ -137,7 +137,7 @@
             <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
 
-            <li class="nav-header">INCICIO</li>
+            <li class="nav-header">INICIO</li>
             <li class="nav-item">
               <a href="<?= base_url() ?>/home" class="nav-link">
                 <i class="nav-icon fas fa-home"></i>
@@ -194,7 +194,7 @@
               <a href="<?= base_url() ?>/attendance" class="nav-link">
                 <i class="nav-icon far fa-image"></i>
                 <p>
-                  Asistencia
+                  Registro
                 </p>
               </a>
             </li>
@@ -202,29 +202,12 @@
               <a href="<?= base_url() ?>/attendance/query" class="nav-link">
                     <i class="nav-icon fas fa-calendar-alt"></i>
                 <p>
-                  Consulta del Dia
+                  Consultas
                 </p>
               </a>
             </li>
             <li class="nav-header">REPORTES</li>
-            <li class="nav-item">
-              <a href="<?= base_url() ?>/report/student" class="nav-link">
-                <i class="nav-icon fas fa-id-badge"></i>
-                <p>
-                  Individual
-                </p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="<?= base_url() ?>/report/group" class="nav-link">
-                <i class="nav-icon fas fa-users"></i>
-                <p>
-                  Por Aula
-                </p>
-              </a>
-            </li>
-
-            <li class="nav-item">
+                        <li class="nav-item">
               <a href="<?= base_url() ?>/report/resume/daily" class="nav-link">
                 <i class="nav-icon fas fa-chart-bar"></i>
                 <p>
@@ -232,6 +215,24 @@
                 </p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="<?= base_url() ?>/report/student" class="nav-link">
+                <i class="nav-icon fas fa-id-badge"></i>
+                <p>
+                  Estudiante
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="<?= base_url() ?>/report/group" class="nav-link">
+                <i class="nav-icon fas fa-users"></i>
+                <p>
+                  Grado y Seccion
+                </p>
+              </a>
+            </li>
+
+
 
             <li class="nav-header">CONFIGURACIÓN</li>
 

@@ -127,23 +127,24 @@
                   <div class="col-12">
                     <!-- Cabecera y lista en scroll horizontal -->
                     <div class="table-responsive" style="overflow-x: auto;">
-                      <div style="min-width: 700px;">
+                      <div style="">
                         <!-- Cabecera fija -->
                         <div class="list-group-item pt-2 pb-2 bg-dark text-left">
                           <div class="container-fluid">
                             <div class="row text-truncate">
                               <!-- En xs no se muestra, solo desde sm -->
-                              <div class="col-1 font-weight-bold text-white d-none d-sm-block">#</div>
-                              <div class="col-2 text-white d-none d-sm-block">Código</div>
+                              <div class="col-1 col-sm-1 font-weight-bold text-white d-none d-sm-block small">#</div>
+                              <div class="col-2 col-sm-2 text-white d-none d-sm-block small">Código</div>
 
                               <!-- Nombres se adapta: 12 columnas en XS, 6 en SM+ -->
-                              <div class="col-5 text-white">Nombres</div>
+                              <div class="col-8 col-sm-5 text-white small">Nombres</div>
 
-                              <div class="col-1 text-white d-none d-sm-block">Grado</div>
-                              <div class="col-1 text-white d-none d-sm-block">Hora</div>
+                              <div class="col-1 col-sm-1 text-white d-none d-sm-block small">Grado</div>
+
+                              <div class="col-1 col-sm-1 text-white d-none d-sm-block small">Hora</div>
 
                               <!-- Estado siempre visible -->
-                              <div class="col-2 text-white text-right">Estado</div>
+                              <div class="col-3 col-sm-2 text-white text-right small">Estado</div>
                             </div>
                           </div>
                         </div>
@@ -194,7 +195,7 @@
                   <i class="fas fa-file-alt mr-1"></i>
                   Justificaciones Diarias
                 </h3>
-                <span id="fechaJustificaciones" class="badge badge-primary ml-auto"></span>
+                <span class="badge badge-info ml-auto">Últimos 15 dias</span>
               </div>
 
               <div class="card-body">

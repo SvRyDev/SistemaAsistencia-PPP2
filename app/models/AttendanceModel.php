@@ -34,7 +34,7 @@ class AttendanceModel extends Model
             JOIN estados_asistencia e ON a.estado_asistencia_id = e.id_estado
             JOIN vista_estudiantes ve ON a.estudiante_id = ve.estudiante_id
             WHERE d.dia_fecha_id = :dia_id
-            ORDER BY a.asistencia_estudiante_id ASC
+            
         ";
 
         // Agregar filtros dinámicos
@@ -46,6 +46,7 @@ class AttendanceModel extends Model
             $sql .= " AND ve.id_seccion = :seccion";
         }
 
+        $sql .= " ORDER BY a.asistencia_estudiante_id ASC";
         // Ahora preparar el SQL ya construido
         $stmt = $this->db->prepare($sql);
 

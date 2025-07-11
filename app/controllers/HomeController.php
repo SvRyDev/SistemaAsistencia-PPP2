@@ -10,7 +10,7 @@ class HomeController extends Controller
         $view = "main.home";
         $data = [
             'view_js' => $view,
-            'title' => 'Vista Rapida - Dashboard',
+            'title' => 'Vista Rápida - Dashboard',
             'message' => 'Esta es la página de incio del Dashboard.'
         ];
 

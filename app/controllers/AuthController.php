@@ -66,7 +66,7 @@ class AuthController extends Controller
             $hashedInput = hash(ENCRYPT, $clave);
 
             if ($hashedInput !== $user['password']) {
-                echo json_encode(['status' => 'error', 'message' => 'Contraseña incorrecta. EL PASS ES '. $hashedInput . ' i el otro es  ' . $user['password']]);
+                echo json_encode(['status' => 'error', 'message' => 'Contraseña incorrecta. ']);
                 return;
             }
 
