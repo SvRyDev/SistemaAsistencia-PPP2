@@ -23,11 +23,15 @@ $.ajax({
   beforeSend: function () {
     Swal.fire({
       title: "Verificando...",
-      text: "Espere un momento",
+      html: `
+        <div class="d-flex flex-column align-items-center">
+          <i class="fas fa-spinner fa-spin fa-2x mb-2"></i>
+          <span>Espere un momento</span>
+        </div>
+      `,
       allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
+      showConfirmButton: false,
+      timer: 1000, // solo 1 segundo
     });
   },
   success: function (res) {
@@ -37,12 +41,12 @@ $.ajax({
         title: "¡Bienvenido!",
         text: res.message,
         showConfirmButton: false,
-        timer: 2000,
+        timer: 1000,
       });
 
       setTimeout(() => {
-        window.location.href = res.redirect || base_url +"/";
-      }, 2000);
+        window.location.href = res.redirect || base_url + "/";
+      }, 1000);
     } else {
       Swal.fire({
         icon: "error",
@@ -59,6 +63,7 @@ $.ajax({
     });
   },
 });
+
 
   });
 });

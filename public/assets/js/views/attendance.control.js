@@ -407,6 +407,24 @@ function actualizarContadores() {
 };
 //actualizar mensaje de estado de hora 
 
+function actualizarMostrarGraficas(habilitado){
+  if (habilitado) {
+    $('#pieAsistencia-alert').addClass('d-none');
+    $('#pieAsistencia').removeClass('d-none');
+    $('#contadores-container-alert').addClass('d-none');
+    $('#contadores-container').removeClass('d-none');
+    $('#lista-asistencia-container-alert').addClass('d-none');
+    $('#lista-asistencia-container').removeClass('d-none');
+  } else {
+    $('#pieAsistencia-alert').removeClass('d-none');
+    $('#pieAsistencia').addClass('d-none');
+    $('#contadores-container-alert').removeClass('d-none');
+    $('#contadores-container').addClass('d-none');
+    $('#lista-asistencia-container-alert').removeClass('d-none');
+    $('#lista-asistencia-container').addClass('d-none');
+  }
+
+}
 function actualizarBotones(btn1, btn2, btn3, btn4, btn5) {
   $('#btnNewDay').prop('disabled', btn1); //Aperturar Dia
   $('#btnCloseDay').prop('disabled', btn2); //Cerrar Dia
@@ -460,7 +478,6 @@ function actualizarEstadoVisual(estado, destinoId) {
     .removeClass("bg-secondary bg-success bg-info bg-warning bg-danger")
     .addClass(`bg-${color}`);
 }
-
 
 
 function iniciarEvaluacionEstado(hEntrada, toleranciaMin, hSalida, destinoId) {
@@ -559,6 +576,7 @@ function refreshListAttendance() {
         iniciarEvaluacionEstado(hora_entrada, min_tolerancia, hora_cierre, "estadoDiaRegistro");
         console.log('PASANDO PR EL CONFIG, EL D ES ' + d.estado);
         if (d) {
+          actualizarMostrarGraficas(true)
           const estado = d.estado;
           if (parseInt(estado) == 1) {
             console.log('espot pasando por qusoy 1');
@@ -572,8 +590,10 @@ function refreshListAttendance() {
           }
 
         } else {
+          actualizarMostrarGraficas(false)
           actualizarEstadoDia(0);
           actualizarBotones(false, true, true, true, true);
+       
         }
 
       } else {

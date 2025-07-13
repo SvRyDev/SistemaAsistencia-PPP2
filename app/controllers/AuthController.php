@@ -52,8 +52,8 @@ class AuthController extends Controller
         }
 
         try {
-            $UserModel = $this->model('UserModel');
-            $user = $UserModel->getUserByNombre($usuario);
+            $AuthModel = $this->model('AuthModel');
+            $user = $AuthModel->getUserByNombre($usuario);
 
        
 
@@ -82,11 +82,20 @@ class AuthController extends Controller
             // Iniciar sesión, por ejemplo:
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['user_nombre'] = $user['nombre'];
-            $_SESSION['role_id'] = $user['role_id'];
+            $_SESSION['rol_id'] = $user['role_id'];
+            $_SESSION['rol_nombre'] = $user['rol_nombre'];
+            $_SESSION['rol_icono'] = $user['rol_icono'];
+            $_SESSION['rol_color_badge'] = $user['rol_color_badge'];
+
+            $arrayPermisos = $this->model('AuthModel')->getPermissionsDetalisByRoleId($user['role_id']);
+
+            $_SESSION['permissions'] = $arrayPermisos;
 
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Inicio de sesión exitoso.'
+                'message' => 'Inicio de sesión exitoso.',
+                'redirect' => APP_URL . '/home'
+                
             ]);
 
         } catch (Exception $e) {
@@ -99,4 +108,25 @@ class AuthController extends Controller
         }
     }
 
+    public function logout()
+    {
+        if (!isAjax()) {
+            http_response_code(403);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Acceso no autorizado.'
+            ]);
+            return;
+        }
+    
+        session_unset();       // Limpia todas las variables de sesión
+        session_destroy();     // Destruye la sesión
+    
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Sesión cerrada exitosamente.',
+            'redirect' => APP_URL . '/login'
+        ]);
+    }
+    
 }

@@ -92,3 +92,28 @@ function guardar_configuraciones($config) {
     $jsonConfig = json_encode($config, JSON_PRETTY_PRINT);
     file_put_contents($configFile, $jsonConfig);
 }
+
+
+
+function hasPermission($permissionName)
+{
+    $permissions = $_SESSION['permissions'] ?? [];
+    foreach ($permissions as $permission) {
+        if ($permission['nombre'] === $permissionName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Función para verificar si el usuario tiene permisos en un grupo específico
+function hasGroupPermission($group)
+{
+    $permissions = $_SESSION['permissions'] ?? [];
+    foreach ($permissions as $permission) {
+        if ($permission['grupo'] === $group) {
+            return true;
+        }
+    }
+    return false;
+}

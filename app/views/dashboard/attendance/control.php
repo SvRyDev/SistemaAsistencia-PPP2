@@ -146,6 +146,17 @@
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-7 mt-2">
                 <div class="card shadow border-left-primary">
                     <div class="card-body">
+
+                        <!-- Instrucciones -->
+                        <div class="text-center mb-2">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle mr-1"></i> Acciones disponibles para el control de
+                                asistencia.
+                            </small>
+                        </div>
+
+
+
                         <div id="botonesAsistenciaWrapper"
                             class="d-flex justify-content-center align-items-center flex-wrap">
 
@@ -155,10 +166,15 @@
                                     <i class="fas fa-toggle-on mr-1"></i> Aperturar Día
                                 </button>
                             </div>
-
+                            <!-- Reabrir Asistencia -->
+                            <div class="mx-2 my-1">
+                                <button type="button" class="btn btn-secondary" id="btnReopenAttendance">
+                                    <i class="fas fa-sync-alt mr-1"></i> Reabrir Asistencia
+                                </button>
+                            </div>
                             <!-- Concluir Día -->
                             <div class="mx-2 my-1">
-                                <button id="btnCloseDay" class="btn btn-danger" >
+                                <button id="btnCloseDay" class="btn btn-danger">
                                     <i class="fas fa-flag-checkered mr-1"></i> Concluir Día
                                 </button>
                             </div>
@@ -224,61 +240,85 @@
                 <!-- Contadores -->
                 <div class="row mb-3 flex-grow-1">
 
-                    <!-- Temprano -->
-                    <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
-                        <div class="text-center p-2 bg-white border-left border-success rounded shadow h-100">
-                            <h6 class="text-success font-weight-bold mb-1">Asistencias</h6>
-                            <div class="h5 font-weight-bold text-success mb-0" id="contadorTemprano">0</div>
-                            <small id="porcentajeTemprano" class="text-muted">0%</small>
-
+                    <div id="contadores-container-alert" class="col-xl-12  animate__animated animate__fadeIn">
+                        <div class="card">
+                            <div class="card-body text-center text-muted" style="opacity: 0.6;">
+                                <i class="fas fa-hourglass-start fa-2x mb-2"></i>
+                                <p class="mb-0">Contadores inactivos. Esperando apertura del día.</p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Tardíos -->
-                    <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
-                        <div class="text-center p-2 bg-white border-left border-info rounded shadow h-100">
-                            <h6 class="text-info font-weight-bold mb-1">Tardanzas</h6>
-                            <div class="h5 font-weight-bold text-info mb-0" id="contadorTardios">0</div>
-                            <small id="porcentajeTardios" class="text-muted">0%</small>
-                        </div>
-                    </div>
 
-                    <!-- Justificados -->
-                    <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
-                        <div class="text-center p-2 bg-white border-left border-warning rounded shadow h-100">
-                            <h6 class="text-warning font-weight-bold mb-1">Justificados</h6>
-                            <div class="h5 font-weight-bold text-warning mb-0" id="contadorJustificados">0</div>
-                            <small id="porcentajeJustificados" class="text-muted">0%</small>
-                        </div>
-                    </div>
+                    <div id="contadores-container" class="col-xl-12 animate__animated animate__fadeInLeft d-none">
+                        <div class="row">
+                            <!-- Temprano -->
+                            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
+                                <div class="text-center p-2 bg-white border-left border-success rounded shadow h-100">
+                                    <h6 class="text-success font-weight-bold mb-1">Asistencias</h6>
+                                    <div class="h5 font-weight-bold text-success mb-0" id="contadorTemprano">0</div>
+                                    <small id="porcentajeTemprano" class="text-muted">0%</small>
 
-                    <!-- Restantes -->
-                    <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
-                        <div class="text-center p-2 bg-white border-left border-danger rounded shadow h-100">
-                            <h6 class="text-danger font-weight-bold mb-1">Restantes</h6>
-                            <div class="h5 font-weight-bold text-danger mb-0" id="contadorRestantes">0</div>
-                            <small id="porcentajeRestantes" class="text-muted">0%</small>
-                        </div>
-                    </div>
+                                </div>
+                            </div>
 
-                    <!-- Totales -->
-                    <div class="col-sm-12 col-md-12 col-lg-12 mb-3">
-                        <div class="text-center p-2 bg-white border-left border-primary rounded shadow h-100">
-                            <h6 class="text-primary font-weight-bold mb-1">Total de Estudiantes</h6>
-                            <div id="total_estudiantes" class="h5 font-weight-bold text-primary mb-0">0</div>
-                            <small class="text-muted">100%</small>
+                            <!-- Tardíos -->
+                            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
+                                <div class="text-center p-2 bg-white border-left border-info rounded shadow h-100">
+                                    <h6 class="text-info font-weight-bold mb-1">Tardanzas</h6>
+                                    <div class="h5 font-weight-bold text-info mb-0" id="contadorTardios">0</div>
+                                    <small id="porcentajeTardios" class="text-muted">0%</small>
+                                </div>
+                            </div>
+
+                            <!-- Justificados -->
+                            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
+                                <div class="text-center p-2 bg-white border-left border-warning rounded shadow h-100">
+                                    <h6 class="text-warning font-weight-bold mb-1">Justificados</h6>
+                                    <div class="h5 font-weight-bold text-warning mb-0" id="contadorJustificados">0</div>
+                                    <small id="porcentajeJustificados" class="text-muted">0%</small>
+                                </div>
+                            </div>
+
+                            <!-- Restantes -->
+                            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-6 mb-3">
+                                <div class="text-center p-2 bg-white border-left border-danger rounded shadow h-100">
+                                    <h6 class="text-danger font-weight-bold mb-1">Restantes</h6>
+                                    <div class="h5 font-weight-bold text-danger mb-0" id="contadorRestantes">0</div>
+                                    <small id="porcentajeRestantes" class="text-muted">0%</small>
+                                </div>
+                            </div>
+
+                            <!-- Totales -->
+                            <div class="col-sm-12 col-md-12 col-lg-12 mb-3">
+                                <div class="text-center p-2 bg-white border-left border-primary rounded shadow h-100">
+                                    <h6 class="text-primary font-weight-bold mb-1">Total de Estudiantes</h6>
+                                    <div id="total_estudiantes" class="h5 font-weight-bold text-primary mb-0">0</div>
+                                    <small class="text-muted">100%</small>
+                                </div>
+                            </div>
                         </div>
+
+
                     </div>
 
 
                     <!-- Gráfico -->
                     <div class="col-xl-12">
                         <div class="card flex-grow-1 shadow">
-                            <div class="card-header bg-secondary text-white">
+                            <div class="card-header bg-primary text-white">
                                 <i class="fas fa-chart-pie mr-2"></i> Gráfico de Asistencia
                             </div>
                             <div class="card-body">
-                                <canvas id="pieAsistencia"></canvas>
+                                <div id="pieAsistencia-alert"
+                                    class="card-body text-center text-muted  animate__animated animate__fadeIn"
+                                    style="opacity: 0.5;">
+                                    <i class="fas fa-chart-pie fa-2x mb-2"></i>
+                                    <p class="mb-0">Gráfica no disponible. Esperando apertura del día.</p>
+                                </div>
+                                <div class="animate__animated animate__fadeInUp ">
+                                    <canvas id="pieAsistencia" class="d-none"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -291,46 +331,57 @@
             <!-- Tabla de registros -->
             <div class="col-lg-12 col-xl-9 mb-3 d-flex">
                 <div class="card shadow  w-100 h-100">
-                    <div class="card-header border-left-dark bg-light">
+                    <div class="card-header border-left-dark bg-light ">
                         <i class="fas fa-list-alt mr-2"></i> Listado del Estudiantes <small>(Se actualizara cada
                             día)</small>
                     </div>
                     <div class="card-body table-responsive">
-                        <div class="list-group" id="">
-                            <div
-                                class="list-group-item pt-2 pb-2 animate__animated animate__fadeInUp  bg-dark text-left">
 
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-md-1 font-weight-bold ">
-                                            #
-                                        </div>
-                                        <div class="col-md-2 text-white">
-                                            Código
-                                        </div>
-                                        <div class="col-md-5">
-                                            Nombres
-                                        </div>
+                        <div id="lista-asistencia-container-alert"
+                            class="card-body text-center text-muted  animate__animated animate__fadeIn"
+                            style="opacity: 0.5;">
+                            <i class="fas fa-chart-line fa-2x mb-2"></i>
+                            <p class="mb-0">Gráfica no disponible. Esperando apertura del día.</p>
+                        </div>
+                        <div id="lista-asistencia-container" class="d-none">
 
-                                        <div class="col-md-1 text-white">
-                                            Grado
-                                        </div>
 
-                                        <div class="col-md-1 text-white">
-                                            Sección
-                                        </div>
-                                        <div class="col-md-1 text-white">
-                                            Hora
-                                        </div>
-                                        <div class="col-md-1 text-white">
-                                            Estado
+                            <div class="list-group" id="">
+                                <div
+                                    class="list-group-item pt-2 pb-2 animate__animated animate__fadeInUp  bg-dark text-left">
+
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-md-1 font-weight-bold ">
+                                                #
+                                            </div>
+                                            <div class="col-md-2 text-white">
+                                                Código
+                                            </div>
+                                            <div class="col-md-5">
+                                                Nombres
+                                            </div>
+
+                                            <div class="col-md-1 text-white">
+                                                Grado
+                                            </div>
+
+                                            <div class="col-md-1 text-white">
+                                                Sección
+                                            </div>
+                                            <div class="col-md-1 text-white">
+                                                Hora
+                                            </div>
+                                            <div class="col-md-1 text-white">
+                                                Estado
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="list-group" id="listaAsistencia" style="height: 400px; overflow-y: auto">
-                            <!-- Aquí se mostrarán los estudiantes registrados -->
+                            <div class="list-group" id="listaAsistencia" style="height: 400px; overflow-y: auto">
+                                <!-- Aquí se mostrarán los estudiantes registrados -->
+                            </div>
                         </div>
                     </div>
                 </div>

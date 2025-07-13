@@ -372,7 +372,7 @@ class AttendanceController extends Controller
 
             // Determinar estado según la hora
             if ($currentTime <= $max_punctual_time) {
-                $estadoSeleccionado = $estadoMap['presente'] ?? null;
+                $estadoSeleccionado = $estadoMap['asistido'] ?? null;
             } elseif ($currentTime > $max_punctual_time && $currentTime <= $exit_time) {
                 $estadoSeleccionado = $estadoMap['tarde'] ?? null;
             } else {

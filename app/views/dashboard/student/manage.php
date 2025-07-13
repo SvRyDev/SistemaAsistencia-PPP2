@@ -16,8 +16,7 @@
             <button type="button" class="btn btn-success btn-create">
               <i class="fas fa-user-plus"></i> Nuevo Estudiante
             </button>
-            <a href="<?= base_url()?>/student/import" class="btn btn-success"><i class="fas fa-book"></i> Importar Estudiantes</a>
-
+           
             <hr>
             <table id="table_student" class="table table-bordered table-striped">
 

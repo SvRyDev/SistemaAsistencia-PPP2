@@ -4,7 +4,10 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class StudentController extends Controller
 {
-
+    public function __construct()
+    {
+        Auth::checkAuth(); // Verifica si el usuario está autenticado
+    }
     public $layout = 'dashboard'; // Establecer el layout por defecto
 
 
