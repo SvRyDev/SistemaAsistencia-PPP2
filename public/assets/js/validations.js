@@ -2,7 +2,6 @@
 function initFormValidation() {
   const forms = document.querySelectorAll("form");
 
-  console.log("ESTA CORRIENDO /(¨>)>/");
 
   forms.forEach((form) => {
     const inputs = form.querySelectorAll("input, select");

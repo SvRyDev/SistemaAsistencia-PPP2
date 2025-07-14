@@ -31,62 +31,64 @@
                   </div>
                 </form>
 
-    
+
               </div>
               <!-- /.card-body -->
             </div>
           </div>
           <!-- /.card -->
 
-<!--
-          <div class="col-xl-4 col-lg-5 col-md-6 col-sm-6 col-xs-12">
-            <div class="card">
-             
-              <div class="card-body p-1">
-                
-                <form id="uploadCSVForm" enctype="multipart/form-data" class="w-100">
-                  <div class="form-group m-0">
-              
-                    <label for="csvFile" class="btn btn-light shadow d-flex align-items-center w-100 m-0"
-                      style="cursor: pointer; border-radius: 0;">
-                 
-                      <span
-                        class="bg-secondary text-white d-flex align-items-center justify-content-center mr-2 flex-shrink-0"
-                        style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; border-radius: 4px;">
-                        <i class="fas fa-file-csv fa-2x"></i>
-                      </span>
-                      <span>Importar desde CSV</span>
-                    </label>
+   
+    <div class="col-12">
+  <div class="card">
+    <div class="card-body" style="font-size: 0.875rem;">
+      <b>Nota importante:</b>
+      <br>
+      <ul class="" style="padding-left: 1.2rem;">
+        <li>El archivo debe contener las columnas: <b>Nombres, Apellidos, Dni, Grado y Sección</b>.</li>
+        <li>El formato de fecha debe ser compatible con el sistema.</li>
+        <li>Los datos serán validados antes de ser importados.</li>
+        <li>El campo <b>Grado</b> debe estar en texto y en mayúsculas (por ejemplo: <b>PRIMERO</b>, <b>SEGUNDO</b>, etc.).</li>
+      </ul>
 
-          
-                    <input type="file" name="csvFile" id="csvFile" accept=".csv" required class="d-none">
-                  </div>
-                </form>
+     
+      <b>Ejemplo de formato del archivo:</b>
+      <div class="table-responsive mt-3">
+        <div class="p-2 border rounded shadow-sm bg-light">
+          <table class="table table-sm table-bordered mb-0" style="font-size: 0.8125rem;">
+            <thead class="table-secondary">
+              <tr>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>DNI</th>
+                <th>Grado</th>
+                <th>Sección</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Juan Carlos</td>
+                <td>Ramírez Soto</td>
+                <td>12345678</td>
+                <td>TERCERO</td>
+                <td>A</td>
+              </tr>
+              <tr>
+                <td>María Elena</td>
+                <td>Flores Núñez</td>
+                <td>87654321</td>
+                <td>CUARTO</td>
+                <td>B</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-                <div id="previewTableCSV"></div>
-              </div>
 
-        
-            </div>
-          </div>
-          -->
-          <!-- /.card -->
-
-          <div class="col-12">
-            <div class="card">
-              <!-- /.card-header -->
-              <div class="card-body">
-                <b>Nota importante:</b>
-                <br>
-                <ul>
-                  <li>El archivo debe contener las columnas: <b>Nombres, Apellidos, Dni, Grado y Sección</b>.</li>
-                  <li>El formato de fecha debe ser compatible con el sistema.</li>
-                  <li>Los datos serán validados antes de ser importados.</li>
-              </div>
-
-              <!-- /.card-body -->
-            </div>
-          </div>
         </div>
         <!-- /.col -->
 

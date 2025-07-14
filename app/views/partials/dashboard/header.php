@@ -7,7 +7,7 @@
   <title>Sistema de Asistencia - Dashboard</title>
 
   <!-- SweetAlert2 -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" />
+  <link rel="stylesheet" href="<?= plugins()?>/animate/css/animate.min.css" />
   <link rel="stylesheet" href="<?= plugins() ?>/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <!-- Toastr -->
   <link rel="stylesheet" href="<?= plugins() ?>/toastr/toastr.min.css">
@@ -15,7 +15,7 @@
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    href="<?= dist()?>/css/fonts-google/font-1.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="<?= plugins() ?>/fontawesome-free/css/all.min.css">
   <!-- DataTables -->
@@ -27,7 +27,7 @@
   <link rel="stylesheet" href="<?= plugins() ?>/datatables-select/css/select.bootstrap4.min.css">
 
   <!-- Ionicons -->
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="<?= plugins()?>/ionicons/css/ionicons.min.css">
   <!-- Tempusdominus Bootstrap 4 -->
   <link rel="stylesheet" href="<?= plugins() ?>/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
   <!-- iCheck -->

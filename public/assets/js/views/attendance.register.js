@@ -18,82 +18,91 @@ $(document).ready(function () {
   const $input = $("#codigoEstudiante");
   const $warning = $("#focusWarning");
 
-  // Enviar datos a la ventana principal
-  $("#formulario").on("submit", function (e) {
+  // Manejo de formulario moderno y animado
+  $('#formulario').on('submit', function (e) {
     e.preventDefault();
-    const codigo = $input.val().trim();
-
-    // Validar que tenga exactamente 11 caracteres
-    if (codigo.length !== 11) {
-      $("#mensajeRespuesta").html(
-        "El código debe tener exactamente 11 caracteres."
-      );
-      setTimeout(() => {
-        $("#resultadoBusqueda span").html("");
-      }, 1500);
+    var codigo = $('#codigoEstudiante').val().trim();
+    if (!codigo) {
+      showStatus('Por favor ingresa tu código.', 'error');
       return;
     }
-
+    showStatus('Registrando asistencia...', 'info');
     $.ajax({
-      url: base_url + "/attendance/registerAttendance",
-      method: "POST",
+      url: base_url + '/attendance/registerAttendance',
+      method: 'POST',
       data: { codigo: codigo },
-      dataType: "json",
-      beforeSend: function () {
-        $("#mensajeRespuesta").html(
-          '<div class="spinner-grow" role="status"><span class="sr-only">Loading...</span></div>'
+      dataType: 'json',
+      success: function (res) {
+        // Adaptar a la estructura real del backend
+        let nombre = '', apellido = '', codigoEst = '', estado = '', hora = '', mensaje = '', tipo = 'info';
+        if (res.student) {
+          nombre = res.student.nombres || '';
+          apellido = res.student.apellidos || '';
+          codigoEst = res.student.codigo || '';
+        }
+        if (res.estado && res.estado.nombre_estado) {
+          estado = res.estado.nombre_estado;
+        }
+        if (res.hora_actual) {
+          hora = res.hora_actual;
+        } else if (res.hora) {
+          hora = res.hora;
+        }
+        if (res.message) {
+          mensaje = res.message;
+        } else if (res.mensaje) {
+          mensaje = res.mensaje;
+        }
+        if (res.status === 'success') {
+          tipo = 'success';
+          mensaje = mensaje || '¡Asistencia registrada!';
+        } else if (res.status === 'warning') {
+          tipo = 'info';
+          mensaje = mensaje || 'Ya tienes asistencia registrada.';
+        } else {
+          tipo = 'error';
+          mensaje = mensaje || 'No se pudo registrar.';
+        }
+        showStatus(
+          mensaje,
+          tipo,
+          hora,
+          estado,
+          nombre,
+          apellido,
+          codigoEst
         );
       },
-      success: function (response) {
-        console.log(response);
-
-        if (response.status === "success") {
-          let mensaje = "<b>ASISTENCIA REGISTRADA</b><br>";
-          mensaje += "Estado: <b>" + response.estado.nombre_estado.toUpperCase() + "</b><br>";
-          mensaje += "Hora actual: " + response.hora_actual + "<br>";
-          mensaje += "Límite puntualidad: " + response.limite_puntualidad;
-
-          $("#mensajeRespuesta").html(mensaje);
-
-          // Mostrar datos del estudiante
-          $("#nombre").html("Nombre: " + response.student.nombres);
-          $("#apellido").html("Apellido: " + response.student.apellidos);
-          $("#codigo").html("Código: " + response.student.codigo);
-
-          if (window.opener) {
-            window.opener.postMessage(response, "*");
-          }
-
-        } else if (response.status === "warning") {
-          // Estudiante ya tiene asistencia registrada
-          let mensaje = "<b>ASISTENCIA YA REGISTRADA</b><br>";
-         mensaje += "Hora registrada: " + response.hora_registrada;
-
-          $("#mensajeRespuesta").html(mensaje);
-
-          // Mostrar datos del estudiante
-          $("#nombre").html("Nombre: " + response.student.nombres);
-          $("#apellido").html("Apellido: " + response.student.apellidos);
-          $("#codigo").html("Código: " + response.student.codigo);
-
-        } else {
-          $("#mensajeRespuesta").html("<b>Error:</b> " + response.message);
-        }
-      },
-
-      error: function (xhr, status, error) {
-        console.error("AJAX Error:", error);
-        $("#mensajeRespuesta").html("Error en la búsqueda del código.");
-        alert("Error al buscar el código. Intenta nuevamente.");
+      error: function () {
+        showStatus('Error de conexión. Intenta de nuevo.', 'error');
       },
       complete: function () {
-        $input.val("").focus();
-        setTimeout(() => {
-          $("#resultadoBusqueda span").html("");
-        }, 1500);
-      },
+        $('#codigoEstudiante').val('')
+      }
     });
   });
+
+  // Animación de estado (igual que en el PHP)
+function showStatus(msg, type, hora, estado, nombre, apellido, codigo) {
+  var $status = $('#public-status');
+  $status.removeClass('success error info').addClass(type || 'info');
+  $status.html('');
+
+  let html = '<div class="status-content">';
+
+  if (msg) html += `<div class="status-msg">${msg}</div>`;
+  if (estado) html += `<div class="estado-label">${estado}</div>`;
+  if (hora) html += `<div><span class="label">Hora:</span> <strong>${hora}</strong></div>`;
+  if (nombre) html += `<div><span class="label">Nombre:</span> <strong>${nombre}</strong></div>`;
+  if (apellido) html += `<div><span class="label">Apellido:</span> <strong>${apellido}</strong></div>`;
+  if (codigo) html += `<div><span class="label">Código:</span> <strong>${codigo}</strong></div>`;
+
+  html += '</div>';
+
+  $status.html(html);
+  $status.show().addClass('animate__fadeInFast').removeClass('animate__fadeOutFast');
+}
+
 
 
   // Mostrar advertencia si se pierde el foco
@@ -126,4 +135,50 @@ $(document).ready(function () {
       $input.focus();
     }
   });
+
+  $(document).ready(function () {
+  const clock = $('#clock').FlipClock({
+    clockFace: 'TwentyFourHourClock',
+    showSeconds: true
+  });
+
+  // Función para obtener la hora exacta en zona Lima
+  function getLimaTime() {
+    const limaTime = new Date(
+      new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Lima',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }).format(new Date())
+    );
+
+    // También puedes obtener la hora manualmente:
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Lima',
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+
+    const parts = formatter.formatToParts(new Date());
+    const timeParts = {
+      hour: parts.find(p => p.type === 'hour').value,
+      minute: parts.find(p => p.type === 'minute').value,
+      second: parts.find(p => p.type === 'second').value
+    };
+
+    return timeParts;
+  }
+
+  // Actualiza el reloj cada segundo
+  setInterval(() => {
+    const { hour, minute, second } = getLimaTime();
+    const time = parseInt(hour + minute + second, 10);
+    clock.setTime(time);
+  }, 1000);
+});
+
 });

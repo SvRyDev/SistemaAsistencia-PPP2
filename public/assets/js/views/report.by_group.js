@@ -25,7 +25,7 @@ $(document).ready(function () {
     info: false,
     responsive: false,
     language: {
-      url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json",
+      url: url_plugins_datable_esp,
     },
   });
 
@@ -201,7 +201,7 @@ $("#searchGroupButton").on("click", function () {
         info: false,
         responsive: false,
         language: {
-          url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json",
+          url: url_plugins_datable_esp,
         },
       });
     },
