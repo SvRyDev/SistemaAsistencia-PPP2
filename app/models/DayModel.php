@@ -30,5 +30,18 @@ class DayModel extends Model
         return $stmt->execute();
     }
 
+    public function reOpenDay($date)
+    {
+        // Suponiendo que "estado" 1 es abierto (y 0 cerrado)
+        $sql = "UPDATE dia_asistencia 
+            SET estado = 1 
+            WHERE fecha = :fecha";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':fecha', $date); // $date debe venir en formato 'Y-m-d'
+
+        return $stmt->execute();
+    }
+
 
 }

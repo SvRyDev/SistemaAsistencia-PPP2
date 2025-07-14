@@ -1,11 +1,12 @@
 $(document).ready(function () {
   const fechaActual = getFechaActual(); // "YYYY-MM-DD"
   const fechaFormateada = formatearFechaCompleta(fechaActual); // "3 de julio"
-  
+
   $("#fechaDistribucion").text(fechaFormateada);
   $("#fechaJustificaciones").text(fechaFormateada);
   $("#fechaRegistro").text(fechaFormateada);
-  
+
+
   const chartColors = {
     puntual: "#28a745", // verde éxito (borde)
     puntualBg: "rgba(40, 167, 70, 0.63)", // fondo más claro
@@ -36,32 +37,34 @@ $(document).ready(function () {
         console.error("Error al cargar datos:", error);
       },
     });
-      // -------------------------------
-  // Cargar registro del dia
-  // -------------------------------
-  $.ajax({
-    url: base_url + "/attendance/getListRegisteredLastDay",
-    type: "POST",
-    dataType: "json",
-    headers: {
-      "X-Requested-With": "XMLHttpRequest",
-    },
-    success: function (response) {
-      
-  $('#listaAsistencia').empty();
-      if (response.status === "success" && Array.isArray(response.list_attendance)) {
-        const lista = document.getElementById("listaAsistencia");
-        lista.innerHTML = ""; // Limpiar lista anterior
-        contadorAsistencias = 0;
+    // -------------------------------
+    // Cargar registro del dia
+    // -------------------------------
+    $.ajax({
+      url: base_url + "/attendance/getListRegisteredLastDay",
+      type: "POST",
+      dataType: "json",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      success: function (response) {
+        $("#listaAsistencia").empty();
+        if (
+          response.status === "success" &&
+          Array.isArray(response.list_attendance)
+        ) {
+          const lista = document.getElementById("listaAsistencia");
+          lista.innerHTML = ""; // Limpiar lista anterior
+          contadorAsistencias = 0;
 
-        response.list_attendance.forEach((student) => {
-          contadorAsistencias++;
-        
-          const nuevoItem = document.createElement("div");
-          nuevoItem.className =
-            "list-group-item list-group-item-action pt-2 pb-2";
-        
-          nuevoItem.innerHTML = `
+          response.list_attendance.forEach((student) => {
+            contadorAsistencias++;
+
+            const nuevoItem = document.createElement("div");
+            nuevoItem.className =
+              "list-group-item list-group-item-action pt-2 pb-2";
+
+            nuevoItem.innerHTML = `
             <div class="container-fluid">
               <div class="row text-truncate">
                 <div class="col-1 col-sm-1 text-muted d-none d-sm-block">
@@ -73,77 +76,140 @@ $(document).ready(function () {
                 </div>
         
                 <div class="col-8  col-sm-5" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                  <span class="small">${student.nombres} ${student.apellidos}</span>
+                  <span class="small">${student.nombres} ${
+              student.apellidos
+            }</span>
                 </div>
         
                 <div class="col-1 col-sm-1 text-muted d-none d-sm-block">
-                  <span class="text-dark small">${student.grado_orden || "--"} ${student.seccion || "--"}</span>
+                  <span class="text-dark small">${
+                    student.grado_orden || "--"
+                  } ${student.seccion || "--"}</span>
                 </div>
         
                 <div class="col-1 col-sm-1 text-muted d-none d-sm-block">
-                  <span class="text-dark small">${getHoraMinuto(student.hora_actual) || "--:--"}</span>
+                  <span class="text-dark small">${
+                    getHoraMinuto(student.hora_actual) || "--:--"
+                  }</span>
                 </div>
         
                 <div class="col-3 col-sm-2 text-right">
-                  <span data-id="${student.id_estado}" class="badge badge-${student.clase_boostrap}">
+                  <span data-id="${student.id_estado}" class="badge badge-${
+              student.clase_boostrap
+            }">
                     ${student.nombre_estado}
                   </span>
                 </div>
               </div>
             </div>
           `;
-        
-          lista.appendChild(nuevoItem);
-        });
-        
 
-      
-      } else {
-        console.warn("Respuesta vacía o inválida:", response);
-      }
-    },
-    error: function (xhr, status, error) {
-      console.error("Error al cargar asistencia:", error);
-    },
-  });
+            lista.appendChild(nuevoItem);
+          });
+        } else {
+          console.warn("Respuesta vacía o inválida:", response);
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error al cargar asistencia:", error);
+      },
+    });
+
+    // -------------------------------
+    // Cargar configuración de asistencia del dia
+    // -------------------------------
+    $.ajax({
+      url: base_url + "/attendance/getConfig",
+      type: "POST",
+      dataType: "json",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      beforeSend: function () {},
+      success: function (response) {
+        if (response.status === "success") {
+          const s = response.setting;
+          const d = response.day_active;
+          const t = response.total_students;
+          totalEstudiantes = t.total;
+          total_restantes = totalEstudiantes;
+
+          hora_entrada = s.entry_time;
+          hora_cierre = s.exit_time;
+          min_tolerancia = s.time_tolerance;
+
+          $('#total-estudiantes').text(t.total);
+          if (d) {
+            $("#mensajeDiaNoAperturado").addClass("d-none");
+            $("#graficaDiarioPlaceholder").addClass("d-none");
+            $("#fechaDistribucion").removeClass("d-none");
+            $("#listaDiarioPlaceholder").addClass("d-none");
+            $("#listaAsistenciaContainer").removeClass("d-none");
+            $("#fechaRegistro").removeClass("d-none");
+            $("#pieAsistenciaDistribucionContainer").removeClass("d-none");
+
+            const estado = d.estado;
+            if (parseInt(estado) == 1) {
+            } else if (parseInt(estado) == 0) {
+            }
+          } else {
+            $("#mensajeDiaNoAperturado").removeClass("d-none");
+            $("#graficaDiarioPlaceholder").removeClass("d-none");
+            $("#fechaDistribucion").addClass("d-none");
+            $("#listaDiarioPlaceholder").removeClass("d-none");
+            $("#listaAsistenciaContainer").addClass("d-none");
+            $("#fechaRegistro").addClass("d-none");
+            $("#pieAsistenciaDistribucionContainer").addClass("d-none");
+
+          }
+        } else {
+          mostrarError("Error", response.message);
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("AJAX Error:", error);
+        mostrarError(
+          "Error",
+          "No se pudieron cargar los datos de configuración."
+        );
+      },
+    });
   }
 
   function renderCards(data) {
     const summary = data.attendance_summary || [];
     if (summary.length === 0) return;
-  
+
     const last = summary[summary.length - 1];
     const hoy = getFechaActual(); // "YYYY-MM-DD"
-  
-    const esHoy = last.fecha === hoy;
-  
-    if (esHoy) {
-      $('#total-estudiantes').text(last.total_estudiantes);
-      $('#asistencias-dia').text(last.total_puntual);
-      $('#tardanzas-dia').text(last.total_tarde);
-      $('#justificados-count').text(last.total_justificados);
-  
-      $('#asistencias-porcentaje').text(last.porcentaje_puntual);
-      $('#tardanzas-porcentaje').text(last.porcentaje_tarde);
-      $('#justificados-percent').text(last.porcentaje_justificado);
-    } else {
-      $('#total-estudiantes').text('0');
-      $('#asistencias-dia').text('0');
-      $('#tardanzas-dia').text('0');
-      $('#justificados-count').text('0');
-  
-      $('#asistencias-porcentaje').text('0');
-      $('#tardanzas-porcentaje').text('0');
-      $('#justificados-percent').text('0');
-    }
-  
-    const fechaFormateada = formatearFechaCorta(last.fecha);
-    $('#asistencias-fecha').text(fechaFormateada);
-    $('#tardanzas-fecha').text(fechaFormateada);
-    $('#justificaciones-fecha').text(fechaFormateada);
-  }
-  
 
+    const esHoy = last.fecha === hoy;
+
+    if (esHoy) {
+      $("#total-estudiantes").text(last.total_estudiantes);
+      $("#asistencias-dia").text(last.total_puntual);
+      $("#tardanzas-dia").text(last.total_tarde);
+      $("#justificados-count").text(last.total_justificados);
+
+      $("#asistencias-porcentaje").text(last.porcentaje_puntual);
+      $("#tardanzas-porcentaje").text(last.porcentaje_tarde);
+      $("#justificados-percent").text(last.porcentaje_justificado);
+    } else {
+      $("#total-estudiantes").text("0");
+      $("#asistencias-dia").text("0");
+      $("#tardanzas-dia").text("0");
+      $("#justificados-count").text("0");
+
+      $("#asistencias-porcentaje").text("0");
+      $("#tardanzas-porcentaje").text("0");
+      $("#justificados-percent").text("0");
+    }
+
+    const fechaFormateada = formatearFechaCorta(last.fecha);
+    $("#asistencias-fecha").text(fechaFormateada);
+    $("#tardanzas-fecha").text(fechaFormateada);
+    $("#justificaciones-fecha").text(fechaFormateada);
+  }
 
   function renderBarChart(data) {
     const summary = data.attendance_summary || [];
@@ -237,26 +303,29 @@ $(document).ready(function () {
   function renderPieChart(data) {
     const summary = data.attendance_summary;
     if (!summary || summary.length === 0) return;
-  
+
     const last = summary[summary.length - 1];
     const hoy = getFechaActual(); // "YYYY-MM-DD"
     const esHoy = last.fecha === hoy;
-  
-    let puntual = 0, tarde = 0, justificado = 0, totalEstudiantes = 0;
-  
+
+    let puntual = 0,
+      tarde = 0,
+      justificado = 0,
+      totalEstudiantes = 0;
+
     if (esHoy) {
       puntual = parseInt(last.total_puntual) || 0;
       tarde = parseInt(last.total_tarde) || 0;
       justificado = parseInt(last.total_justificados) || 0;
       totalEstudiantes = parseInt(last.total_estudiantes) || 0;
     }
-  
+
     const asistido = puntual + tarde;
     const registrados = asistido + justificado;
     const restantes = totalEstudiantes - registrados;
-  
+
     const dataPie = [asistido, tarde, justificado, restantes];
-  
+
     const labels = ["Temprano", "Tarde", "Justificado", "Restantes"];
     const backgroundColors = [
       chartColors.puntual,
@@ -264,7 +333,7 @@ $(document).ready(function () {
       chartColors.justificado,
       chartColors.restantes || "#dee2e6",
     ];
-  
+
     if (pieChart) {
       pieChart.data.datasets[0].data = dataPie;
       pieChart.update();
@@ -284,29 +353,34 @@ $(document).ready(function () {
         },
         options: {
           responsive: true,
-          plugins: {
-            legend: { position: "bottom" },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  const value = context.parsed;
-                  const total = dataPie.reduce((a, b) => a + b, 0);
-                  const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                  return `${context.label}: ${value} (${percent}%)`;
-                },
-              },
-            },
+          legend: {
+            position: "left", // Mueve la leyenda a la izquierda
+            labels: {
+              boxWidth: 20,
+              padding: 10,
+            }
           },
-        },
+          tooltips: {
+            callbacks: {
+              label: function (tooltipItem, data) {
+                const dataset = data.datasets[tooltipItem.datasetIndex];
+                const value = dataset.data[tooltipItem.index];
+                const total = dataset.data.reduce((a, b) => a + b, 0);
+                const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                return `${data.labels[tooltipItem.index]}: ${value} (${percent}%)`;
+              }
+            }
+          }
+        }
+        
       });
     }
   }
-  
 
   function renderMonthlyBarChart(data) {
     const summary = data.attendance_summary || [];
     if (!summary.length) return;
-  
+
     // Agrupar por mes: YYYY-MM
     const grouped = {};
     summary.forEach((item) => {
@@ -322,12 +396,12 @@ $(document).ready(function () {
       grouped[mes].tarde += parseInt(item.total_tarde || 0);
       grouped[mes].justificado += parseInt(item.total_justificados || 0);
     });
-  
+
     const meses = Object.keys(grouped).sort();
     const puntual = meses.map((m) => grouped[m].puntual);
     const tarde = meses.map((m) => grouped[m].tarde);
     const justificado = meses.map((m) => grouped[m].justificado);
-  
+
     const datasets = [
       {
         label: "Puntual",
@@ -354,7 +428,7 @@ $(document).ready(function () {
         tension: 0.3,
       },
     ];
-  
+
     if (monthlyBarChart) {
       monthlyBarChart.data.labels = meses;
       monthlyBarChart.data.datasets.forEach((ds, i) => {
@@ -399,22 +473,21 @@ $(document).ready(function () {
       });
     }
   }
-  
-  
-  
 
   function renderJustificacionesDiarias(data) {
     const summary = data.attendance_summary || [];
     const maxSlots = 15;
     const trimmed = summary.slice(-maxSlots);
-  
+
     const fechas = trimmed.map((r) => r.fecha);
-    const justificados = trimmed.map((r) => parseInt(r.total_justificados) || 0);
-  
+    const justificados = trimmed.map(
+      (r) => parseInt(r.total_justificados) || 0
+    );
+
     const faltan = maxSlots - fechas.length;
     const dias = Array(faltan).fill("").concat(fechas);
     const justificadosFull = Array(faltan).fill(null).concat(justificados);
-  
+
     const dataset = {
       label: "Justificados",
       data: justificadosFull,
@@ -422,7 +495,7 @@ $(document).ready(function () {
       borderColor: "#555",
       borderWidth: 1,
     };
-  
+
     if (justificacionesChart) {
       justificacionesChart.data.labels = dias;
       justificacionesChart.data.datasets[0].data = justificadosFull;
@@ -470,8 +543,6 @@ $(document).ready(function () {
     }
   }
 
-  
-
   const ctx = document.getElementById("lineAsistenciaGeneral").getContext("2d");
   let chart;
 
@@ -486,10 +557,9 @@ $(document).ready(function () {
   let monthlyBarChart;
 
   const ctxJustificaciones = document
-  .getElementById("barJustificacionesDiarias")
-  .getContext("2d");
-let justificacionesChart;
-
+    .getElementById("barJustificacionesDiarias")
+    .getContext("2d");
+  let justificacionesChart;
 
   fetchAttendanceData();
   setInterval(fetchAttendanceData, 3000);

@@ -5,7 +5,10 @@ class AttendanceController extends Controller
 {
 
     public $layout = 'dashboard'; // Establecer el layout por defecto
-
+    public function __construct()
+    {
+        Auth::checkAuth(); // Verifica si el usuario está autenticado
+    }
     public function index()
     {
         $view = "attendance.control";
@@ -378,7 +381,7 @@ class AttendanceController extends Controller
             } else {
                 echo json_encode([
                     'status' => 'error',
-                    'message' => 'Fuera del horario permitido para registrar asistencia. El current time es ' . $currentTime . 'y el max_puntual_time es ' . $max_punctual_time
+                    'message' => 'Fuera del horario permitido para registrar asistencia.',
                 ]);
                 return;
             }
@@ -636,5 +639,52 @@ class AttendanceController extends Controller
             'status' => 'success',
             'message' => 'El día ha sido cerrado. Se registraron ' . count($absentStudents) . ' faltas automáticamente.'
         ]);
+    }
+
+    public function re_open_day()
+    {
+        if (!isAjax()) {
+            http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Acceso no permitido']);
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $currentDate = date('Y-m-d');
+
+            // Validar si el día está activo
+            $DayModel = $this->model('DayModel');
+            $dayActive = $DayModel->validDayActive($currentDate);
+
+            if (!$dayActive) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'El día actual no está habilitado para reabrir.'
+                ]);
+                return;
+            }
+
+            // Reabrir el día
+            $result = $DayModel->reOpenDay($currentDate);
+
+            if ($result) {
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Día reabierto exitosamente.'
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Error al reabrir el día.'
+                ]);
+            }
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Método no permitido.'
+            ]);
+        }
     }
 }

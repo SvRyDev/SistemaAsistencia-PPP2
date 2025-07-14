@@ -5,7 +5,10 @@ class DashboardController extends Controller
 
     public $layout = 'dashboard'; // Establecer el layout por defecto
 
-
+    public function __construct()
+    {
+        Auth::checkAuth(); // Verifica si el usuario está autenticado
+    }
 
 
     public function get_data_attendance_percent()

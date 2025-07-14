@@ -114,35 +114,35 @@
       <div class="col-md-12 col-xl-12">
   <!-- Card Restaurar Sistema -->
   <div class="card shadow">
-    <div class="card-header bg-danger text-white">
-      <i class="fas fa-redo-alt mr-2"></i> Restaurar Sistema (Limpiar Datos)
-    </div>
-    <div class="card-body">
-      <p>Esta acción eliminará de forma permanente los siguientes registros:</p>
-      <ul class="small text-danger mb-2">
-        <li>📛 Estudiantes</li>
-        <li>🎫 Carnets emitidos</li>
-        <li>📝 Registros de asistencia</li>
-      </ul>
-
-      <p class="small mb-2">
-        Además, se <u>restablecerá la configuración del sistema</u> a sus valores predeterminados (nombre de la institución, año académico, fechas, horarios, etc.).
-      </p>
-
-      <p class="small mb-3">
-        <strong>No se eliminarán:</strong> grados, secciones ni usuarios del sistema.
-      </p>
-
-      <div class="alert alert-warning small mb-0">
-        <strong><i class="fas fa-exclamation-triangle"></i> Advertencia:</strong>
-        Esta acción <u>no puede deshacerse</u>. Asegúrate de haber realizado un backup antes de continuar.
-      </div>
-
-      <button id="btnResetSystem" class="btn btn-danger mt-3">
-        <i class="fas fa-trash-alt mr-1"></i> Restaurar Sistema
-      </button>
-    </div>
+  <div class="card-header bg-danger text-white">
+    <i class="fas fa-redo-alt mr-2"></i> Restaurar Sistema (Limpiar Datos)
   </div>
+  <div class="card-body">
+    <p>Esta acción eliminará de forma permanente los siguientes registros:</p>
+    <ul class="small text-danger mb-2">
+      <li>📛 Estudiantes</li>
+      <li>🎫 Carnets emitidos</li>
+      <li>📝 Registros de asistencia</li>
+      <li>👤 Usuarios (excepto administrador)</li>
+    </ul>
+
+    <p class="small mb-2">
+      Además, se <u>restablecerá la configuración del sistema</u> a sus valores predeterminados (nombre de la institución, año académico, fechas, horarios, etc.).
+    </p>
+
+
+
+    <div class="alert alert-warning small mb-0">
+      <strong><i class="fas fa-exclamation-triangle"></i> Advertencia:</strong>
+      Esta acción <u>no puede deshacerse</u>. Asegúrate de haber realizado un backup antes de continuar.
+    </div>
+
+    <button id="btnResetSystem" class="btn btn-danger mt-3">
+      <i class="fas fa-trash-alt mr-1"></i> Restaurar Sistema
+    </button>
+  </div>
+</div>
+
 </div>
 
 

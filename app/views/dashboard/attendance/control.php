@@ -59,7 +59,7 @@
                                 <i class="fas fa-calendar-check fa-2x"></i>
                             </span>
                             <div class="text-left">
-                                <div class="font-weight-bold text-dark mb-1">Día Habilitado</div>
+                                <div class="font-weight-bold text-dark mb-1">Apertura del día</div>
                                 <span id="dia-activo" class="badge badge-secondary badge-pill px-3 py-1">--</span>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                                 <i class="fas fa-door-closed fa-2x"></i>
                             </span>
                             <div class="text-left">
-                                <div class="font-weight-bold text-dark mb-1">Ventana de Asistencia</div>
+                                <div class="font-weight-bold text-dark mb-1">Ventana de Registro</div>
                                 <span id="estadoVentana" class="badge badge-danger badge-pill px-3 py-1">No
                                     Abierta</span>
                             </div>
@@ -91,15 +91,29 @@
                     <div class="card-header bg-light">
                         <i class="fas fa-info-circle mr-2"></i> Estado Actual
                     </div>
-                    <div class="card-body d-flex align-items-center p-3">
-                        <div id="iconEstado"
-                            class="bg-secondary text-white d-flex align-items-center justify-content-center mr-3"
-                            style="width: 60px; height: 60px; border-radius: 50%;">
-                            <i id="iconoAsistencia" class="fas fa-check-circle fa-2x"></i>
+                    <div class="card-body  p-3">
+                        <!-- Spinner temporal de carga -->
+                        <div id="estadoTiempoActualLoading"
+                            class="card-body d-flex align-items-center justify-content-center p-2">
+                            <div class="text-center">
+                                <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+
+                            </div>
                         </div>
-                        <div class="text-left flex-grow-1">
-                            <div id="estadoDiaRegistro" class="h3 font-weight-bold mb-0">----</div>
-                            <small class="text-muted">Estado de Asistencia</small>
+
+                        <div id="estadoTiempoActual" class="d-none align-items-center animate__animated animate__fadeIn">
+                            <div id="iconEstado"
+                                class="bg-secondary text-white d-flex align-items-center justify-content-center mr-3 "
+                                style="width: 60px; height: 60px; border-radius: 50%;">
+                                <i id="iconoAsistencia" class="fas fa-check-circle fa-2x"></i>
+                            </div>
+                            <div class="text-left flex-grow-1">
+                                <div>
+                                    <span id="estadoDiaRegistro" class="h3 font-weight-bold mb-0"></span>
+                                    <small id="tiempoDiferenciaEstado" class="h6"></small>
+                                </div>
+                                <small class="text-muted">Estado de Asistencia</small>
+                            </div>
                         </div>
                     </div>
 
@@ -157,43 +171,38 @@
 
 
 
-                        <div id="botonesAsistenciaWrapper"
-                            class="d-flex justify-content-center align-items-center flex-wrap">
-
-                            <!-- Habilitar Periodo -->
-                            <div class="mx-2 my-1">
-                                <button id="btnNewDay" class="btn btn-success">
-                                    <i class="fas fa-toggle-on mr-1"></i> Aperturar Día
-                                </button>
-                            </div>
-                            <!-- Reabrir Asistencia -->
-                            <div class="mx-2 my-1">
-                                <button type="button" class="btn btn-secondary" id="btnReopenAttendance">
-                                    <i class="fas fa-sync-alt mr-1"></i> Reabrir Asistencia
-                                </button>
-                            </div>
-                            <!-- Concluir Día -->
-                            <div class="mx-2 my-1">
-                                <button id="btnCloseDay" class="btn btn-danger">
-                                    <i class="fas fa-flag-checkered mr-1"></i> Concluir Día
-                                </button>
-                            </div>
-
-                            <!-- Abrir Ventana -->
-                            <div class="mx-2 my-1">
-                                <button id="btnOpenAttendanceView" class="btn btn-info">
-                                    <i class="fas fa-door-open mr-1"></i> Abrir Ventana
-                                </button>
-                            </div>
-
-                            <!-- Entrada Asistencia Manual -->
-                            <div class="mx-2 my-1">
-                                <button type="button" class="btn btn-warning" id="btnRegisterManual">
-                                    <i class="fas fa-edit mr-1"></i> Entrada Manual
-                                </button>
-                            </div>
+                        <!-- Spinner de carga -->
+                        <div id="cargandoBotonesAsistencia" class="text-center my-1">
+                            <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
 
                         </div>
+
+                        <!-- Botones (inicialmente ocultos) -->
+                        <div id="botonesAsistenciaWrapper"
+                            class="btn-group flex-wrap justify-content-center align-items-center w-100 animate__animated animate__fadeIn  d-none">
+
+                            <button id="btnNewDay" class="btn btn-success m-0">
+                                <i class="fas fa-toggle-on mr-1"></i> Aperturar Asistencia
+                            </button>
+
+                            <button type="button" class="btn btn-primary m-0" id="btnReopenAttendance">
+                                <i class="fas fa-sync-alt mr-1"></i> Reabrir Asistencia
+                            </button>
+
+                            <button id="btnCloseDay" class="btn btn-danger m-0">
+                                <i class="fas fa-flag-checkered mr-1"></i> Cerrar Día
+                            </button>
+
+                            <button id="btnOpenAttendanceView" class="btn btn-info m-0">
+                                <i class="fas fa-door-open mr-1"></i> Abrir Ventana
+                            </button>
+
+                            <button type="button" class="btn btn-warning m-0" id="btnRegisterManual">
+                                <i class="fas fa-edit mr-1"></i> Entrada Manual
+                            </button>
+
+                        </div>
+
 
                     </div>
                 </div>

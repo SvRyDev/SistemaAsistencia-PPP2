@@ -131,47 +131,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Gestión de Usuarios -->
-
-            <div class="col-12">
-                <div class="card border-left-info shadow mb-4">
-                    <div class="card-header bg-info text-white">
-                        <i class="fas fa-user-cog"></i> Configuración de Cuenta
-                    </div>
-                    <div class="card-body">
-                        <!-- Nombre de usuario -->
-                        <div class="form-group">
-                            <label for="user-username">Nombre de usuario</label>
-                            <input type="text" class="form-control" id="user-username" placeholder="Ej: jdoe123">
-                        </div>
-
-                        <!-- Rol (solo lectura si no se puede cambiar) -->
-                        <div class="form-group">
-                            <label for="user-role">Rol</label>
-                            <input type="text" class="form-control" id="user-role" disabled>
-                        </div>
-
-                        <!-- Cambiar contraseña -->
-                        <hr>
-                        <p class="text-muted mb-2"><i class="fas fa-key me-1"></i> Cambiar contraseña</p>
-
-                        <div class="form-group">
-                            <label for="user-password-current">Contraseña actual</label>
-                            <input type="password" class="form-control" id="user-password-current">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="user-password-new">Nueva contraseña</label>
-                            <input type="password" class="form-control" id="user-password-new">
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="user-password-confirm">Confirmar nueva contraseña</label>
-                            <input type="password" class="form-control" id="user-password-confirm">
-                        </div>
-                    </div>
-                </div>
-            </div>
+  
 
 
         </div>

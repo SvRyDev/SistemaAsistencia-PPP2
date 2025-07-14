@@ -83,6 +83,18 @@ class UserModel extends Model
         return $stmt->execute();
     }
 
+    public function updateUserPassword($id, $hashedPassword)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE usuarios 
+            SET password = :password
+            WHERE user_id = :id
+        ");
+        $stmt->bindParam(':password', $hashedPassword);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
+
 
     public function deleteUserById($id)
 {

@@ -5,44 +5,28 @@ $(function () {
   /////////////////////////////////////////////////////////////////////////////////////////////
   let table = $("#table_student").DataTable({
     ajax: {
-      url: base_url + "/student/getAll", // tu endpoint
+      url: base_url + "/student/getAll",
       dataSrc: "",
     },
+    pageLength: 100, // Mostrar 100 por defecto
     initComplete: function () {
-      // Recorremos todas las columnas para agregar un campo de búsqueda
       this.api().columns();
-      table
-        .buttons()
-        .container()
-        .appendTo("#table_student_wrapper .col-md-6:eq(0)");
-
-
-        
-
-
-        const api = this.api();
-
-        // Obtener el contenedor de DataTable
-        const wrapper = $("#table_student_wrapper");
-      
-        // Mover el filtro al primer .col-md-6 (izquierda)
-        const filter = wrapper.find("#table_student_filter");
-        const wrapperRow = wrapper.find(".row");
-        const leftCol = wrapperRow.find(".col-md-6").first();
-      
-        leftCol.empty().append(filter);
-      
-        // Asegurar que el contenedor y su contenido estén alineados a la izquierda
-        filter.removeClass("text-right").addClass("text-left");
-      
-        // Estilizar el input si deseas
-        filter.find("input")
-          .addClass("form-control form-control-sm")
-          .attr("placeholder", "Buscar estudiante...")
-          .css({ width: "300px", display: "inline-block" }); // opcional: ancho visual claro
-      
-      
-      },
+      table.buttons().container().appendTo("#table_student_wrapper .col-md-6:eq(0)");
+  
+      const api = this.api();
+      const wrapper = $("#table_student_wrapper");
+      const filter = wrapper.find("#table_student_filter");
+      const wrapperRow = wrapper.find(".row");
+      const leftCol = wrapperRow.find(".col-md-6").first();
+  
+      leftCol.empty().append(filter);
+      filter.removeClass("text-right").addClass("text-left");
+  
+      filter.find("input")
+        .addClass("form-control form-control-sm")
+        .attr("placeholder", "Buscar estudiante...")
+        .css({ width: "300px", display: "inline-block" });
+    },
     columns: [
       { title: "#", data: "estudiante_id" },
       { title: "Codigo", data: "codigo" },
@@ -51,7 +35,6 @@ $(function () {
       { title: "DNI", data: "dni" },
       { title: "Grado", data: "grado_nombre" },
       { title: "Sección", data: "seccion" },
-
       {
         title: "",
         data: null,
@@ -70,13 +53,13 @@ $(function () {
     ],
     columnDefs: [
       {
-        targets: 0, // La primera columna (#)
-        width: "30px", // Ancho mínimo fijo o pequeño
-        className: "text-left", // Centrar texto si quieres
+        targets: 0,
+        width: "30px",
+        className: "text-left",
         orderable: false,
       },
       {
-        targets: -1, // Última columna (Opciones)
+        targets: -1,
         width: "40px",
         orderable: false,
         searchable: false,
@@ -90,6 +73,7 @@ $(function () {
       url: base_url + "/public/assets/libs/data-table-js/languaje/Spanish.json",
     },
   });
+  
 
   $(document).on("click", ".btn-modal-details", function () {
     const $btn = $(this); // Guarda referencia al botón

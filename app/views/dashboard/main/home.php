@@ -7,50 +7,7 @@
     <!-- Contenedor principal -->
     <div class="row">
 
-      <!-- Mensaje de día no aperturado -->
-      <div class="col-md-12">
-        <div class="card bg-light border border-primary">
-          <div class="card-body text-center">
-            <i class="fas fa-lock fa-3x text-primary mb-3"></i>
-            <h4 class="card-title">Día no aperturado</h4>
-            <p class="card-text">
-              Hoy aún no se ha iniciado el registro de asistencia. Por favor, aperture el día para comenzar a registrar
-              y visualizar datos.
-            </p>
 
-            <!-- Botón de apertura (solo visible para administrador) -->
-            <button class="btn btn-primary" onclick="aperturarDia()">
-              <i class="fas fa-calendar-plus"></i> Aperturar Día Escolar
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Placeholder para la gráfica de asistencia -->
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-header bg-secondary text-white">
-            <h3 class="card-title"><i class="fas fa-chart-bar"></i> Asistencia General</h3>
-          </div>
-          <div class="card-body text-center text-muted" style="opacity: 0.5;">
-            <i class="fas fa-chart-pie fa-2x mb-2"></i>
-            <p class="mb-0">Gráfica no disponible. Esperando apertura del día.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Placeholder para la gráfica de justificaciones -->
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-header bg-warning text-white">
-            <h3 class="card-title"><i class="fas fa-calendar-check"></i> Justificaciones Diarias</h3>
-          </div>
-          <div class="card-body text-center text-muted" style="opacity: 0.5;">
-            <i class="fas fa-chart-line fa-2x mb-2"></i>
-            <p class="mb-0">Gráfica no disponible. Esperando apertura del día.</p>
-          </div>
-        </div>
-      </div>
 
     </div>
 
@@ -76,20 +33,7 @@
           </div>
         </div>
       </div>
- 
-<!-- Total Estudiantes -->
-<div class="col-md-6 col-lg-3 col-6">
-  <div class="small-box bg-secondary text-white" style="opacity: 0.6;">
-    <div class="inner text-center">
-      <h4 class="mb-0 mt-2">Estudiantes</h4>
-      <h1 class="font-weight-bold mb-0">—</h1>
-      <small>No disponible</small>
-    </div>
-    <div class="icon">
-      <i class="fas fa-users fa-3x"></i>
-    </div>
-  </div>
-</div>
+
 
       <!-- Asistencias del Día -->
       <div class="col-md-6 col-lg-3 col-6">
@@ -152,6 +96,23 @@
       </div>
 
 
+      <!-- Mensaje de día no aperturado -->
+      <div class="col-md-12 d-none" id="mensajeDiaNoAperturado">
+        <div class="card bg-light border border-primary">
+          <div class="card-body text-center">
+            <i class="fas fa-lock fa-3x text-primary mb-3"></i>
+            <br>
+            <p class="card-text font-weight-bold m-0">
+
+              Día no aperturado
+            </p>
+            <p class="card-text">
+              Hoy aún no se ha iniciado el registro de asistencia. Por favor, aperture el día para comenzar a registrar
+              y visualizar datos.
+            </p>
+          </div>
+        </div>
+      </div>
 
 
       <!-- /.row -->
@@ -169,18 +130,23 @@
                   <i class="fas fa-chart-pie mr-1"></i>
                   Lista de asistencia
                 </h3>
-                <span id="fechaDistribucion" class="badge badge-primary ml-auto"></span>
+                <span id="fechaDistribucion" class="badge badge-primary ml-auto d-none"></span>
               </div>
 
               <div class="card-body">
-                <div class="card-body text-center text-muted" style="opacity: 0.5;">
+
+                <div id="graficaDiarioPlaceholder" class="card-body text-center text-muted" style="opacity: 0.5;">
                   <i class="fas fa-chart-pie fa-2x mb-2"></i>
                   <p class="mb-0">Gráfica no disponible. Esperando apertura del día.</p>
                 </div>
+
                 <div class="row">
                   <div class="col-12">
-                    <canvas id="pieAsistenciaDistribucion"
-                      style="min-height: 300px; height: 100%; width: 100%;"></canvas>
+
+                    <div class="d-none animate__animated animate__fadeIn" id="pieAsistenciaDistribucionContainer">
+                      <canvas id="pieAsistenciaDistribucion" style="height: 300px;; width: 100%;"></canvas>
+                    </div>
+
                   </div>
                 </div>
               </div>
@@ -194,21 +160,22 @@
                   <i class="fas fa-chart-pie mr-1"></i>
                   Registro de Asistencias
                 </h3>
-                <span id="fechaRegistro" class="badge badge-primary ml-auto"></span>
+                <span id="fechaRegistro" class="badge badge-primary ml-auto d-none"></span>
               </div>
 
               <div class="card-body">
 
-              <div class="card-body text-center text-muted" style="opacity: 0.5;">
-      <i class="fas fa-user-check fa-2x mb-2"></i>
-      <p class="mb-0">La lista de asistencia aún no está disponible. Apertura el día para habilitar el registro de estudiantes.</p>
-    </div>
+                <div id="listaDiarioPlaceholder" class="card-body text-center text-muted" style="opacity: 0.5;">
+                  <i class="fas fa-user-check fa-2x mb-2"></i>
+                  <p class="mb-0">La lista de asistencia aún no está disponible. Apertura el día para habilitar el
+                    registro de estudiantes.</p>
+                </div>
 
                 <div class="row">
                   <div class="col-12">
                     <!-- Cabecera y lista en scroll horizontal -->
                     <div class="table-responsive" style="overflow-x: auto;">
-                      <div style="">
+                      <div id="listaAsistenciaContainer" class="d-none animate__animated animate__fadeIn" style="">
                         <!-- Cabecera fija -->
                         <div class="list-group-item pt-2 pb-2 bg-dark text-left">
                           <div class="container-fluid">
@@ -281,10 +248,7 @@
 
               <div class="card-body">
 
-                <div class="card-body text-center text-muted" style="opacity: 0.5;">
-                  <i class="fas fa-chart-line fa-2x mb-2"></i>
-                  <p class="mb-0">Gráfica no disponible. Esperando apertura del día.</p>
-                </div>
+   
 
                 <div class="chart">
                   <canvas id="barJustificacionesDiarias"
@@ -296,7 +260,7 @@
           <!-- right col (We are only adding the ID to make the widgets sortable)-->
           <section class="col-sm-12 col-md-12 col-lg-12 order-5 order-md-5">
             <div class="card">
-              <div class="card-header d-flex align-items-center">
+              <div class="card-header d-flex align-items-center bg-primary">
                 <h3 class="card-title m-0 mr-3">
                   <i class="fas fa-chart-bar mr-1"></i>
                   Asistencia Mensual

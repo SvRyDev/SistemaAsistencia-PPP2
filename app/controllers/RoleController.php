@@ -4,7 +4,10 @@ class RoleController extends Controller
 {
 
     public $layout = 'dashboard'; // Establecer el layout por defecto
-
+    public function __construct()
+    {
+        Auth::checkAuth(); // Verifica si el usuario está autenticado
+    }
 
     public function index()
     {

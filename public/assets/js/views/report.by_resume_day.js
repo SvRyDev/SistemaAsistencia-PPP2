@@ -99,9 +99,6 @@ $(document).ready(function () {
     success: function (response) {
       console.log("Total estudiantes:", response.total_estudiantes);
       $("#total-estudiantes").html(response.total);
-
-
-
     },
     error: function (xhr, status, error) { },
   });

@@ -16,6 +16,8 @@ $router->addRoute('GET', '/login', 'AuthController@view_login');
 
 $router->addRoute('GET', '/', 'HomeController@index');
 $router->addRoute('GET', '/home', 'HomeController@index');
+$router->addRoute('GET', '/account/config', 'UserController@config_personal_user');
+
 $router->addRoute('GET', '/student', 'StudentController@view_list_students');
 $router->addRoute('GET', '/student/manage', 'StudentController@view_manage_students');
 $router->addRoute('GET', '/student/import', 'StudentController@view_import_data');
@@ -45,6 +47,7 @@ $router->addRoute('GET', '/user/{tipo}/buscar/{nivel}/{id}', 'HomeController@det
 //Api Endpoints
 $router->addRoute('POST', '/login/auth', 'AuthController@auth');
 $router->addRoute('POST', '/login/logout', 'AuthController@logout');
+$router->addRoute('POST', '/account/updatePassword', 'UserController@update_personal_password');
 
 $router->addRoute('GET', '/student/getAll', 'StudentController@show');
 $router->addRoute('POST', '/student/getOne', 'StudentController@get_data_student');
@@ -70,6 +73,7 @@ $router->addRoute('GET', '/carnet/previewCarnet', 'CarnetController@preview_sing
 $router->addRoute('POST', '/attendance/registerAttendance', 'AttendanceController@register_attendance');
 $router->addRoute('POST', '/attendance/openNewDay', 'AttendanceController@register_new_day');
 $router->addRoute('POST', '/attendance/closeDayAndRegisterAbsents', 'AttendanceController@close_day_register_abstents');
+$router->addRoute('POST', '/attendance/reOpenDay', 'AttendanceController@re_open_day');
 $router->addRoute('POST', '/attendance/getConfig', 'AttendanceController@get_config_attendance');
 $router->addRoute('POST', '/attendance/getListRegisteredLastDay', 'AttendanceController@get_list_attendance_last_day');
 $router->addRoute('POST', '/attendance/getListByFilter', 'AttendanceController@fetch_by_filters');
