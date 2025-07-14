@@ -10,35 +10,42 @@ $(document).ready(function () {
       // Puedes mostrarlo en el HTML si quieres:
       $("#horaEntrada").text("Entrada: " + datosDesdePrincipal.entry_time);
       $("#horaSalida").text("Salida: " + datosDesdePrincipal.exit_time);
-      $("#tolerancia").text("Tolerancia: " + datosDesdePrincipal.tolerance + " min");
+      $("#tolerancia").text(
+        "Tolerancia: " + datosDesdePrincipal.tolerance + " min"
+      );
     }
   });
-
 
   const $input = $("#codigoEstudiante");
   const $warning = $("#focusWarning");
 
   // Manejo de formulario moderno y animado
-  $('#formulario').on('submit', function (e) {
+  $("#formulario").on("submit", function (e) {
     e.preventDefault();
-    var codigo = $('#codigoEstudiante').val().trim();
+    var codigo = $("#codigoEstudiante").val().trim();
     if (!codigo) {
-      showStatus('Por favor ingresa tu código.', 'error');
+      showStatus("Por favor ingresa tu código.", "error");
       return;
     }
-    showStatus('Registrando asistencia...', 'info');
+
     $.ajax({
-      url: base_url + '/attendance/registerAttendance',
-      method: 'POST',
+      url: base_url + "/attendance/registerAttendance",
+      method: "POST",
       data: { codigo: codigo },
-      dataType: 'json',
+      dataType: "json",
       success: function (res) {
         // Adaptar a la estructura real del backend
-        let nombre = '', apellido = '', codigoEst = '', estado = '', hora = '', mensaje = '', tipo = 'info';
+        let nombre = "",
+          apellido = "",
+          codigoEst = "",
+          estado = "",
+          hora = "",
+          mensaje = "",
+          tipo = "info";
         if (res.student) {
-          nombre = res.student.nombres || '';
-          apellido = res.student.apellidos || '';
-          codigoEst = res.student.codigo || '';
+          nombre = res.student.nombres || "";
+          apellido = res.student.apellidos || "";
+          codigoEst = res.student.codigo || "";
         }
         if (res.estado && res.estado.nombre_estado) {
           estado = res.estado.nombre_estado;
@@ -53,57 +60,77 @@ $(document).ready(function () {
         } else if (res.mensaje) {
           mensaje = res.mensaje;
         }
-        if (res.status === 'success') {
-          tipo = 'success';
-          mensaje = mensaje || '¡Asistencia registrada!';
-        } else if (res.status === 'warning') {
-          tipo = 'info';
-          mensaje = mensaje || 'Ya tienes asistencia registrada.';
+        if (res.status === "success") {
+          tipo = "success";
+          mensaje = mensaje || "¡Asistencia registrada!";
+        } else if (res.status === "warning") {
+          tipo = "info";
+          mensaje = mensaje || "Ya tienes asistencia registrada.";
+          
         } else {
-          tipo = 'error';
-          mensaje = mensaje || 'No se pudo registrar.';
+          tipo = "error";
+          mensaje = mensaje || "No se pudo registrar.";
         }
-        showStatus(
-          mensaje,
-          tipo,
-          hora,
-          estado,
-          nombre,
-          apellido,
-          codigoEst
-        );
+        showStatus(mensaje, tipo, hora, estado, nombre, apellido, codigoEst);
       },
       error: function () {
-        showStatus('Error de conexión. Intenta de nuevo.', 'error');
+        showStatus("Error de conexión. Intenta de nuevo.", "error");
       },
       complete: function () {
-        $('#codigoEstudiante').val('')
-      }
+        $("#codigoEstudiante").val("");
+      },
     });
   });
 
   // Animación de estado (igual que en el PHP)
-function showStatus(msg, type, hora, estado, nombre, apellido, codigo) {
-  var $status = $('#public-status');
-  $status.removeClass('success error info').addClass(type || 'info');
-  $status.html('');
+  let hideTimeout = null;
 
-  let html = '<div class="status-content">';
-
-  if (msg) html += `<div class="status-msg">${msg}</div>`;
-  if (estado) html += `<div class="estado-label">${estado}</div>`;
-  if (hora) html += `<div><span class="label">Hora:</span> <strong>${hora}</strong></div>`;
-  if (nombre) html += `<div><span class="label">Nombre:</span> <strong>${nombre}</strong></div>`;
-  if (apellido) html += `<div><span class="label">Apellido:</span> <strong>${apellido}</strong></div>`;
-  if (codigo) html += `<div><span class="label">Código:</span> <strong>${codigo}</strong></div>`;
-
-  html += '</div>';
-
-  $status.html(html);
-  $status.show().addClass('animate__fadeInFast').removeClass('animate__fadeOutFast');
-}
-
-
+  function showStatus(msg, type, hora, estado, nombre, apellido, codigo) {
+    const $status = $("#public-status");
+  
+    // Actualizar contenido
+    $status.find(".card-header").removeClass("success error info").addClass(type || "info");
+    $status.find(".status-message").text(msg || "");
+    $status.find(".estado-label").text(`${hora || ""}`);
+    $status.find(".nombre-label").text(`Nombre: ${nombre || ""}`);
+    $status.find(".apellido-label").text(`Apellido: ${apellido || ""}`);
+    $status.find(".codigo-label").text(`Código: ${codigo || ""}`);
+  
+    // Cambiar ícono según tipo
+    let iconClass = "fas fa-info-circle";
+    if (type === "success") iconClass = "fas fa-check-circle";
+    else if (type === "error") iconClass = "fas fa-times-circle";
+    $status.find(".status-icon").attr("class", `status-icon ${iconClass}`);
+  
+    // Cancelar animaciones y timeouts anteriores
+    $status.removeClass("animate__animated animate__fadeIn animate__fadeOut animate__faster");
+    clearTimeout(hideTimeout);
+  
+    // Forzar reflow para reiniciar animación
+    void $status[0].offsetWidth;
+  
+    // Animación de entrada
+    $status
+      .show()
+      .addClass("animate__animated animate__fadeIn animate__faster");
+  
+    // Programar animación de salida después de 1.5s
+    hideTimeout = setTimeout(() => {
+      $status
+        .removeClass("animate__fadeIn")
+        .addClass("animate__fadeOut");
+  
+      // Ocultar completamente después de animación de salida (~800ms)
+      hideTimeout = setTimeout(() => {
+        $status.hide().removeClass("animate__animated animate__fadeOut animate__faster");
+      }, 800);
+    }, 2500);
+  }
+  
+  
+  
+  
+  
 
   // Mostrar advertencia si se pierde el foco
   $(window).on("blur", function () {
@@ -137,48 +164,47 @@ function showStatus(msg, type, hora, estado, nombre, apellido, codigo) {
   });
 
   $(document).ready(function () {
-  const clock = $('#clock').FlipClock({
-    clockFace: 'TwentyFourHourClock',
-    showSeconds: true
-  });
-
-  // Función para obtener la hora exacta en zona Lima
-  function getLimaTime() {
-    const limaTime = new Date(
-      new Intl.DateTimeFormat('en-US', {
-        timeZone: 'America/Lima',
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      }).format(new Date())
-    );
-
-    // También puedes obtener la hora manualmente:
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: 'America/Lima',
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+    const clock = $("#clock").FlipClock({
+      clockFace: "TwentyFourHourClock",
+      showSeconds: true,
     });
 
-    const parts = formatter.formatToParts(new Date());
-    const timeParts = {
-      hour: parts.find(p => p.type === 'hour').value,
-      minute: parts.find(p => p.type === 'minute').value,
-      second: parts.find(p => p.type === 'second').value
-    };
+    // Función para obtener la hora exacta en zona Lima
+    function getLimaTime() {
+      const limaTime = new Date(
+        new Intl.DateTimeFormat("en-US", {
+          timeZone: "America/Lima",
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        }).format(new Date())
+      );
 
-    return timeParts;
-  }
+      // También puedes obtener la hora manualmente:
+      const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Lima",
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
 
-  // Actualiza el reloj cada segundo
-  setInterval(() => {
-    const { hour, minute, second } = getLimaTime();
-    const time = parseInt(hour + minute + second, 10);
-    clock.setTime(time);
-  }, 1000);
-});
+      const parts = formatter.formatToParts(new Date());
+      const timeParts = {
+        hour: parts.find((p) => p.type === "hour").value,
+        minute: parts.find((p) => p.type === "minute").value,
+        second: parts.find((p) => p.type === "second").value,
+      };
 
+      return timeParts;
+    }
+
+    // Actualiza el reloj cada segundo
+    setInterval(() => {
+      const { hour, minute, second } = getLimaTime();
+      const time = parseInt(hour + minute + second, 10);
+      clock.setTime(time);
+    }, 1000);
+  });
 });

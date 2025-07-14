@@ -330,7 +330,7 @@ class AttendanceController extends Controller
             if (!$student) {
                 echo json_encode([
                     'status' => 'error',
-                    'message' => 'Estudiante no encontrado con el código proporcionado.'
+                    'message' => 'Estudiante no encontrado.'
                 ]);
                 return;
             }
@@ -408,7 +408,7 @@ class AttendanceController extends Controller
             if ($yaRegistrado) {
                 echo json_encode([
                     'status' => 'warning',
-                    'message' => 'Este estudiante ya ha registrado su asistencia hoy.',
+                    'message' => 'El estudiante ya está registrado.',
                     'student' => $student,
                     'hora_registrada' => $yaRegistrado['hora_entrada'],
 
@@ -426,7 +426,7 @@ class AttendanceController extends Controller
 
             echo json_encode([
                 'status' => 'success',
-                'message' => 'Asistencia registrada correctamente.',
+                'message' => 'Asistencia registrada.',
                 'student' => $student,
                 'estado' => $estadoSeleccionado,
                 'hora_actual' => $currentTime,
