@@ -100,7 +100,7 @@
     .public-title {
       font-size: 2.9rem;
       font-weight: 800;
-      color:rgb(255, 255, 255);
+      color: rgb(255, 255, 255);
       margin-bottom: 22px;
       letter-spacing: 1.5px;
       text-shadow: 0 4px 16px #0004;
@@ -133,24 +133,24 @@
     }
 
     .public-form button[type="submit"] {
-  background: linear-gradient(90deg, #00b4d8 0%, #0077b6 100%);
-  color: white;
-  padding: 16px 0;
-  width: 100%;
-  font-size: 1.3rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 700;
-  margin-bottom: 14px;
-  transition: background 0.3s, box-shadow 0.2s;
-  box-shadow: 0 4px 16px #0002;
-}
+      background: linear-gradient(90deg, #00b4d8 0%, #0077b6 100%);
+      color: white;
+      padding: 16px 0;
+      width: 100%;
+      font-size: 1.3rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      margin-bottom: 14px;
+      transition: background 0.3s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px #0002;
+    }
 
-.public-form button[type="submit"]:hover {
-  background: linear-gradient(90deg, #0077b6 0%, #00b4d8 100%);
-  box-shadow: 0 8px 32px #00b4d855;
-}
+    .public-form button[type="submit"]:hover {
+      background: linear-gradient(90deg, #0077b6 0%, #00b4d8 100%);
+      box-shadow: 0 8px 32px #00b4d855;
+    }
 
 
 
@@ -171,22 +171,22 @@
     }
 
     .card-header.success {
-  background: linear-gradient(90deg, #00c853 0%, #00e676 100%);
-  color: #ffffff;
-  border-color: #00c853;
-}
+      background: linear-gradient(90deg, #00c853 0%, #00e676 100%);
+      color: #ffffff;
+      border-color: #00c853;
+    }
 
-.card-header.error {
-  background: linear-gradient(90deg, #d50000 0%,rgb(255, 81, 0) 100%);
-  color: #fff5f5;
-  border-color: #d50000;
-}
+    .card-header.error {
+      background: linear-gradient(90deg, #d50000 0%, rgb(255, 81, 0) 100%);
+      color: #fff5f5;
+      border-color: #d50000;
+    }
 
-.card-header.info {
-  background: linear-gradient(90deg, #0288d1 0%, #00bcd4 100%);
-  color: #e0f7fa;
-  border-color: #0288d1;
-}
+    .card-header.info {
+      background: linear-gradient(90deg, #0288d1 0%, #00bcd4 100%);
+      color: #e0f7fa;
+      border-color: #0288d1;
+    }
 
     .public-status .estado-label {
       font-size: 2.0em;
@@ -320,6 +320,7 @@
       justify-content: space-between;
       padding: 20px;
       color: #222;
+      margin: auto;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
@@ -444,7 +445,7 @@
               <button type="submit">Registrar Asistencia</button>
             </form>
 
-  <!-- 
+            <!-- 
             <div class="mb-3 mt-3">
               <span id="horaEntrada" class="badge badge-info p-2"></span>
               <span id="horaSalida" class="badge badge-info p-2 ml-2"></span>
@@ -471,8 +472,7 @@
           <!-- Estado del estudiante -->
           <div class="public-container-child">
             <!-- filepath: c:\xampp\htdocs\SistemaAsistencia-PPP2\app\views\dashboard\attendance\register.php -->
-            <div id="public-status" class="public-status "
-              style="display: none;">
+            <div id="public-status" class="public-status " style="display: none;">
               <div class="card-container p-1">
                 <!-- Parte superior: Ícono de estudiante -->
                 <div class="card-header">

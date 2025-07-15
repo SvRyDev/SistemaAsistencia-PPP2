@@ -140,9 +140,22 @@ class CarnetController extends Controller
 
 
         // ✅ Muy importante: devolver solo PDF, sin nada antes
+        $pdfOutput = $dompdf->output();
+        $descargar = isset($_POST['descargar']) && $_POST['descargar'] == 1;
+
         header("Content-Type: application/pdf");
-        echo $dompdf->output();
+
+        if ($descargar) {
+            header("Content-Disposition: attachment; filename=\"carnets.pdf\"");
+        } else {
+            header("Content-Disposition: inline; filename=\"carnets.pdf\"");
+        }
+
+        header("Content-Length: " . strlen($pdfOutput));
+        echo $pdfOutput;
         exit;
+
+
     }
 
     public function generate_carnet_individual()
@@ -221,12 +234,23 @@ class CarnetController extends Controller
         $dompdf->render();
 
 
-
+        $descargar = isset($_POST['descargar']) && $_POST['descargar'] == 1;
 
         // ✅ Muy importante: devolver solo PDF, sin nada antes
+        $pdfOutput = $dompdf->output();
+
         header("Content-Type: application/pdf");
-        echo $dompdf->output();
+
+        if ($descargar) {
+            header("Content-Disposition: attachment; filename=\"carnets.pdf\"");
+        } else {
+            header("Content-Disposition: inline; filename=\"carnets.pdf\"");
+        }
+
+        header("Content-Length: " . strlen($pdfOutput));
+        echo $pdfOutput;
         exit;
+
     }
 
     public function preview_carnet_individual()

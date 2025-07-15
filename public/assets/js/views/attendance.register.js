@@ -96,6 +96,13 @@ $(document).ready(function () {
     $status.find(".apellido-label").text(`Apellido: ${apellido || ""}`);
     $status.find(".codigo-label").text(`Código: ${codigo || ""}`);
   
+    $('.status-details').show();
+
+    if(type == "error" || type == "info") {
+      $('.status-details').hide();
+    }
+    console.log(type);
+    
     // Cambiar ícono según tipo
     let iconClass = "fas fa-info-circle";
     if (type === "success") iconClass = "fas fa-check-circle";

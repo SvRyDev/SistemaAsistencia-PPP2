@@ -320,7 +320,7 @@ $(document).ready(function () {
       totalEstudiantes = parseInt(last.total_estudiantes) || 0;
     }
 
-    const asistido = puntual + tarde;
+    const asistido = puntual;
     const registrados = asistido + justificado;
     const restantes = totalEstudiantes - registrados;
 

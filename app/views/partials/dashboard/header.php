@@ -258,7 +258,7 @@
 
             <?php if (hasGroupPermission('REPORTES')): ?>
               <li class="nav-header">REPORTES</li>
-              <?php if (hasPermission(' reporte_resumen_diario')): ?>
+              <?php if (hasPermission('reporte_resumen_diario')): ?>
                 <li class="nav-item">
                   <a href="<?= base_url() ?>/report/resume/daily" class="nav-link">
                     <i class="nav-icon fas fa-chart-bar"></i>

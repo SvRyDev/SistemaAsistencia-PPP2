@@ -213,7 +213,7 @@
 
 
             <div class="footer-text">
-                © 2025 desarrollador por <strong>A. S. R.</strong>
+                © 2025 desarrollado por <strong>A. S. R.</strong>
 
             </div>
         </div>

@@ -46,67 +46,64 @@ $(function () {
   }
 
   $(document).ready(function () {
-  
-  // Asignar el evento load del iframe UNA SOLA VEZ
-// Al cargar el iframe (cuando el PDF está listo)
-$("#preview-carnets").on("load", function () {
-  // Mostrar alerta
-  $("#carnet-alert").show();
+    // Asignar el evento load del iframe UNA SOLA VEZ
+    // Al cargar el iframe (cuando el PDF está listo)
+    $("#preview-carnets").on("load", function () {
+      // Mostrar alerta
+      $("#carnet-alert").show();
 
-  // Habilitar el botón de exportar
-  $("#btn-export-pdf").removeClass("disabled").css({
-    cursor: "pointer",
-    "pointer-events": "auto",
-    opacity: "1",
-  });
-});
-
-
-  $("#btn-generate-carnets").on("click", function (e) {
-    e.preventDefault();
-
-    var grado = $("#grado_grupo").val();
-    var seccion = $("#seccion_grupo").val();
-
-    if (!grado || !seccion) {
-      Swal.fire({
-        icon: "warning",
-        title: "Campos requeridos",
-        text: "Seleccione grado y sección",
-        confirmButtonText: "Aceptar",
+      // Habilitar el botón de exportar
+      $("#btn-export-pdf").removeClass("disabled").css({
+        cursor: "pointer",
+        "pointer-events": "auto",
+        opacity: "1",
       });
-      return;
-    }
-
-
-    // Crear formulario dinámico para enviar al iframe
-    const form = $("<form>", {
-      method: "POST",
-      action: base_url + "/carnet/generateCarnetGrupal",
-      target: "preview-carnets",
     });
 
-    form.append($("<input>", {
-      type: "hidden",
-      name: "grado_grupo",
-      value: grado,
-    }));
+    $("#btn-generate-carnets").on("click", function (e) {
+      e.preventDefault();
 
-    form.append($("<input>", {
-      type: "hidden",
-      name: "seccion_grupo",
-      value: seccion,
-    }));
+      var grado = $("#grado_grupo").val();
+      var seccion = $("#seccion_grupo").val();
 
-    $("body").append(form);
-    form.submit();
-    form.remove();
-  });
+      if (!grado || !seccion) {
+        Swal.fire({
+          icon: "warning",
+          title: "Campos requeridos",
+          text: "Seleccione grado y sección",
+          confirmButtonText: "Aceptar",
+        });
+        return;
+      }
 
+      // Crear formulario dinámico para enviar al iframe
+      const form = $("<form>", {
+        method: "POST",
+        action: base_url + "/carnet/generateCarnetGrupal",
+        target: "preview-carnets",
+      });
 
+      form.append(
+        $("<input>", {
+          type: "hidden",
+          name: "grado_grupo",
+          value: grado,
+        })
+      );
 
-    
-    
+      form.append(
+        $("<input>", {
+          type: "hidden",
+          name: "seccion_grupo",
+          value: seccion,
+        })
+      );
+
+      $("body").append(form);
+      form.submit();
+      form.remove();
+    });
+
     $("#btn-export-pdf").on("click", function (e) {
       e.preventDefault();
 
@@ -146,6 +143,15 @@ $("#preview-carnets").on("load", function () {
         })
       );
 
+      // 👇 Nuevo campo para indicar descarga
+      form.append(
+        $("<input>", {
+          type: "hidden",
+          name: "descargar",
+          value: 1,
+        })
+      );
+      
       $("body").append(form);
       form.submit();
       form.remove();
